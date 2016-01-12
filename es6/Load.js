@@ -1,13 +1,11 @@
 //This is a part of another project I made, and modified somewhat to use in the honours project.
 "use strict";
 
-var global = this;
-
-if("load" in global) {
-	console.warn("global.load already exists! It will be clobbered. Careful.");
+if("load" in self) {
+	console.warn("self.load already exists! It will be clobbered. Careful.");
 }
 
-global.load = (function(global) {
+self.load = (function(self) {
 	/** This namespace provides the functions required to import files and resolve dependencies.
 	 * 
 	 * JavaScript files imported by this system consist of adding them to the page's head tag, one after the other.
@@ -88,19 +86,19 @@ global.load = (function(global) {
 	var _uncaughtErrors = [];
 	
 	// Set up multithreading
-	load.worker = !("document" in global) && !("window" in global)
+	load.worker = !("document" in self) && !("window" in self)
 	
 	if(load.worker) {
 		// A worker
 		
-		global.onmessage = function(e) {
+		self.onmessage = function(e) {
 			if(e.data[0] == "_load_packs") {
 				// Add package information
 				load.addDependency.apply(load, e.data[1]);
 			}else{
 				load.import(e.data[1]).then(function(pack) {
 					var output = pack(e.data[2]);
-					global.postMessage([e.data[0], output[0]], output[1]);
+					self.postMessage([e.data[0], output[0]], output[1]);
 				});
 			}
 		}
@@ -559,7 +557,7 @@ global.load = (function(global) {
 			_names[f[0][i]][1] = 1;
 		}
 		
-		if(!("document" in global) && !("window" in global)) {
+		if(!("document" in self) && !("window" in self)) {
 			importScripts(file);
 		}else{
 			var js = document.createElement("script");
@@ -674,14 +672,14 @@ global.load = (function(global) {
 		return ~~(sum/1024);
 	};
 	
-	global.addEventListener("error", function(e) {
+	self.addEventListener("error", function(e) {
 		if(!e.error) return;
 		_uncaughtErrors.push([e.error, e]);
 		load.abort();
 	});
 	
 	return load;
-})(global);
+})(self);
 
 load.addDependency("", ["load"], []);
 load.provide("load", load);
