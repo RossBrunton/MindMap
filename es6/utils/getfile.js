@@ -11,13 +11,13 @@ load.provide("mm.utils.getfile", (function() {
 	 * @return {Promise(*)} A promise that resolves when the file is finished downloading. The object is from $.get.
 	 */
 	return function(url) {
-		// Would like to have used fetch, but babeljs can't figure that out...
 		if(url.startsWith("data:")) {
 			// Data URL
 			return Promise.resolve(url.split(",")[1]);
 		}else{
 			// Not a data url
-			return new Promise((f, r) => $.get(url, "", f));
+			// Would like to have used fetch, but babeljs can't figure that out...
+			return new Promise((f, r) => void $.get(url, "", f).fail(r));
 		}
 	};
 })());
