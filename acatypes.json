@@ -1,0 +1,23 @@
+{
+	"version": 1,
+	"types":[
+		{
+			"name":"test",
+			"fields":[
+				["testfield", "text"]
+			],
+			"nodeText":"{testfield}",
+			"nodeAttr":{},
+			"viewText":"{testfield}",
+			"viewAddText":"HAI",
+		}
+	],
+	
+	"arrows":[
+		{
+			"name":"default",
+			"attr":{},
+		}
+	],
+}
+	
