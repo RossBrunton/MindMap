@@ -10,7 +10,6 @@ runserver:
 	python2 -m SimpleHTTPServer
 
 configure:
-	npm install babel
 	npm install babel-cli
 	npm install babel-preset-es2015
 	ln -s ../node_modules/babel-cli/bin/babel.js tools/babel
