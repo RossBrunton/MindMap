@@ -6,12 +6,14 @@
 		<script src='es5/Load.js'></script>
 		<script>
 			load.importList("es5/deps.json", function() {
-				
+				load.import("mm.main");
 			});
 		</script>
 	</head>
 	
 	<body style='margin:0px;padding:0px'>
-		I AM A HTML BODY LOOK AT ME!
+		<graph-display src='objtest.json' types='acatypes.json'>
+			
+		</graph-display>
 	</body>
 </html>
