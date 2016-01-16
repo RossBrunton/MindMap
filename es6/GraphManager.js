@@ -4,7 +4,7 @@ load.provide("mm.HTMLGraphFinder", (function() {
 	let Renderer = load.require("mm.Renderer");
 	
 	return function*() {
-		for(let n of Array.prototype.slice.call(document.querySelectorAll("graph-display"))) {
+		for(let n of Array.from(document.querySelectorAll("graph-display"))) {
 			yield {
 				renderer: new Renderer(n),
 				objectsUrl: n.getAttribute("src"),

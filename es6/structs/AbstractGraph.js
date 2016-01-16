@@ -40,11 +40,26 @@ load.provide("mm.structs.AbstractGraph", (function() {
 				getfile(objectsUrl)
 			]).then((function(contents) {
 				this._types = new TypesFile(typeof contents[0] === "string" ? JSON.parse(contents[0]) : contents[0]);
-				this._objects = new ObjectsData(typeof contents[1] === "string" ? JSON.parse(contents[1]) :contents[1]);
+				this._objects = new ObjectsData(typeof contents[1] === "string" ? JSON.parse(contents[1]) :contents[1], this._types);
 				
 				console.log("READY!");
 				this.ready = true;
+				this.rerender();
 			}).bind(this));
+		}
+		
+		/** Asks all the renderers to rerender the document from scratch.
+		 * 
+		 * If this graph is not ready, does nothing.
+		 * 
+		 * @return {boolean} Whether this did something (same value as !this.ready).
+		 */
+		rerender() {
+			if(!this.ready) return false;
+			
+			for(let r of this._renderers) {
+				r.rerender(this._objects);
+			}
 		}
 	};
 })());
