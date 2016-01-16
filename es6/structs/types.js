@@ -47,5 +47,31 @@ load.provide("mm.structs.TypesFile", (function() {
 			this.types = object.types.map((x) => new NodeType(x));
 			this.arrowTypes = object.arrows.map((x) => new ArrowType(x));
 		}
+		
+		/** Returns the node type with the given name.
+		 * 
+		 * @param {string} The name to look up.
+		 * @return {mm.structs.NodeType?} The node type, or null if it wasn't found.
+		 */
+		getNodeType(name) {
+			for(let t of this.types) {
+				if(t.name == name) return t;
+			}
+			
+			return null;
+		}
+		
+		/** Returns the arrow type with the given name.
+		 * 
+		 * @param {string} The name to look up.
+		 * @return {mm.structs.NodeType?} The arrow type, or null if it wasn't found.
+		 */
+		getArrowType(name) {
+			for(let t of this.arrowTypes) {
+				if(t.name == name) return t;
+			}
+			
+			return null;
+		}
 	};
 })());
