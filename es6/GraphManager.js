@@ -26,12 +26,12 @@ load.provide("mm.graphManager", (function() {
 	 */
 	let graphManager = {};
 	
-	/** Array of all renderers */
-	let _renderers = [];
+	/** Array of all graphs known about */
+	let _graphs = [];
 	
 	graphManager.createAll = function() {
 		for(let x of finder()) {
-			console.log(x);
+			_graphs.push(new AbstractGraph(x.objectsUrl, x.typesUrl, [x.renderer]));
 		}
 	}
 	
