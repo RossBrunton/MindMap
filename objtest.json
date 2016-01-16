@@ -1,0 +1,30 @@
+{
+    "version":1,
+    "nodes":[{
+        "type":"test",
+        "id":1,
+        "fields":{},
+        "x":10,
+        "y":10
+    },
+    {
+        "type":"test",
+        "id":2,
+        "fields":{},
+        "x":110,
+        "y":110
+    }],
+    "edges":[{
+        "type":"default",
+        "origin":1,
+        "dest":2,
+        "text":"",
+        "points":[[200, 30]]
+    }],
+    "canvas":{
+        "height":1000,
+        "width":1000,
+        "offsetX":50,
+        "offsetY":50
+    }
+}

@@ -10,7 +10,7 @@
 		"viewText": "{testfield}",
 		"viewAddText": "HAI"
 	}],
-
+	
 	"arrows": [{
 		"name": "default",
 		"attr": {}
