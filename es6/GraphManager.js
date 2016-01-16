@@ -3,21 +3,17 @@
 load.provide("mm.HTMLGraphFinder", (function() {
 	let Renderer = load.require("mm.Renderer");
 	
-	return function() {
-		let out = [];
-		
+	return function*() {
 		for(let n of Array.prototype.slice.call(document.querySelectorAll("graph-display"))) {
-			out.push({
+			yield {
 				renderer: new Renderer(n),
 				objectsUrl: n.getAttribute("src"),
 				typesUrl: n.getAttribute("types"),
 				editor: n.getAttribute("editor") ?
 					["true", "1", "editor"].includes(n.getAttribute("editor").toLowerCase())
 					: false
-			});
+			};
 		}
-		
-		return out;
 	}
 })());
 
