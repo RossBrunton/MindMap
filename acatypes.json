@@ -6,7 +6,14 @@
 			["testfield", "text"]
 		],
 		"nodeText": "{testfield}",
-		"nodeAttr": {},
+		"nodeAttr": {
+			"rect":{
+				"fill":"#aaffaa",
+				"stroke":"#99bb99",
+				"rx":10,
+				"ry":10
+			}
+		},
 		"viewText": "{testfield}",
 		"viewAddText": "HAI"
 	}],
