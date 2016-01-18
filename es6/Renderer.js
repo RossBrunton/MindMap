@@ -73,6 +73,8 @@ load.provide("mm.Renderer", (function() {
 					attrs:n.type.nodeAttr
 				});
 				
+				rect.attr("text/text", n.type.nodeText);
+				
 				this._graph.addCell(rect);
 				nodeIds.set(n.id, rect);
 			}
