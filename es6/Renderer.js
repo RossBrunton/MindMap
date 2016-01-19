@@ -63,7 +63,11 @@ load.provide("mm.Renderer", (function() {
 			 */
 			this._interactor = null;
 			
-			this.init();
+			/** True if this has been inited
+			 * 
+			 * @type boolean
+			 */
+			this.inited = false;
 		}
 		
 		/** Given some objects, renders them from scratch.
@@ -71,6 +75,8 @@ load.provide("mm.Renderer", (function() {
 		 * @param {mm.structs.ObjectsData} objects The objects to render with this.
 		 */
 		rerender(objects) {
+			if(!this.inited) this.init();
+			
 			// Set dimensions
 			this._paper.setDimensions(objects.canvas.width, objects.canvas.height);
 			this._paper.setOrigin(objects.canvas.offsetX, objects.canvas.offsetY);
@@ -90,6 +96,7 @@ load.provide("mm.Renderer", (function() {
 				
 				this._graph.addCell(rect);
 				nodeIds.set(n.id, rect);
+				this._interactor.addNode(rect);
 			}
 			
 			// Edges
@@ -109,6 +116,7 @@ load.provide("mm.Renderer", (function() {
 				link.set("connector", {name:"smooth"});
 				link.attr(e.type.attr);
 				this._graph.addCell(link);
+				this._interactor.addEdge(link);
 			}
 		}
 		
@@ -128,6 +136,9 @@ load.provide("mm.Renderer", (function() {
 				height:0,
 				interactive:true//false
 			});
+			
+			this._interactor.addCanvas(this.node);
+			this.inited = true;
 		}
 		
 		/** Sets the interactor for this Renderer

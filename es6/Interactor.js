@@ -18,6 +18,10 @@ load.provide("mm.Interactor", (function() {
 			console.log(`Edge added: ${edge}`);
 		}
 		
+		addCanvas(node) {
+			console.log(`Canvas added: ${node}`);
+		}
+		
 		rerender() {
 			this._renderers.forEach((r) => r.rerender(this._abstractGraph.objects));
 		}
