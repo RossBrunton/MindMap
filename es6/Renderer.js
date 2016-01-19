@@ -96,7 +96,7 @@ load.provide("mm.Renderer", (function() {
 				
 				this._graph.addCell(rect);
 				nodeIds.set(n.id, rect);
-				this._interactor.addNode(rect);
+				this._interactor.addNode(this, rect);
 			}
 			
 			// Edges
@@ -116,7 +116,7 @@ load.provide("mm.Renderer", (function() {
 				link.set("connector", {name:"smooth"});
 				link.attr(e.type.attr);
 				this._graph.addCell(link);
-				this._interactor.addEdge(link);
+				this._interactor.addEdge(this, link);
 			}
 		}
 		
@@ -137,7 +137,7 @@ load.provide("mm.Renderer", (function() {
 				interactive:true//false
 			});
 			
-			this._interactor.addCanvas(this.node);
+			this._interactor.addCanvas(this, this.node);
 			this.inited = true;
 		}
 		
@@ -147,6 +147,14 @@ load.provide("mm.Renderer", (function() {
 		 */
 		setInteractor(interactor) {
 			this._interactor = interactor;
+		}
+		
+		/** Scales the jointJS paper
+		 * 
+		 * @param {float} scale The amount to scale the paper.
+		 */
+		scale(scale) {
+			this._paper.scale(scale, scale);
 		}
 	};
 })());
