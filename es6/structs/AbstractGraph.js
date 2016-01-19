@@ -7,7 +7,7 @@ load.provide("mm.structs.AbstractGraph", (function() {
 	
 	/** This represents a graph. */
 	return class AbstractGraph {
-		constructor(objectsUrl, typesUrl, renderers) {
+		constructor(objectsUrl, typesUrl, interactor) {
 			/** True if this object is ready for use (that is, the files have been downloaded)
 			 * 
 			 * @type boolean
@@ -19,47 +19,43 @@ load.provide("mm.structs.AbstractGraph", (function() {
 			 * @type mm.structs.TypesFile
 			 * @private
 			 */
-			this._types = null;
+			this.types = null;
 			/** When downloaded, the objects data object.
 			 * 
 			 * @type mm.structs.ObjectsData
 			 * @private
 			 */
-			this._objects = null;
+			this.objects = null;
 			
-			/** An array of renderers for this graph.
+			/** The interactor for this abstractGraph.
 			 * 
-			 * @type Array<mm.Renderer>
+			 * Null until it is added by setInteractor.
+			 * 
+			 * @type ?mm.Interactor
 			 * @private
 			 */
-			this._renderers = renderers;
+			this._interactor = null;
 			
 			// Now download the files
 			Promise.all([
 				getfile(typesUrl),
 				getfile(objectsUrl)
 			]).then((function(contents) {
-				this._types = new TypesFile(typeof contents[0] === "string" ? JSON.parse(contents[0]) : contents[0]);
-				this._objects = new ObjectsData(typeof contents[1] === "string" ? JSON.parse(contents[1]) :contents[1], this._types);
+				this.types = new TypesFile(typeof contents[0] === "string" ? JSON.parse(contents[0]) : contents[0]);
+				this.objects = new ObjectsData(typeof contents[1] === "string" ? JSON.parse(contents[1]) :contents[1], this.types);
 				
 				console.log("READY!");
 				this.ready = true;
-				this.rerender();
+				this._interactor.rerender();
 			}).bind(this));
 		}
 		
-		/** Asks all the renderers to rerender the document from scratch.
+		/** Sets the interactor for this Renderer
 		 * 
-		 * If this graph is not ready, does nothing.
-		 * 
-		 * @return {boolean} Whether this did something (same value as !this.ready).
+		 * @param {mm.Interactor} interactor The interactor
 		 */
-		rerender() {
-			if(!this.ready) return false;
-			
-			for(let r of this._renderers) {
-				r.rerender(this._objects);
-			}
+		setInteractor(interactor) {
+			this._interactor = interactor;
 		}
 	};
 })());

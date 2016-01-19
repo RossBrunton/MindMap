@@ -47,17 +47,29 @@ load.provide("mm.Renderer", (function() {
 			this._graph = null;
 			/** The joint.js paper used for this node
 			 * 
-			 * Null until it is inited
+			 * Null until it is inited.
 			 * 
 			 * @type ?joint.dia.Paper
 			 * @private
 			 */
 			this._paper = null;
 			
+			/** The interactor for this renderer.
+			 * 
+			 * Null until it is added by setInteractor.
+			 * 
+			 * @type ?mm.Interactor
+			 * @private
+			 */
+			this._interactor = null;
 			
 			this.init();
 		}
 		
+		/** Given some objects, renders them from scratch.
+		 * 
+		 * @param {mm.structs.ObjectsData} objects The objects to render with this.
+		 */
 		rerender(objects) {
 			// Set dimensions
 			this._paper.setDimensions(objects.canvas.width, objects.canvas.height);
@@ -116,6 +128,14 @@ load.provide("mm.Renderer", (function() {
 				height:0,
 				interactive:true//false
 			});
+		}
+		
+		/** Sets the interactor for this Renderer
+		 * 
+		 * @param {mm.Interactor} interactor The interactor
+		 */
+		setInteractor(interactor) {
+			this._interactor = interactor;
 		}
 	};
 })());

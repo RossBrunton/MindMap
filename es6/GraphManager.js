@@ -21,17 +21,23 @@ load.provide("mm.HTMLGraphFinder", (function() {
 load.provide("mm.graphManager", (function() {
 	let AbstractGraph = load.require("mm.structs.AbstractGraph");
 	let finder = load.require("mm.HTMLGraphFinder");
+	let Interactor = load.require("mm.Interactor");
     
 	/** Controls all the AbstractNodeMaps available, and creates them and their renderers.
 	 */
 	let graphManager = {};
 	
-	/** Array of all graphs known about */
+	/** Array of all the interactors known about */
 	let _graphs = [];
 	
+	/** Loop through all the nodes (as per mm.HTMLGraphFinder) and set them up */
 	graphManager.createAll = function() {
 		for(let x of finder()) {
-			_graphs.push(new AbstractGraph(x.objectsUrl, x.typesUrl, [x.renderer]));
+			let ag = new AbstractGraph(x.objectsUrl, x.typesUrl);
+			let renderers = [x.renderer];
+			let interactor = new Interactor(ag, renderers);
+			
+			_graphs.push(interactor);
 		}
 	}
 	
