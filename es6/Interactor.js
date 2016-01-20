@@ -4,7 +4,14 @@ load.provide("mm.Interactor", (function() {
 	let getDirName = load.require("mm.utils.getDirName");
 	let getfile = load.require("mm.utils.getfile");
 	
-	let dir = getDirName("Interactor.js") + "interactorResources/";
+	let _dir = getDirName("Interactor.js") + "interactorResources/";
+	
+	// First of all, load the CSS file
+	let cssNode = document.createElement("link");
+	cssNode.rel = "stylesheet";
+	cssNode.type = "text/css";
+	cssNode.href = _dir + "styles.css";
+	$("head").append(cssNode);
 	
 	return class Interactor {
 		constructor(abstractGraph, renderers) {
@@ -28,9 +35,10 @@ load.provide("mm.Interactor", (function() {
 			
 			// Vars in this closure
 			let scale = 1.0;
+			let mouseDown = false;
 			
 			// Put the widget thing with the zoom things
-			let widgetHtml = await getfile(dir + "viewWidget.html");
+			let widgetHtml = await getfile(_dir + "viewWidget.html");
 			$(node).prepend(widgetHtml);
 			
 			
@@ -68,6 +76,30 @@ load.provide("mm.Interactor", (function() {
 				}
 				
 				e.preventDefault();
+			});
+			
+			
+			// ----
+			// Pan
+			// ----
+			node.addEventListener("mousedown", function(e) {
+				console.log(e);
+				mouseDown = true;
+				startX = e.clientX;
+				startY = e.clientY;
+			});
+
+			node.addEventListener("mousemove", function(e) {
+				if(mouseDown) {
+					node.scrollTop += e.movementY;
+					node.scrollLeft += e.movementX;
+				}
+				console.log(e);
+			});
+
+			node.addEventListener("mouseup", function(e) {
+				console.log(e);
+				mouseDown = false;
 			});
 		}
 		
