@@ -1,6 +1,11 @@
 "use strict";
 
 load.provide("mm.Interactor", (function() {
+	let getDirName = load.require("mm.utils.getDirName");
+	let getfile = load.require("mm.utils.getfile");
+	
+	let dir = getDirName("Interactor.js") + "interactorResources/";
+	
 	return class Interactor {
 		constructor(abstractGraph, renderers) {
 			this._abstractGraph = abstractGraph;
@@ -18,11 +23,30 @@ load.provide("mm.Interactor", (function() {
 			console.log(`Edge added: ${edge}`);
 		}
 		
-		addCanvas(renderer, node) {
+		async addCanvas(renderer, node) {
 			console.log(`Canvas added: ${node}`);
 			
 			// Vars in this closure
 			let scale = 1.0;
+			
+			// Put the widget thing with the zoom things
+			let widgetHtml = await getfile(dir + "viewWidget.html");
+			$(node).prepend(widgetHtml);
+			
+			
+			// ----
+			// Zoom
+			// ----
+			let _updateZoom = function(mod) {
+				scale += mod;
+				if(scale < 0.2) scale = 0.2;
+				
+				renderer.scale(scale);
+			}
+			
+			// Widget zoom buttons
+			$(node).find(".mm-zoom-in").click((e) => _updateZoom(0.3));
+			$(node).find(".mm-zoom-out").click((e) => _updateZoom(-0.3));
 			
 			// Scroll zoom
 			$(node).on('mousewheel DOMMouseScroll', function(e){
@@ -31,22 +55,17 @@ load.provide("mm.Interactor", (function() {
 				// Browser compatability! :D
 				if("detail" in e.originalEvent && e.originalEvent.detail) {
 					if(e.originalEvent.detail > 0) {
-						scale -= 0.1;
+						_updateZoom(-0.1);
 					}else{
-						scale += 0.1;
+						_updateZoom(0.1);
 					}
 				}else{
 					if(e.originalEvent.deltaY > 0) {
-						scale -= 0.1;
+						_updateZoom(-0.1);
 					}else{
-						scale += 0.1;
+						_updateZoom(0.1);
 					}
 				}
-				
-				// Range check
-				if(scale < 0.2) scale = 0.2;
-				
-				renderer.scale(scale);
 				
 				e.preventDefault();
 			});
