@@ -91,8 +91,8 @@ load.provide("mm.Interactor", (function() {
 
 			node.addEventListener("mousemove", function(e) {
 				if(mouseDown) {
-					node.scrollTop += e.movementY;
-					node.scrollLeft += e.movementX;
+					node.scrollTop -= e.movementY;
+					node.scrollLeft -= e.movementX;
 				}
 				console.log(e);
 			});
