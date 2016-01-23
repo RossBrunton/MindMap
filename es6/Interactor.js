@@ -83,7 +83,6 @@ load.provide("mm.Interactor", (function() {
 			// Pan
 			// ----
 			node.addEventListener("mousedown", function(e) {
-				console.log(e);
 				mouseDown = true;
 				startX = e.clientX;
 				startY = e.clientY;
@@ -97,8 +96,7 @@ load.provide("mm.Interactor", (function() {
 				console.log(e);
 			});
 
-			node.addEventListener("mouseup", function(e) {
-				console.log(e);
+			$(node).on("mouseup mouseout", function(e) {
 				mouseDown = false;
 			});
 		}
