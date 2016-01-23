@@ -68,6 +68,9 @@ load.provide("mm.Renderer", (function() {
 			 * @type boolean
 			 */
 			this.inited = false;
+			
+			this._width = 0;
+			this._height = 0;
 		}
 		
 		/** Given some objects, renders them from scratch.
@@ -78,6 +81,8 @@ load.provide("mm.Renderer", (function() {
 			if(!this.inited) this.init();
 			
 			// Set dimensions
+			this._width = objects.canvas.width;
+			this._height = objects.canvas.height;
 			this._paper.setDimensions(objects.canvas.width, objects.canvas.height);
 			this._paper.setOrigin(objects.canvas.offsetX, objects.canvas.offsetY);
 			
@@ -155,6 +160,7 @@ load.provide("mm.Renderer", (function() {
 		 */
 		scale(scale) {
 			this._paper.scale(scale, scale);
+			this._paper.setDimensions(this._width*scale, this._height * scale);
 		}
 	};
 })());
