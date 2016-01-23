@@ -2,3 +2,29 @@ graph-display {
     display:block;
     overflow:scroll;
 }
+
+/** Widgets */
+.mm-view-widget {
+    position:absolute;
+    top:3px;
+    left:3px;
+    border-radius:10px;
+    padding:5px;
+    background-color:#eeeeff;
+    display:inline-block;
+}
+
+.mm-view-widget a {
+    border-radius:10px;
+    background-color:#ccccdd;
+    width:20px;
+    display:inline-block;
+    text-align:center;
+    cursor:pointer;
+    
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
