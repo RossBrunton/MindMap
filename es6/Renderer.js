@@ -5,8 +5,8 @@ load.provide("mm.Renderer", (function() {
 	let TypesFile = load.require("mm.structs.TypesFile");
 
 	const _TEMPLATE =
-`<div class='_mm_inner'>
-	<div class='_mm_paper'>
+`<div class='mm-inner'>
+	<div class='mm-paper'>
 		
 	</div>
 </div>`;
@@ -123,13 +123,13 @@ load.provide("mm.Renderer", (function() {
 		/** Inits the element, by creating the needed elements inside it */
 		init() {
 			this.node.innerHTML = _TEMPLATE;
-			this.node.classList.add("_mm_root");
+			this.node.classList.add("mm-root");
 			
 			// Set up jointjs
 			let graph = this._graph = new joint.dia.Graph();
 			
 			let paper = this._paper = new joint.dia.Paper({
-				el:$(`#${this._id} ._mm_paper`),
+				el:$(`#${this._id} .mm-paper`),
 				model:graph,
 				gridSize:1,
 				width:0,

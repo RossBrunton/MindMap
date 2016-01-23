@@ -36,6 +36,8 @@ load.provide("mm.Interactor", (function() {
 			// Vars in this closure
 			let scale = 1.0;
 			let mouseDown = false;
+			let startX = 0;
+			let startY = 0;
 			
 			// Put the widget thing with the zoom things
 			let widgetHtml = await getfile(_dir + "viewWidget.html");
@@ -90,10 +92,9 @@ load.provide("mm.Interactor", (function() {
 
 			node.addEventListener("mousemove", function(e) {
 				if(mouseDown) {
-					node.scrollTop -= e.movementY;
-					node.scrollLeft -= e.movementX;
+					$(node).find(".mm-inner")[0].scrollTop -= e.movementY;
+					$(node).find(".mm-inner")[0].scrollLeft -= e.movementX;
 				}
-				console.log(e);
 			});
 
 			$(node).on("mouseup mouseout", function(e) {
