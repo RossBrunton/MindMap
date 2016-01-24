@@ -129,6 +129,7 @@ load.provide("mm.Renderer", (function() {
 		init() {
 			this.node.innerHTML = _TEMPLATE;
 			this.node.classList.add("mm-root");
+			if(true /* Editor condition */) this.node.classList.add("mm-noedit")
 			
 			// Set up jointjs
 			let graph = this._graph = new joint.dia.Graph();
@@ -139,7 +140,7 @@ load.provide("mm.Renderer", (function() {
 				gridSize:1,
 				width:0,
 				height:0,
-				interactive:true//false
+				interactive:false
 			});
 			
 			this._interactor.addCanvas(this, this.node);

@@ -13,7 +13,7 @@
     height:inherit;
 }
 
-/** Widgets */
+/* Widgets */
 .mm-view-widget {
     position:absolute;
     top:3px;
@@ -37,4 +37,13 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+/* Hide editor bits */
+.mm-noedit .link-tools {
+    visibility:hidden;
+}
+
+.mm-noedit .marker-vertices {
+    visibility:hidden;
 }
