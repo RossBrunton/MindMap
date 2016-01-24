@@ -3,9 +3,10 @@
 	"types": [{
 		"name": "test",
 		"fields": [
-			["testfield", "text"]
+			["testfield", "text"],
+			["name", "text"]
 		],
-		"nodeText": "{testfield}",
+		"nodeText": "{name}",
 		"nodeAttr": {
 			"rect":{
 				"fill":"#aaffaa",
@@ -14,7 +15,7 @@
 				"ry":10
 			}
 		},
-		"viewText": "{testfield}",
+		"viewText": "{name} - {testfield}",
 		"viewAddText": "HAI"
 	}],
 	

@@ -3,14 +3,14 @@
     "nodes":[{
         "type":"test",
         "id":1,
-        "fields":{},
+        "fields":{"name":"Incomprehensible Gibberish"},
         "x":10,
         "y":10
     },
     {
         "type":"test",
         "id":2,
-        "fields":{},
+        "fields":{"name":"Some Book"},
         "x":110,
         "y":110
     }],
