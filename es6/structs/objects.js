@@ -19,6 +19,10 @@ load.provide("mm.structs.ObjectNode", (function() {
 			
 			for(let x of ["id", "x", "y", "fields"]) this[x] = object[x];
 		}
+		
+		getFieldType(field) {
+			return this.type.getFieldType(field);
+		}
 	};
 })());
 

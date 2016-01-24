@@ -21,6 +21,16 @@ load.provide("mm.structs.NodeType", (function() {
 			
 			this.fields = object.fields.map((x) => new NodeTypeField(x));
 		}
+		
+		getFieldType(field) {
+			for(let f of this.fields) {
+				if(f.name == field) {
+					return f;
+				}
+			}
+			
+			return null;
+		}
 	};
 })());
 

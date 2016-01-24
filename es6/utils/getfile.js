@@ -7,7 +7,7 @@ load.provide("mm.utils.getfile", (function() {
 	 * 
 	 * Works on data urls, provided they are encoded in ascii.
 	 * 
-	 * @param {url} The url to get.
+	 * @param {string} The url to get.
 	 * @return {Promise(*)} A promise that resolves when the file is finished downloading. The object is from $.get.
 	 */
 	return function(url) {
