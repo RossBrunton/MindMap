@@ -122,6 +122,16 @@ load.provide("mm.Renderer", (function() {
 				link.attr(e.type.attr);
 				this._graph.addCell(link);
 				this._interactor.addEdge(this, link);
+				
+				// Text
+				if(e.text) {
+					link.label(0, {
+						position: 0.5,
+						attrs: e.type.textAttr
+					});
+					
+					link.label(0, {position:0.5, attrs:{rect:{style:"scale:1.3"}, text:{text:e.text}}});
+				}
 			}
 		}
 		

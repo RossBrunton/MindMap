@@ -30,7 +30,7 @@ load.provide("mm.structs.ArrowType", (function() {
 		constructor(object) {
 			if(!object.name.match(/[a-z]+/)) throw new TypeError(`Arrow type name ${this.name} is not valid.`);
 			
-			for(let x of ["name", "attr"]) this[x] = object[x];
+			for(let x of ["name", "attr", "textAttr"]) this[x] = object[x];
 		}
 	};
 })());

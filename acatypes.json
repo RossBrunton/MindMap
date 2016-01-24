@@ -20,6 +20,14 @@
 	
 	"arrows": [{
 		"name": "default",
-		"attr": {}
+		"attr": {},
+		"textAttr":{
+			"rect":{
+				"fill":"#ffffff",
+				"stroke":"#000000",
+				"rx":10,
+				"ry":10
+			}
+		}
 	}]
 }
