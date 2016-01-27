@@ -21,6 +21,9 @@ load.provide("mm.Interactor", (function() {
 			
 			this._abstractGraph.setInteractor(this);
 			renderers.forEach((r) => r.setInteractor(this));
+			
+			this._edges = [];
+			this._nodes = [];
 		}
 		
 		addNode(renderer, object, node) {
@@ -52,10 +55,14 @@ load.provide("mm.Interactor", (function() {
 				e.preventDefault();
 				e.stopPropagation();
 			});
+			
+			this._nodes.push([renderer, object, node, svgNode]);
 		}
 		
 		addEdge(renderer, object, edge) {
 			console.log(`Edge added: ${edge}`);
+			
+			this._edges.push([renderer, object, edge]);
 		}
 		
 		async addCanvas(renderer, node) {
@@ -79,11 +86,31 @@ load.provide("mm.Interactor", (function() {
 			// ----
 			// Zoom
 			// ----
-			let _updateZoom = function(mod) {
+			let _updateZoom = (mod) => {
+				let oldscale = scale;
 				scale += mod;
 				if(scale < 0.2) scale = 0.2;
 				
-				renderer.scale(scale);
+				//renderer.scale(scale);
+				
+				this._nodes.forEach((x) => {
+					
+					x[1].position(x[2].x * scale, x[2].y * scale);
+					
+					/*$(x[3]).find("text").css("font-size", `${(1/scale) * 100}%`);
+					x[1].attr("rect/height", (x[1].attr("rect/height")/(1/oldscale)) * (1/scale));
+					x[1].attr("rect/width", (x[1].attr("rect/width")/(1/oldscale)) * (1/scale));*/
+				});
+				//$(node).find(".mm-paper").css("font-size", `${(1/scale) * 100}%`);
+				
+				this._edges.forEach((x) => {
+					
+					x[1].set("vertices", x[2].points.map(([x, y]) => ({x:x * scale, y:y * scale})));
+					
+					/*$(x[3]).find("text").css("font-size", `${(1/scale) * 100}%`);
+					x[1].attr("rect/height", (x[1].attr("rect/height")/(1/oldscale)) * (1/scale));
+					x[1].attr("rect/width", (x[1].attr("rect/width")/(1/oldscale)) * (1/scale));*/
+				});
 			}
 			
 			// Widget zoom buttons
@@ -143,6 +170,11 @@ load.provide("mm.Interactor", (function() {
 		
 		rerender() {
 			this._renderers.forEach((r) => r.rerender(this._abstractGraph.objects));
+		}
+		
+		clear() {
+			this._nodes = [];
+			this._edges = [];
 		}
 	};
 })());
