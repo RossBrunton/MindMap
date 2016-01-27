@@ -102,7 +102,7 @@ load.provide("mm.Renderer", (function() {
 				
 				this._graph.addCell(rect);
 				nodeIds.set(n.id, rect);
-				this._interactor.addNode(this, rect);
+				this._interactor.addNode(this, rect, n);
 			}
 			
 			// Edges
@@ -122,7 +122,7 @@ load.provide("mm.Renderer", (function() {
 				link.set("connector", {name:"smooth"});
 				link.attr(e.type.attr);
 				this._graph.addCell(link);
-				this._interactor.addEdge(this, link);
+				this._interactor.addEdge(this, link, e);
 				
 				// Text
 				if(e.text) {

@@ -39,6 +39,35 @@
     user-select: none;
 }
 
+/* Details panel */
+.mm-details-panel {
+    position:absolute;
+    bottom:3px;
+    left:3px;
+    border-radius:10px;
+    padding:5px;
+    background-color:#eeeeff;
+    display:inline-block;
+    min-width:20%;
+    max-width:50%;
+}
+
+.mm-details-panel.hidden {
+    display:none;
+}
+
+.mm-details-panel.hidden.long {
+    display:inherit;
+}
+
+.mm-details-panel .mm-details-long {
+    display:none;
+}
+
+.mm-details-panel.long .mm-details-long {
+    display:inherit;
+}
+
 /* Hide editor bits */
 .mm-noedit .link-tools {
     visibility:hidden;

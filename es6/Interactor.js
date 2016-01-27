@@ -3,6 +3,7 @@
 load.provide("mm.Interactor", (function() {
 	let getDirName = load.require("mm.utils.getDirName");
 	let getfile = load.require("mm.utils.getfile");
+	let strf = load.require("mm.utils.strf");
 	
 	let _dir = getDirName("Interactor.js") + "interactorResources/";
 	
@@ -22,11 +23,38 @@ load.provide("mm.Interactor", (function() {
 			renderers.forEach((r) => r.setInteractor(this));
 		}
 		
-		addNode(renderer, node) {
-			console.log(`Node added: ${node}`);
+		addNode(renderer, object, node) {
+			console.log("Node added: %o for %o", object, node);
+			
+			let svgNode = $(`[model-id="${object.id}"]`)[0];
+			
+			// ----
+			// Hangle mouse hover thing
+			// ----
+			// Would love to have defined panel here to avoid copy-paste, but the node probably isn't added yet
+			$(svgNode).on("mousemove", (e) => {
+				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
+				if(panel.hasClass("long")) return;
+				
+				panel.find(".mm-details-short").html(strf(node.type.viewText, node));
+				panel.find(".mm-details-long").html(strf(node.type.viewAddText, node));
+				panel.removeClass("hidden");
+			});
+			
+			$(svgNode).on("mouseout", (e) => {
+				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
+				panel.addClass("hidden");
+			});
+			
+			$(svgNode).on("click", (e) => {
+				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
+				panel.addClass("long");
+				e.preventDefault();
+				e.stopPropagation();
+			});
 		}
 		
-		addEdge(renderer, edge) {
+		addEdge(renderer, object, edge) {
 			console.log(`Edge added: ${edge}`);
 		}
 		
@@ -42,6 +70,10 @@ load.provide("mm.Interactor", (function() {
 			// Put the widget thing with the zoom things
 			let widgetHtml = await getfile(_dir + "viewWidget.html");
 			$(node).prepend(widgetHtml);
+			
+			// And the details panel
+			let detailsHtml = await getfile(_dir + "detailsPanel.html");
+			$(node).prepend(detailsHtml);
 			
 			
 			// ----
@@ -60,8 +92,6 @@ load.provide("mm.Interactor", (function() {
 			
 			// Scroll zoom
 			$(node).on('mousewheel DOMMouseScroll', function(e){
-				console.log(e);
-				
 				// Browser compatability! :D
 				if("detail" in e.originalEvent && e.originalEvent.detail) {
 					if(e.originalEvent.detail > 0) {
@@ -99,6 +129,15 @@ load.provide("mm.Interactor", (function() {
 
 			$(node).on("mouseup mouseout", function(e) {
 				mouseDown = false;
+			});
+			
+			
+			// ----
+			// Clear details panel
+			// ----
+			node.addEventListener("mousedown", (e) => {
+				let panel = $(node).find(".mm-details-panel");
+				panel.removeClass("long");
 			});
 		}
 		
