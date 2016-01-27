@@ -409,6 +409,8 @@ self.load = (function(self) {
 					
 					var data = xhr.response;
 					
+					if(typeof(data) == "string") data = JSON.parse(data);
+					
 					if(Array.isArray(data)) {
 						//Convert into new format
 						data = {"version":0, "packages":data};
