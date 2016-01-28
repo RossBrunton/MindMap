@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>MindMap Thing</title>
+		<script src="libs/jquery.min.js"></script>
+		<script src='libs/polyfill.min.js'></script>
+		<script src='libs/lodash.min.js'></script>
+		<script src='libs/backbone-min.js'></script>
+		<script src='libs/joint.min.js'></script>
+		<script src='es5/Load.js'></script>
+		<script>
+			load.importList("es5/deps.json", function() {
+				load.import("mm.main");
+			});
+		</script>
+	</head>
+	
+	<body style='margin:0px;padding:0px'>
+		Document content here hurray
+		<graph-display editor=editor src='objtest.json' types='acatypes.json' style='width:500px;height:500px;'>
+			
+		</graph-display>
+	</body>
+</html>

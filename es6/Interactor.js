@@ -15,9 +15,10 @@ load.provide("mm.Interactor", (function() {
 	$("head").append(cssNode);
 	
 	return class Interactor {
-		constructor(abstractGraph, renderers) {
+		constructor(abstractGraph, renderers, editor) {
 			this._abstractGraph = abstractGraph;
 			this._renderers = renderers;
+			this._editor = editor;
 			
 			this._abstractGraph.setInteractor(this);
 			renderers.forEach((r) => r.setInteractor(this));

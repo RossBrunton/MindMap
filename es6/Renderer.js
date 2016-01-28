@@ -20,7 +20,7 @@ load.provide("mm.Renderer", (function() {
 	 * @param {HTMLElement} node The node to use. Must be a plain HTMLElement, not a JQuery object.
 	 */
 	return class Renderer {
-		constructor(node, types) {
+		constructor(node, editor) {
 			/** The HTML node
 			 * 
 			 * @type HTMLElement
@@ -72,6 +72,8 @@ load.provide("mm.Renderer", (function() {
 			
 			this._width = 0;
 			this._height = 0;
+			
+			this._editor = editor;
 		}
 		
 		/** Given some objects, renders them from scratch.
@@ -140,7 +142,11 @@ load.provide("mm.Renderer", (function() {
 		init() {
 			this.node.innerHTML = _TEMPLATE;
 			this.node.classList.add("mm-root");
-			if(true /* Editor condition */) this.node.classList.add("mm-noedit")
+			if(this._editor) {
+				this.node.classList.add("mm-edit");
+			}else {
+				this.node.classList.add("mm-noedit");
+			}
 			
 			// Set up jointjs
 			let graph = this._graph = new joint.dia.Graph();
@@ -151,7 +157,7 @@ load.provide("mm.Renderer", (function() {
 				gridSize:1,
 				width:0,
 				height:0,
-				interactive:false
+				interactive:this._editor
 			});
 			
 			this._interactor.addCanvas(this, this.node);
