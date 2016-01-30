@@ -25,6 +25,8 @@ load.provide("mm.Interactor", (function() {
 			
 			this._edges = [];
 			this._nodes = [];
+			
+			this._vertexChangeEvent = null;
 		}
 		
 		addNode(renderer, object, node) {
@@ -82,6 +84,13 @@ load.provide("mm.Interactor", (function() {
 			console.log(`Edge added: ${edge}`);
 			
 			this._edges.push([renderer, object, edge]);
+			
+			// ----
+			// Edge changes
+			// ----
+			object.on("change:vertices", (e, o) => {
+				this._vertexChangeEvent = [edge, e];
+			});
 		}
 		
 		async addCanvas(renderer, node) {
@@ -184,6 +193,24 @@ load.provide("mm.Interactor", (function() {
 			node.addEventListener("mousedown", (e) => {
 				let panel = $(node).find(".mm-details-panel");
 				panel.removeClass("long");
+			});
+			
+			
+			// ----
+			// Vertex change action thing
+			// ----
+			$(node).on("mouseup", (e) => {
+				// This doesn't handle mouse going out of widget
+				if(this._vertexChangeEvent) {
+					let [edge, e] = this._vertexChangeEvent;
+					let oldVerts = edge.points;
+					
+					edge.changePoints(e.attributes.vertices.map(x => [x.x, x.y]));
+					
+					this._editor.addToUndoStack("edge_change", {id:edge.id, old:oldVerts, "new":edge.points});
+					
+					this._vertexChangeEvent = null;
+				}
 			});
 		}
 		

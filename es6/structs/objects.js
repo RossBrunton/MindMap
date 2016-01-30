@@ -48,7 +48,11 @@ load.provide("mm.structs.ObjectEdge", (function() {
 			 */
 			this.type = type;
 			
-			for(let x of [ "id", "origin", "dest", "text", "points"]) this[x] = object[x];
+			for(let x of ["id", "origin", "dest", "text", "points"]) this[x] = object[x];
+		}
+		
+		changePoints(newPoints) {
+			this.points = newPoints;
 		}
 	};
 })());
