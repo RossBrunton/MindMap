@@ -23,6 +23,11 @@ load.provide("mm.structs.ObjectNode", (function() {
 		getFieldType(field) {
 			return this.type.getFieldType(field);
 		}
+		
+		changePosition(x, y) {
+			this.x = x;
+			this.y = y;
+		}
 	};
 })());
 

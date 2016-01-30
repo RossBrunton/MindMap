@@ -10,7 +10,12 @@ load.provide("mm.Editor", (function() {
 			this._abstractGraph = abstractGraph;
 			this._interactor = interactor;
 			
-			this._actionStack = [];
+			this._undoStack = [];
+		}
+		
+		addToUndoStack(type, arg) {
+			console.log(`Added event of type ${type}, %o`, arg);
+			this._undoStack.push([type, arg]);
 		}
 	};
 })());
