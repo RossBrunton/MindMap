@@ -110,6 +110,15 @@ load.provide("mm.Interactor", (function() {
 			let detailsHtml = await getfile(_dir + "detailsPanel.html");
 			$(node).prepend(detailsHtml);
 			
+			// And maybe the edit and controls
+			if(this._editor) {
+				let editWidgetHtml = await getfile(_dir + "editWidget.html");
+				$(node).prepend(editWidgetHtml);
+				
+				let editHelp = await getfile(_dir + "editHelp.html");
+				$(node).prepend(editHelp);
+			}
+			
 			
 			// ----
 			// Zoom
@@ -195,6 +204,12 @@ load.provide("mm.Interactor", (function() {
 				panel.removeClass("long");
 			});
 			
+			
+			// ----
+			// Edit Help
+			// ----
+			$(node).find(".mm-help-button").click((e) => $(node).find(".mm-edit-help").removeClass("hidden"));
+			$(node).find(".mm-edit-help").click((e) => $(node).find(".mm-edit-help").addClass("hidden"));
 			
 			// ----
 			// Vertex change action thing

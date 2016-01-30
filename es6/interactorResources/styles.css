@@ -13,8 +13,12 @@
     height:inherit;
 }
 
+.hidden {
+    display:none;
+}
+
 /* Widgets */
-.mm-view-widget {
+.mm-view-widget, .mm-edit-widget {
     position:absolute;
     top:3px;
     left:3px;
@@ -24,7 +28,7 @@
     display:inline-block;
 }
 
-.mm-view-widget a {
+.mm-view-widget a, .mm-edit-widget a {
     border-radius:10px;
     background-color:#ccccdd;
     width:20px;
@@ -37,6 +41,11 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.mm-edit-widget {
+    left:inherit;
+    right:3px;
 }
 
 /* Details panel */
@@ -66,6 +75,19 @@
 
 .mm-details-panel.long .mm-details-long {
     display:inherit;
+}
+
+/** Help panel thing */
+.mm-edit-help {
+    position:absolute;
+    width:100%;
+    height:100%;
+    z-index:1;
+    background-color:#eeeeff;
+}
+
+.mm-edit-help-content {
+    padding:5px;
 }
 
 /* Hide editor bits */
