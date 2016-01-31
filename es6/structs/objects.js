@@ -128,7 +128,7 @@ load.provide("mm.structs.ObjectsData", (function() {
 			let highest = 0;
 			for(let x of this.nodes) {
 				if(x.id >= highest) {
-					highest = x.id += highest;
+					highest = x.id + highest;
 				}
 			}
 			
