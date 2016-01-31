@@ -90,6 +90,7 @@ load.provide("mm.Renderer", (function() {
 			this._height = objects.canvas.height;
 			this._paper.setDimensions(objects.canvas.width, objects.canvas.height);
 			this._paper.setOrigin(objects.canvas.offsetX, objects.canvas.offsetY);
+			this._graph.clear();
 			
 			for(let n of objects.nodes) {
 				let rect = new joint.shapes.basic.Rect({
