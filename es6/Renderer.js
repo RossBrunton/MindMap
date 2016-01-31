@@ -74,6 +74,8 @@ load.provide("mm.Renderer", (function() {
 			this._height = 0;
 			
 			this._editor = editor;
+			
+			this._nodeIds = new Map();
 		}
 		
 		/** Given some objects, renders them from scratch.
@@ -89,9 +91,6 @@ load.provide("mm.Renderer", (function() {
 			this._paper.setDimensions(objects.canvas.width, objects.canvas.height);
 			this._paper.setOrigin(objects.canvas.offsetX, objects.canvas.offsetY);
 			
-			// Now do the nodes
-			let nodeIds = new Map();
-			
 			for(let n of objects.nodes) {
 				let rect = new joint.shapes.basic.Rect({
 					position:{x:n.x, y:n.y},
@@ -103,15 +102,15 @@ load.provide("mm.Renderer", (function() {
 				rect.attr("text/text", strf(n.type.nodeText, n));
 				
 				this._graph.addCell(rect);
-				nodeIds.set(n.id, rect);
+				this._nodeIds.set(n.id, rect);
 				this._interactor.addNode(this, rect, n);
 			}
 			
 			// Edges
 			for(let e of objects.edges) {
 				let link = new joint.dia.Link({
-					source: {id:nodeIds.get(e.origin).id},
-					target: {id:nodeIds.get(e.dest).id},
+					source: {id:this._nodeIds.get(e.origin).id},
+					target: {id:this._nodeIds.get(e.dest).id},
 					vertices:e.points.map(([x, y]) => ({x:x, y:y}))
 				});
 				

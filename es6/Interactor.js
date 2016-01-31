@@ -211,6 +211,7 @@ load.provide("mm.Interactor", (function() {
 			$(node).find(".mm-help-button").click((e) => $(node).find(".mm-edit-help").removeClass("hidden"));
 			$(node).find(".mm-edit-help").click((e) => $(node).find(".mm-edit-help").addClass("hidden"));
 			
+			
 			// ----
 			// Vertex change action thing
 			// ----
@@ -226,6 +227,15 @@ load.provide("mm.Interactor", (function() {
 					
 					this._vertexChangeEvent = null;
 				}
+			});
+			
+			
+			// ----
+			// Node adding
+			// ----
+			if(this._editor) $(node).on("dblclick", (e) => {
+				this._abstractGraph.objects.makeNewNode();
+				this.rerender();
 			});
 		}
 		

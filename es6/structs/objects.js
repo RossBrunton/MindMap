@@ -118,5 +118,48 @@ load.provide("mm.structs.ObjectsData", (function() {
 			
 			// Todo: Editor part
 		}
+		
+		/** Makes a brand new, "empty" node of an unspecified type
+		 * 
+		 * @param {int=0} x The x coordinate at which to place the node.
+		 * @param {int=0} y The y coordinate at which to place the node.
+		 */
+		makeNewNode(x, y) {
+			let highest = 0;
+			for(let x of this.nodes) {
+				if(x.id >= highest) {
+					highest = x.id += highest;
+				}
+			}
+			
+			// TODO: Improve selection
+			let type = this.types.types[0];
+			
+			let newNode = {};
+			
+			newNode.id = highest;
+			newNode.type = type.name;
+			
+			newNode.x = x ? x : 0;
+			newNode.y = y ? y : 0;
+			
+			newNode.fields = {};
+			for(let f of type.fields) {
+				switch(f.type) {
+					case "text":
+					case "blockText":
+					case "url":
+					case "email":
+						newNode.fields[f.name] = `[${f.name}]`;
+						break;
+						
+					case "date":
+						newNode.fields[f.name] = (new Date()).toJSON();
+						break
+				}
+			}
+			
+			this.nodes.push(new ObjectNode(newNode, type));
+		}
 	};
 })());
