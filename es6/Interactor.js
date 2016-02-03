@@ -3,7 +3,7 @@
 load.provide("mm.Interactor", (function() {
 	let getDirName = load.require("mm.utils.getDirName");
 	let getfile = load.require("mm.utils.getfile");
-	let strf = load.require("mm.utils.strf");
+	let textGen = load.require("mm.textGen");
 	
 	let _dir = getDirName("Interactor.js") + "interactorResources/";
 	
@@ -42,8 +42,8 @@ load.provide("mm.Interactor", (function() {
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
 				if(panel.hasClass("long")) return;
 				
-				panel.find(".mm-details-short").html(strf(node.type.viewText, node));
-				panel.find(".mm-details-long").html(strf(node.type.viewAddText, node));
+				panel.find(".mm-details-short").html(textGen.detailsShort(node));
+				panel.find(".mm-details-long").html(textGen.detailsLong(node));
 				panel.removeClass("hidden");
 			});
 			

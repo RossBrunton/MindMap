@@ -3,7 +3,7 @@
 load.provide("mm.Renderer", (function() {
 	let ObjectsData = load.require("mm.structs.ObjectsData");
 	let TypesFile = load.require("mm.structs.TypesFile");
-	let strf = load.require("mm.utils.strf");
+	let textGen = load.require("mm.textGen");
 
 	const _TEMPLATE =
 `<div class='mm-inner'>
@@ -100,7 +100,7 @@ load.provide("mm.Renderer", (function() {
 				});
 				
 				rect.attr(n.type.nodeAttr);
-				rect.attr("text/text", strf(n.type.nodeText, n));
+				rect.attr("text/text", textGen.nodeText(n));
 				
 				this._graph.addCell(rect);
 				this._nodeIds.set(n.id, rect);
