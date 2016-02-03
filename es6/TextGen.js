@@ -47,5 +47,21 @@ load.provide("mm.textGen", (function() {
 		return strf(node.type.viewAddText, node);
 	};
 	
+	/** Generates HTML for displaying in the node's type select widget
+	 * 
+	 * @param {mm.structs.ObjectNode} node The node to generate options for.
+	 * @param {mm.structs.TypesFile} typesFile The types file containing the options.
+	 * @return {string} The text to display as the select value.
+	 */
+	textGen.editSelect = function(node, types) {
+		let hold = "";
+		
+		for(let x of types.types) {
+			hold += `<option value='${x.name}' ${x == node.type ? "" : "selected"}>${x.name}</option>`;
+		}
+		
+		return hold;
+	};
+	
 	return textGen;
 })());

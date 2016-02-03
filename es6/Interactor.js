@@ -43,7 +43,13 @@ load.provide("mm.Interactor", (function() {
 				if(panel.hasClass("long")) return;
 				
 				panel.find(".mm-details-short").html(textGen.detailsShort(node));
-				panel.find(".mm-details-long").html(textGen.detailsLong(node));
+				
+				if(!this._editor) {
+					panel.find(".mm-details-long").html(textGen.detailsLong(node));
+				}else{
+					panel.find(".mm-details-edit-type").html(textGen.editSelect(node, this._abstractGraph.types));
+				}
+				
 				panel.removeClass("hidden");
 			});
 			
