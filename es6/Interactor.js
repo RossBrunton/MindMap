@@ -199,9 +199,14 @@ load.provide("mm.Interactor", (function() {
 			// ----
 			// Clear details panel
 			// ----
-			node.addEventListener("mousedown", (e) => {
+			if(!this._editor) node.addEventListener("mousedown", (e) => {
 				let panel = $(node).find(".mm-details-panel");
 				panel.removeClass("long");
+			});
+			$(node).find(".mm-details-edit-close").click((e) => {
+				let panel = $(node).find(".mm-details-panel");
+				panel.removeClass("long");
+				e.preventDefault();
 			});
 			
 			

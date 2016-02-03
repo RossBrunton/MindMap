@@ -69,11 +69,15 @@
     display:inherit;
 }
 
-.mm-details-panel .mm-details-long {
+.mm-details-panel .mm-details-long, .mm-details-panel .mm-details-edit {
     display:none;
 }
 
-.mm-details-panel.long .mm-details-long {
+.mm-noedit .mm-details-panel.long .mm-details-long {
+    display:inherit;
+}
+
+.mm-edit .mm-details-panel.long .mm-details-edit {
     display:inherit;
 }
 
