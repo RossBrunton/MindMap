@@ -30,12 +30,15 @@ load.provide("mm.structs.ObjectNode", (function() {
 		}
 		
 		toJson() {
+			let fields = {}
+			for(let x in this.fields) fields[x] = this.fields[x];
+			
 			return {
 				type:this.type,
 				x:this.x,
 				y:this.y,
 				id:this.id,
-				fields:this.fields,
+				fields:fields,
 			}
 		}
 		

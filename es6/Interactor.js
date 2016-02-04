@@ -202,10 +202,26 @@ load.provide("mm.Interactor", (function() {
 				let panel = $(node).find(".mm-details-panel");
 				panel.removeClass("long");
 			});
+			
+			
+			// ----
+			// Edit and save buttons
+			// ----
+			$(node).find(".mm-details-edit-save").click((e) => {
+				let panel = $(node).find(".mm-details-panel");
+				panel.removeClass("long");
+				e.preventDefault();
+				this._editor.addToUndoStack("node_edit",
+					{id:this._editingNode.id, old:this._editingBackup, "new":this._editingNode.toJson()}
+				);
+			});
+			
 			$(node).find(".mm-details-edit-close").click((e) => {
 				let panel = $(node).find(".mm-details-panel");
 				panel.removeClass("long");
 				e.preventDefault();
+				this._editingNode.update(this._editingBackup);
+				this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.nodeText(this._editingNode));
 			});
 			
 			
