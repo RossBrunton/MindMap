@@ -159,7 +159,9 @@ load.provide("mm.structs.ObjectsData", (function() {
 				}
 			}
 			
-			this.nodes.push(new ObjectNode(newNode, type));
+			let n = new ObjectNode(newNode, type);
+			this.nodes.push(n);
+			return n;
 		}
 	};
 })());

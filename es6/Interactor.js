@@ -24,7 +24,7 @@ load.provide("mm.Interactor", (function() {
 			renderers.forEach((r) => r.setInteractor(this));
 			
 			this._edges = [];
-			this._nodes = [];
+			this._nodes = new Map();
 			
 			this._vertexChangeEvent = null;
 		}
@@ -39,19 +39,7 @@ load.provide("mm.Interactor", (function() {
 			// ----
 			// Would love to have defined panel here to avoid copy-paste, but the node probably isn't added yet
 			$(svgNode).on("mousemove", (e) => {
-				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
-				if(panel.hasClass("long")) return;
-				
-				panel.find(".mm-details-short").html(textGen.detailsShort(node));
-				
-				if(!this._editor) {
-					panel.find(".mm-details-long").html(textGen.detailsLong(node));
-				}else{
-					panel.find(".mm-details-edit-type").html(textGen.editSelect(node, this._abstractGraph.types));
-					panel.find(".mm-details-edit-inner").html(textGen.editForm(node));
-				}
-				
-				panel.removeClass("hidden");
+				this._loadDetails(node, $(svgNode).parents(".mm-root"), true);
 			});
 			
 			$(svgNode).on("mouseout", (e) => {
@@ -84,7 +72,7 @@ load.provide("mm.Interactor", (function() {
 				}
 			});
 			
-			this._nodes.push([renderer, object, node, svgNode]);
+			this._nodes.set(node.id, [renderer, object, node, svgNode]);
 		}
 		
 		addEdge(renderer, object, edge) {
@@ -246,11 +234,11 @@ load.provide("mm.Interactor", (function() {
 			// Node adding
 			// ----
 			if(this._editor) $(node).on("dblclick", (e) => {
-				console.log(e);
 				let [xo, yo] = renderer.getOffsets();
-				let [xm, ym] = this.getMousePos(e, node);
-				this._abstractGraph.objects.makeNewNode(xm - xo, ym - yo);
+				let [xm, ym] = this._getMousePos(e, node);
+				let newNode = this._abstractGraph.objects.makeNewNode(xm - xo, ym - yo);
 				this.rerender();
+				this._loadDetails(this._nodes.get(newNode.id)[2], node, true, true);
 			});
 		}
 		
@@ -259,15 +247,35 @@ load.provide("mm.Interactor", (function() {
 		}
 		
 		clear() {
-			this._nodes = [];
+			this._nodes = new Map();
 			this._edges = [];
 		}
 		
-		getMousePos(e, elem) {
+		_getMousePos(e, elem) {
 			return [e.pageX - $(elem).offset().left + $(elem).find(".mm-inner")[0].scrollLeft,
 					e.pageY - $(elem).offset().top + $(elem).find(".mm-inner")[0].scrollTop]
 		}
 		
-		
+		_loadDetails(node, root, show, expand) {
+			let panel = $(root).find(".mm-details-panel");
+			if(panel.hasClass("long")) return;
+			
+			panel.find(".mm-details-short").html(textGen.detailsShort(node));
+			
+			if(!this._editor) {
+				panel.find(".mm-details-long").html(textGen.detailsLong(node));
+			}else{
+				panel.find(".mm-details-edit-type").html(textGen.editSelect(node, this._abstractGraph.types));
+				panel.find(".mm-details-edit-inner").html(textGen.editForm(node));
+			}
+			
+			if(show) {
+				panel.removeClass("hidden");
+			}
+			
+			if(expand) {
+				panel.addClass("long");
+			}
+		}
 	};
 })());
