@@ -48,6 +48,7 @@ load.provide("mm.Interactor", (function() {
 					panel.find(".mm-details-long").html(textGen.detailsLong(node));
 				}else{
 					panel.find(".mm-details-edit-type").html(textGen.editSelect(node, this._abstractGraph.types));
+					panel.find(".mm-details-edit-inner").html(textGen.editForm(node));
 				}
 				
 				panel.removeClass("hidden");

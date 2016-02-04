@@ -57,7 +57,42 @@ load.provide("mm.textGen", (function() {
 		let hold = "";
 		
 		for(let x of types.types) {
-			hold += `<option value='${x.name}' ${x == node.type ? "" : "selected"}>${x.name}</option>`;
+			hold += `<option value='${x.name}' ${x != node.type ? "" : "selected"}>${x.name}</option>`;
+		}
+		
+		return hold;
+	};
+	
+	/** Generates HTML for displaying in the node's edit form
+	 * 
+	 * @param {mm.structs.ObjectNode} node The node to generate a form for.
+	 * @return {string} The text to display as the select value.
+	 */
+	textGen.editForm = function(node) {
+		let hold = "";
+		
+		for(let x of node.type.fields) {
+			hold += `${x.name}: `;
+			
+			switch(x.type) {
+				case "text":
+					hold += `<input type='text' name='${x.name}' value='${node.fields[x.name]}'/>`;
+					break;
+				
+				case "url":
+					hold += `<input type='url' name='${x.name}' value='${node.fields[x.name]}'/>`;
+					break;
+				
+				case "email":
+					hold += `<input type='email' name='${x.name}' value='${node.fields[x.name]}'/>`;
+					break;
+				
+				case "blockText":
+					hold += `<br/><textarea name='${x.name}'>${node.fields[x.name]}</textarea>`;
+					break;
+			}
+			
+			hold += "<br/>";
 		}
 		
 		return hold;

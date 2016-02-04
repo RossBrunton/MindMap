@@ -4,7 +4,11 @@
 		"name": "test",
 		"fields": [
 			["testfield", "text"],
-			["name", "text"]
+			["name", "text"],
+			["blocktext", "blockText"],
+			["url", "url"],
+			["email", "email"],
+			["date", "date"]
 		],
 		"nodeText": "{name}",
 		"nodeAttr": {
