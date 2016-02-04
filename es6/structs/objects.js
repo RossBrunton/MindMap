@@ -28,6 +28,24 @@ load.provide("mm.structs.ObjectNode", (function() {
 			this.x = x;
 			this.y = y;
 		}
+		
+		toJson() {
+			return {
+				type:this.type,
+				x:this.x,
+				y:this.y,
+				id:this.id,
+				fields:this.fields,
+			}
+		}
+		
+		update(obj) {
+			["x", "y"].forEach((x) => {if(x in obj) this[x] = obj[x]});
+			
+			if("fields" in obj) for(let x in obj.fields) {
+				this.fields[x] = obj.fields[x];
+			}
+		}
 	};
 })());
 

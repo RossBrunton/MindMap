@@ -26,6 +26,9 @@ load.provide("mm.Interactor", (function() {
 			this._edges = [];
 			this._nodes = new Map();
 			
+			this._editingNode = null;
+			this._editingBackup = null;
+			
 			this._vertexChangeEvent = null;
 		}
 		
@@ -50,6 +53,7 @@ load.provide("mm.Interactor", (function() {
 			$(svgNode).on("click", (e) => {
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
 				panel.addClass("long");
+				this._setEditing(node);
 				e.preventDefault();
 				e.stopPropagation();
 			});
@@ -238,7 +242,25 @@ load.provide("mm.Interactor", (function() {
 				let [xm, ym] = this._getMousePos(e, node);
 				let newNode = this._abstractGraph.objects.makeNewNode(xm - xo, ym - yo);
 				this.rerender();
+				this._setEditing(newNode);
 				this._loadDetails(this._nodes.get(newNode.id)[2], node, true, true);
+			});
+			
+			
+			// ----
+			// Node editing
+			// ----
+			if(this._editor) $(node).find(".mm-details-edit").on("input", (e) => {
+				let editing = $(node).find(".mm-details-panel").attr("data-id");
+				
+				let update = {fields:{}};
+				for(let entry of $(node).find(".mm-details-edit form").serializeArray()) {
+					update.fields[entry.name] = entry.value;
+				}
+				
+				this._editingNode.update(update);
+				
+				this._nodes.get(+editing)[1].attr("text/text", textGen.nodeText(this._nodes.get(+editing)[2]));
 			});
 		}
 		
@@ -276,6 +298,13 @@ load.provide("mm.Interactor", (function() {
 			if(expand) {
 				panel.addClass("long");
 			}
+			
+			panel.attr("data-id", node.id);
+		}
+		
+		_setEditing(node) {
+			this._editingNode = node;
+			this._editingBackup = node.toJson();
 		}
 	};
 })());
