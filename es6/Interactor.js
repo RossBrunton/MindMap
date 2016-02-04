@@ -246,7 +246,10 @@ load.provide("mm.Interactor", (function() {
 			// Node adding
 			// ----
 			if(this._editor) $(node).on("dblclick", (e) => {
-				this._abstractGraph.objects.makeNewNode();
+				console.log(e);
+				let [xo, yo] = renderer.getOffsets();
+				let [xm, ym] = this.getMousePos(e, node);
+				this._abstractGraph.objects.makeNewNode(xm - xo, ym - yo);
 				this.rerender();
 			});
 		}
@@ -259,5 +262,12 @@ load.provide("mm.Interactor", (function() {
 			this._nodes = [];
 			this._edges = [];
 		}
+		
+		getMousePos(e, elem) {
+			return [e.pageX - $(elem).offset().left + $(elem).find(".mm-inner")[0].scrollLeft,
+					e.pageY - $(elem).offset().top + $(elem).find(".mm-inner")[0].scrollTop]
+		}
+		
+		
 	};
 })());
