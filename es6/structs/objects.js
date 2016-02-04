@@ -69,6 +69,44 @@ load.provide("mm.structs.ObjectCanvas", (function() {
 		constructor(object) {
 			for(let x of ["width", "height", "offsetX", "offsetY"]) this[x] = object[x];
 		}
+	
+		/** Adds the given amount of pixels to the top of the document
+		 * 
+		 * This adjusts the offset such that it looks like the added space is "new" at the top.
+		 * 
+		 * @param {integer} n The number of pixels to increase the size by.
+		 */
+		addTop(n) {
+			this.height += n;
+			this.offsetY += n;
+		}
+		
+		/** Adds the given amount of pixels to the left of the document
+		 * 
+		 * This adjusts the offset such that it looks like the added space is "new" at the left.
+		 * 
+		 * @param {integer} n The number of pixels to increase the size by.
+		 */
+		addLeft(n) {
+			this.width += n;
+			this.offsetX += n;
+		}
+		
+		/** Adds the given amount of pixels to the right of the document
+		 * 
+		 * @param {integer} n The number of pixels to increase the size by.
+		 */
+		addRight(n) {
+			this.width += n;
+		}
+		
+		/** Adds the given amount of pixels to the bottom of the document
+		 * 
+		 * @param {integer} n The number of pixels to increase the size by.
+		 */
+		addBottom(n) {
+			this.height += n;
+		}
 	};
 })());
 
