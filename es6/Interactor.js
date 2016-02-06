@@ -220,8 +220,14 @@ load.provide("mm.Interactor", (function() {
 				let panel = $(node).find(".mm-details-panel");
 				panel.removeClass("long");
 				e.preventDefault();
-				this._editingNode.update(this._editingBackup);
-				this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.nodeText(this._editingNode));
+				
+				if(this._editingBackup.type != this._editingNode.type.name) {
+					this._editingNode.update(this._editingBackup);
+					this.rerender();
+				}else{
+					this._editingNode.update(this._editingBackup);
+					this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.nodeText(this._editingNode));
+				}
 			});
 			
 			
@@ -269,14 +275,22 @@ load.provide("mm.Interactor", (function() {
 			if(this._editor) $(node).find(".mm-details-edit").on("input", (e) => {
 				let editing = $(node).find(".mm-details-panel").attr("data-id");
 				
-				let update = {fields:{}};
+				let update = {fields:{}, type:$(node).find(".mm-details-edit-type").val()};
+				
+				// Load all the fields
 				for(let entry of $(node).find(".mm-details-edit form").serializeArray()) {
 					update.fields[entry.name] = entry.value;
 				}
 				
+				// Now check if the type has changed
+				let oldTypeName = this._editingNode.type.name;
 				this._editingNode.update(update);
-				
-				this._nodes.get(+editing)[1].attr("text/text", textGen.nodeText(this._nodes.get(+editing)[2]));
+				if(this._editingNode.type.name != oldTypeName) {
+					this.rerender();
+					
+				}else{
+					this._nodes.get(+editing)[1].attr("text/text", textGen.nodeText(this._nodes.get(+editing)[2]));
+				}
 			});
 		}
 		
