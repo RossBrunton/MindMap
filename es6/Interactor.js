@@ -54,6 +54,7 @@ load.provide("mm.Interactor", (function() {
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
 				panel.addClass("long");
 				this._setEditing(node);
+				panel.find("input").first().focus();
 				e.preventDefault();
 				e.stopPropagation();
 			});
