@@ -179,6 +179,7 @@ load.provide("mm.Interactor", (function() {
 			// Pan
 			// ----
 			node.addEventListener("mousedown", function(e) {
+				if(e.target.localName != "svg") return;
 				mouseDown = true;
 				startX = e.clientX;
 				startY = e.clientY;
