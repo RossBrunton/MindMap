@@ -287,7 +287,7 @@ load.provide("mm.Interactor", (function() {
 				this._editingNode.update(update);
 				if(this._editingNode.type.name != oldTypeName) {
 					this.rerender();
-					
+					this._loadDetails(this._editingNode, node, true, true, true);
 				}else{
 					this._nodes.get(+editing)[1].attr("text/text", textGen.nodeText(this._nodes.get(+editing)[2]));
 				}
@@ -308,9 +308,9 @@ load.provide("mm.Interactor", (function() {
 					e.pageY - $(elem).offset().top + $(elem).find(".mm-inner")[0].scrollTop]
 		}
 		
-		_loadDetails(node, root, show, expand) {
+		_loadDetails(node, root, show, expand, force) {
 			let panel = $(root).find(".mm-details-panel");
-			if(panel.hasClass("long")) return;
+			if(panel.hasClass("long") && !force) return;
 			
 			panel.find(".mm-details-short").html(textGen.detailsShort(node));
 			
