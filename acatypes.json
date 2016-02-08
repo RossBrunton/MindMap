@@ -21,6 +21,22 @@
 		},
 		"viewText": "{name} - {testfield}",
 		"viewAddText": "HAI"
+	}, {
+		"name": "test2",
+		"fields": [
+			["testfield", "text"]
+		],
+		"nodeText": "!{name}!",
+		"nodeAttr": {
+			"rect":{
+				"fill":"#ffaaaa",
+				"stroke":"#bb9999",
+				"rx":10,
+				"ry":10
+			}
+		},
+		"viewText": "{name} - {testfield}",
+		"viewAddText": "HAI"
 	}],
 	
 	"arrows": [{

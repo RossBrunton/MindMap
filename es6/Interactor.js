@@ -26,6 +26,9 @@ load.provide("mm.Interactor", (function() {
 			this._edges = [];
 			this._nodes = new Map();
 			
+			this._editingNode = null;
+			this._editingBackup = null;
+			
 			this._vertexChangeEvent = null;
 		}
 		
@@ -50,6 +53,7 @@ load.provide("mm.Interactor", (function() {
 			$(svgNode).on("click", (e) => {
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
 				panel.addClass("long");
+				this._setEditing(node);
 				e.preventDefault();
 				e.stopPropagation();
 			});
@@ -198,10 +202,32 @@ load.provide("mm.Interactor", (function() {
 				let panel = $(node).find(".mm-details-panel");
 				panel.removeClass("long");
 			});
+			
+			
+			// ----
+			// Edit and save buttons
+			// ----
+			$(node).find(".mm-details-edit-save").click((e) => {
+				let panel = $(node).find(".mm-details-panel");
+				panel.removeClass("long");
+				e.preventDefault();
+				this._editor.addToUndoStack("node_edit",
+					{id:this._editingNode.id, old:this._editingBackup, "new":this._editingNode.toJson()}
+				);
+			});
+			
 			$(node).find(".mm-details-edit-close").click((e) => {
 				let panel = $(node).find(".mm-details-panel");
 				panel.removeClass("long");
 				e.preventDefault();
+				
+				if(this._editingBackup.type != this._editingNode.type.name) {
+					this._editingNode.update(this._editingBackup);
+					this.rerender();
+				}else{
+					this._editingNode.update(this._editingBackup);
+					this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.nodeText(this._editingNode));
+				}
 			});
 			
 			
@@ -238,7 +264,33 @@ load.provide("mm.Interactor", (function() {
 				let [xm, ym] = this._getMousePos(e, node);
 				let newNode = this._abstractGraph.objects.makeNewNode(xm - xo, ym - yo);
 				this.rerender();
+				this._setEditing(newNode);
 				this._loadDetails(this._nodes.get(newNode.id)[2], node, true, true);
+			});
+			
+			
+			// ----
+			// Node editing
+			// ----
+			if(this._editor) $(node).find(".mm-details-edit").on("input", (e) => {
+				let editing = $(node).find(".mm-details-panel").attr("data-id");
+				
+				let update = {fields:{}, type:$(node).find(".mm-details-edit-type").val()};
+				
+				// Load all the fields
+				for(let entry of $(node).find(".mm-details-edit form").serializeArray()) {
+					update.fields[entry.name] = entry.value;
+				}
+				
+				// Now check if the type has changed
+				let oldTypeName = this._editingNode.type.name;
+				this._editingNode.update(update);
+				if(this._editingNode.type.name != oldTypeName) {
+					this.rerender();
+					
+				}else{
+					this._nodes.get(+editing)[1].attr("text/text", textGen.nodeText(this._nodes.get(+editing)[2]));
+				}
 			});
 		}
 		
@@ -276,6 +328,13 @@ load.provide("mm.Interactor", (function() {
 			if(expand) {
 				panel.addClass("long");
 			}
+			
+			panel.attr("data-id", node.id);
+		}
+		
+		_setEditing(node) {
+			this._editingNode = node;
+			this._editingBackup = node.toJson();
 		}
 	};
 })());
