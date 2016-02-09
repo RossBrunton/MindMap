@@ -41,7 +41,16 @@
 	
 	"arrows": [{
 		"name": "default",
-		"attr": {},
+		"attr": {
+			".connection":{
+				"stroke":"#ff9999",
+				"stroke-width":"4px"
+			},
+			".marker-target":{
+				"stroke":"#ff9999",
+				"fill":"#ff9999"
+			}
+		},
 		"textAttr":{
 			"rect":{
 				"fill":"#ffffff",
