@@ -250,7 +250,7 @@ load.provide("mm.Interactor", (function() {
 					
 					edge.changePoints(e.attributes.vertices.map(x => [x.x, x.y]));
 					
-					this._editor.addToUndoStack("edge_change", {id:edge.id, old:oldVerts, "new":edge.points});
+					if(this._editor) this._editor.addToUndoStack("edge_change", {id:edge.id, old:oldVerts, "new":edge.points});
 					
 					this._vertexChangeEvent = null;
 				}
