@@ -20,7 +20,6 @@ load.provide("mm.Interactor", (function() {
 			this._renderers = renderers;
 			this._editor = editor;
 			
-			this._abstractGraph.setInteractor(this);
 			renderers.forEach((r) => r.setInteractor(this));
 			
 			this._edges = [];

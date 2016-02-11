@@ -29,18 +29,29 @@ load.provide("mm.graphManager", (function() {
 	 */
 	let graphManager = {};
 	
-	/** Array of all the interactors known about */
+	/** Array of all the interactors and graphs known about
+	 * 
+	 * @type {array} An array of [interactor, graph] pairs.
+	 */
 	let _graphs = [];
 	
-	/** Loop through all the nodes (as per mm.HTMLGraphFinder) and set them up */
-	graphManager.createAll = function() {
+	/** Loop through all the nodes (as per mm.HTMLGraphFinder) and set them up
+	 * 
+	 * @async
+	 */
+	graphManager.createAll = async function() {
 		for(let x of finder()) {
 			let ag = new AbstractGraph(x.objectsUrl, x.typesUrl, x.editor);
 			let renderers = [x.renderer];
 			let editor = x.editor ? new Editor(ag) : null;
 			let interactor = new Interactor(ag, renderers, editor);
 			
-			_graphs.push(interactor);
+			_graphs.push([interactor, ag]);
+		}
+		
+		for(let [i, ag] of _graphs) {
+			await ag.load();
+			i.rerender();
 		}
 	}
 	

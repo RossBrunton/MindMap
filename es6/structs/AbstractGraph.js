@@ -7,7 +7,7 @@ load.provide("mm.structs.AbstractGraph", (function() {
 	
 	/** This represents a graph. */
 	return class AbstractGraph {
-		constructor(objectsUrl, typesUrl, interactor) {
+		constructor(objectsUrl, typesUrl) {
 			/** True if this object is ready for use (that is, the files have been downloaded)
 			 * 
 			 * @type boolean
@@ -27,35 +27,20 @@ load.provide("mm.structs.AbstractGraph", (function() {
 			 */
 			this.objects = null;
 			
-			/** The interactor for this abstractGraph.
-			 * 
-			 * Null until it is added by setInteractor.
-			 * 
-			 * @type ?mm.Interactor
-			 * @private
-			 */
-			this._interactor = null;
-			
-			// Now download the files
-			Promise.all([
-				getfile(typesUrl),
-				getfile(objectsUrl)
-			]).then((function(contents) {
+			this._typesUrl = typesUrl;
+			this._objectsUrl = objectsUrl;
+		}
+		
+		async load() {
+			return Promise.all([
+				getfile(this._typesUrl),
+				getfile(this._objectsUrl)
+			]).then((contents) => {
 				this.types = new TypesFile(typeof contents[0] === "string" ? JSON.parse(contents[0]) : contents[0]);
 				this.objects = new ObjectsData(typeof contents[1] === "string" ? JSON.parse(contents[1]) :contents[1], this.types);
 				
-				console.log("READY!");
 				this.ready = true;
-				this._interactor.rerender();
-			}).bind(this));
-		}
-		
-		/** Sets the interactor for this Renderer
-		 * 
-		 * @param {mm.Interactor} interactor The interactor
-		 */
-		setInteractor(interactor) {
-			this._interactor = interactor;
+			});
 		}
 	};
 })());
