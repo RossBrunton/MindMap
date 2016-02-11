@@ -10,6 +10,7 @@ load.provide("mm.Interactor", (function() {
 	let HoverView = load.require("mm.interactions.HoverView");
 	let EditHelp = load.require("mm.interactions.EditHelp");
 	let NodeMove = load.require("mm.interactions.NodeMove");
+	let EdgeChange = load.require("mm.interactions.EdgeChange");
 	
 	let _dir = getDirName("Interactor.js") + "interactorResources/";
 	
@@ -41,7 +42,8 @@ load.provide("mm.Interactor", (function() {
 				new Zoom(this, abstractGraph, editor),
 				new HoverView(this, abstractGraph, editor),
 				new EditHelp(this, abstractGraph, editor),
-				new NodeMove(this, abstractGraph, editor)
+				new NodeMove(this, abstractGraph, editor),
+				new EdgeChange(this, abstractGraph, editor),
 			];
 		}
 		
@@ -72,18 +74,11 @@ load.provide("mm.Interactor", (function() {
 		addEdge(renderer, object, edge) {
 			console.log(`Edge added: ${edge}`);
 			
+			this._edges.push([renderer, object, edge]);
+			
 			for(let i of this._interactions) {
 				i.addEdge(renderer, object, edge);
 			}
-			
-			this._edges.push([renderer, object, edge]);
-			
-			// ----
-			// Edge changes
-			// ----
-			object.on("change:vertices", (e, o) => {
-				this._vertexChangeEvent = [edge, e];
-			});
 		}
 		
 		async addCanvas(renderer, node) {
@@ -130,24 +125,6 @@ load.provide("mm.Interactor", (function() {
 				}else{
 					this._editingNode.update(this._editingBackup);
 					this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.nodeText(this._editingNode));
-				}
-			});
-			
-			
-			// ----
-			// Vertex change action thing
-			// ----
-			$(node).on("mouseup", (e) => {
-				// This doesn't handle mouse going out of widget
-				if(this._vertexChangeEvent) {
-					let [edge, e] = this._vertexChangeEvent;
-					let oldVerts = edge.points;
-					
-					edge.changePoints(e.attributes.vertices.map(x => [x.x, x.y]));
-					
-					if(this._editor) this._editor.addToUndoStack("edge_change", {id:edge.id, old:oldVerts, "new":edge.points});
-					
-					this._vertexChangeEvent = null;
 				}
 			});
 			

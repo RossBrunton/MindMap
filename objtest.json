@@ -15,6 +15,7 @@
         "y":110
     }],
     "edges":[{
+        "id":1,
         "type":"default",
         "origin":1,
         "dest":2,
