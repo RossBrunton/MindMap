@@ -5,6 +5,8 @@ load.provide("mm.Interactor", (function() {
 	let getfile = load.require("mm.utils.getfile");
 	let textGen = load.require("mm.textGen");
 	
+	let Interaction = load.require("mm.interactions.Interaction");
+	
 	let _dir = getDirName("Interactor.js") + "interactorResources/";
 	
 	// First of all, load the CSS file
@@ -29,10 +31,18 @@ load.provide("mm.Interactor", (function() {
 			this._editingBackup = null;
 			
 			this._vertexChangeEvent = null;
+			
+			this._interactions = [
+				new Interaction(this, abstractGraph, editor)
+			];
 		}
 		
 		addNode(renderer, object, node) {
 			console.log("Node added: %o for %o", object, node);
+			
+			for(let i of this._interactions) {
+				i.addNode(renderer, object, node);
+			}
 			
 			let svgNode = $(`[model-id="${object.id}"]`)[0];
 			
@@ -82,6 +92,10 @@ load.provide("mm.Interactor", (function() {
 		addEdge(renderer, object, edge) {
 			console.log(`Edge added: ${edge}`);
 			
+			for(let i of this._interactions) {
+				i.addEdge(renderer, object, edge);
+			}
+			
 			this._edges.push([renderer, object, edge]);
 			
 			// ----
@@ -94,6 +108,10 @@ load.provide("mm.Interactor", (function() {
 		
 		async addCanvas(renderer, node) {
 			console.log(`Canvas added: ${node}`);
+			
+			for(let i of this._interactions) {
+				i.addCanvas(renderer, node);
+			}
 			
 			// Vars in this closure
 			let scale = 1.0;
