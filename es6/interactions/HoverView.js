@@ -22,8 +22,13 @@ load.provide("mm.interactions.HoverView", (function() {
 			});
 			
 			$(svgNode).on("click", (e) => {
-				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
-				panel.addClass("long");
+				this._interactor.loadNodeDetails(node, renderer, true, true, true);
+			});
+		}
+		
+		async addCanvas(renderer, node) {
+			node.addEventListener("click", (e) => {
+				this._interactor.hideDetailsPanel(renderer, true);
 			});
 		}
 	};

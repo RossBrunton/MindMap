@@ -122,15 +122,6 @@ load.provide("mm.Interactor", (function() {
 			
 			
 			// ----
-			// Clear details panel
-			// ----
-			if(!this._editor) node.addEventListener("mousedown", (e) => {
-				let panel = $(node).find(".mm-details-panel");
-				panel.removeClass("long");
-			});
-			
-			
-			// ----
 			// Edit and save buttons
 			// ----
 			$(node).find(".mm-details-edit-save").click((e) => {
@@ -262,9 +253,10 @@ load.provide("mm.Interactor", (function() {
 			panel.attr("data-id", node.id);
 		}
 		
-		hideDetailsPanel(rendererer) {
+		hideDetailsPanel(rendererer, evenIfLong) {
 			let panel = $(rendererer.getRoot()).find(".mm-details-panel");
 			panel.addClass("hidden");
+			if(evenIfLong) panel.removeClass("long");
 		}
 		
 		_loadDetails(node, root, show, expand, force) {
