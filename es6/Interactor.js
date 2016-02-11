@@ -6,6 +6,7 @@ load.provide("mm.Interactor", (function() {
 	let textGen = load.require("mm.textGen");
 	
 	let Pan = load.require("mm.interactions.Pan");
+	let Zoom = load.require("mm.interactions.Zoom");
 	
 	let _dir = getDirName("Interactor.js") + "interactorResources/";
 	
@@ -33,7 +34,8 @@ load.provide("mm.Interactor", (function() {
 			this._vertexChangeEvent = null;
 			
 			this._interactions = [
-				new Pan(this, abstractGraph, editor)
+				new Pan(this, abstractGraph, editor),
+				new Zoom(this, abstractGraph, editor)
 			];
 		}
 		
@@ -109,13 +111,6 @@ load.provide("mm.Interactor", (function() {
 		async addCanvas(renderer, node) {
 			console.log(`Canvas added: ${node}`);
 			
-			for(let i of this._interactions) {
-				i.addCanvas(renderer, node);
-			}
-			
-			// Vars in this closure
-			let scale = 1.0;
-			
 			// Put the widget thing with the zoom things
 			let widgetHtml = await getfile(_dir + "viewWidget.html");
 			$(node).prepend(widgetHtml);
@@ -132,61 +127,6 @@ load.provide("mm.Interactor", (function() {
 				let editHelp = await getfile(_dir + "editHelp.html");
 				$(node).prepend(editHelp);
 			}
-			
-			
-			// ----
-			// Zoom
-			// ----
-			let _updateZoom = (mod) => {
-				let oldscale = scale;
-				scale += mod;
-				if(scale < 0.2) scale = 0.2;
-				
-				//renderer.scale(scale);
-				
-				this._nodes.forEach((x) => {
-					
-					x[1].position(x[2].x * scale, x[2].y * scale);
-					
-					/*$(x[3]).find("text").css("font-size", `${(1/scale) * 100}%`);
-					x[1].attr("rect/height", (x[1].attr("rect/height")/(1/oldscale)) * (1/scale));
-					x[1].attr("rect/width", (x[1].attr("rect/width")/(1/oldscale)) * (1/scale));*/
-				});
-				//$(node).find(".mm-paper").css("font-size", `${(1/scale) * 100}%`);
-				
-				this._edges.forEach((x) => {
-					
-					x[1].set("vertices", x[2].points.map(([x, y]) => ({x:x * scale, y:y * scale})));
-					
-					/*$(x[3]).find("text").css("font-size", `${(1/scale) * 100}%`);
-					x[1].attr("rect/height", (x[1].attr("rect/height")/(1/oldscale)) * (1/scale));
-					x[1].attr("rect/width", (x[1].attr("rect/width")/(1/oldscale)) * (1/scale));*/
-				});
-			}
-			
-			// Widget zoom buttons
-			$(node).find(".mm-zoom-in").click((e) => _updateZoom(0.3));
-			$(node).find(".mm-zoom-out").click((e) => _updateZoom(-0.3));
-			
-			// Scroll zoom
-			$(node).on('mousewheel DOMMouseScroll', function(e){
-				// Browser compatability! :D
-				if("detail" in e.originalEvent && e.originalEvent.detail) {
-					if(e.originalEvent.detail > 0) {
-						_updateZoom(-0.1);
-					}else{
-						_updateZoom(0.1);
-					}
-				}else{
-					if(e.originalEvent.deltaY > 0) {
-						_updateZoom(-0.1);
-					}else{
-						_updateZoom(0.1);
-					}
-				}
-				
-				e.preventDefault();
-			});
 			
 			
 			// ----
@@ -286,6 +226,10 @@ load.provide("mm.Interactor", (function() {
 					this._nodes.get(+editing)[1].attr("text/text", textGen.nodeText(this._nodes.get(+editing)[2]));
 				}
 			});
+			
+			for(let i of this._interactions) {
+				i.addCanvas(renderer, node);
+			}
 		}
 		
 		rerender() {
