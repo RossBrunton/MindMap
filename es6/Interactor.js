@@ -5,7 +5,7 @@ load.provide("mm.Interactor", (function() {
 	let getfile = load.require("mm.utils.getfile");
 	let textGen = load.require("mm.textGen");
 	
-	let Interaction = load.require("mm.interactions.Interaction");
+	let Pan = load.require("mm.interactions.Pan");
 	
 	let _dir = getDirName("Interactor.js") + "interactorResources/";
 	
@@ -33,7 +33,7 @@ load.provide("mm.Interactor", (function() {
 			this._vertexChangeEvent = null;
 			
 			this._interactions = [
-				new Interaction(this, abstractGraph, editor)
+				new Pan(this, abstractGraph, editor)
 			];
 		}
 		
@@ -115,9 +115,6 @@ load.provide("mm.Interactor", (function() {
 			
 			// Vars in this closure
 			let scale = 1.0;
-			let mouseDown = false;
-			let startX = 0;
-			let startY = 0;
 			
 			// Put the widget thing with the zoom things
 			let widgetHtml = await getfile(_dir + "viewWidget.html");
@@ -189,28 +186,6 @@ load.provide("mm.Interactor", (function() {
 				}
 				
 				e.preventDefault();
-			});
-			
-			
-			// ----
-			// Pan
-			// ----
-			node.addEventListener("mousedown", function(e) {
-				if(e.target.localName != "svg") return;
-				mouseDown = true;
-				startX = e.clientX;
-				startY = e.clientY;
-			});
-
-			node.addEventListener("mousemove", function(e) {
-				if(mouseDown) {
-					$(node).find(".mm-inner")[0].scrollTop -= e.movementY;
-					$(node).find(".mm-inner")[0].scrollLeft -= e.movementX;
-				}
-			});
-
-			$(node).on("mouseup mouseout", function(e) {
-				mouseDown = false;
 			});
 			
 			
