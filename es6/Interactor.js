@@ -7,6 +7,7 @@ load.provide("mm.Interactor", (function() {
 	
 	let Pan = load.require("mm.interactions.Pan");
 	let Zoom = load.require("mm.interactions.Zoom");
+	let HoverView = load.require("mm.interactions.HoverView");
 	
 	let _dir = getDirName("Interactor.js") + "interactorResources/";
 	
@@ -35,7 +36,8 @@ load.provide("mm.Interactor", (function() {
 			
 			this._interactions = [
 				new Pan(this, abstractGraph, editor),
-				new Zoom(this, abstractGraph, editor)
+				new Zoom(this, abstractGraph, editor),
+				new HoverView(this, abstractGraph, editor)
 			];
 		}
 		
@@ -52,18 +54,8 @@ load.provide("mm.Interactor", (function() {
 			// Hangle mouse hover thing
 			// ----
 			// Would love to have defined panel here to avoid copy-paste, but the node probably isn't added yet
-			$(svgNode).on("mousemove", (e) => {
-				this._loadDetails(node, $(svgNode).parents(".mm-root"), true);
-			});
-			
-			$(svgNode).on("mouseout", (e) => {
-				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
-				panel.addClass("hidden");
-			});
-			
 			$(svgNode).on("click", (e) => {
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
-				panel.addClass("long");
 				this._setEditing(node);
 				panel.find("input").first().focus();
 				e.preventDefault();
@@ -246,7 +238,7 @@ load.provide("mm.Interactor", (function() {
 					e.pageY - $(elem).offset().top + $(elem).find(".mm-inner")[0].scrollTop]
 		}
 		
-		loadNodeDetails(node, rendererer, show, exapand, force) {
+		loadNodeDetails(node, rendererer, show, expand, force) {
 			let panel = $(rendererer.getRoot()).find(".mm-details-panel");
 			if(panel.hasClass("long") && !force) return;
 			
@@ -268,6 +260,11 @@ load.provide("mm.Interactor", (function() {
 			}
 			
 			panel.attr("data-id", node.id);
+		}
+		
+		hideDetailsPanel(rendererer) {
+			let panel = $(rendererer.getRoot()).find(".mm-details-panel");
+			panel.addClass("hidden");
 		}
 		
 		_loadDetails(node, root, show, expand, force) {

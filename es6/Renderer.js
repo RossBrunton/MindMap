@@ -200,5 +200,14 @@ load.provide("mm.Renderer", (function() {
 		getRoot() {
 			return this.node;
 		}
+		
+		/** Returns the SVGNode for the given (graph) node id
+		 * 
+		 * @param {int} The node id.
+		 * @return {SVGGElement} The SVG node.
+		 */
+		getSvgNode(id) {
+			return $(`[model-id="${this._nodeIds.get(id).id}"]`)[0];
+		}
 	};
 })());
