@@ -9,6 +9,7 @@ load.provide("mm.Interactor", (function() {
 	let Zoom = load.require("mm.interactions.Zoom");
 	let HoverView = load.require("mm.interactions.HoverView");
 	let EditHelp = load.require("mm.interactions.EditHelp");
+	let NodeMove = load.require("mm.interactions.NodeMove");
 	
 	let _dir = getDirName("Interactor.js") + "interactorResources/";
 	
@@ -39,7 +40,8 @@ load.provide("mm.Interactor", (function() {
 				new Pan(this, abstractGraph, editor),
 				new Zoom(this, abstractGraph, editor),
 				new HoverView(this, abstractGraph, editor),
-				new EditHelp(this, abstractGraph, editor)
+				new EditHelp(this, abstractGraph, editor),
+				new NodeMove(this, abstractGraph, editor)
 			];
 		}
 		
@@ -62,24 +64,6 @@ load.provide("mm.Interactor", (function() {
 				panel.find("input").first().focus();
 				e.preventDefault();
 				e.stopPropagation();
-			});
-			
-			// ----
-			// Position changes
-			// ----
-			$(svgNode).on("mouseup", (e) => {
-				// The changed position seems to be in object.changed.position. Not sure if I'm supposed to use it, but
-				// it's public.
-				if(!object.changed || !object.changed.position) return;
-				
-				if(node.x != object.changed.position.x) {
-					// Node has been moved
-					let oldPos = [node.x, node.y];
-					
-					node.changePosition(object.changed.position.x, object.changed.position.y);
-					
-					this._editor.addToUndoStack("node_move", {id:node.id, old:oldPos, "new":[node.x, node.y]});
-				}
 			});
 			
 			this._nodes.set(node.id, [renderer, object, node, svgNode]);
