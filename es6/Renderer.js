@@ -192,5 +192,13 @@ load.provide("mm.Renderer", (function() {
 		getOffsets() {
 			return [this._offsetX, this._offsetY];
 		}
+		
+		/** Returns the root node for this renderer
+		 * 
+		 * @return {HTMLElement} The root node
+		 */
+		getRoot() {
+			return this.node;
+		}
 	};
 })());

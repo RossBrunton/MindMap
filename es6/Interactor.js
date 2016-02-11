@@ -17,7 +17,7 @@ load.provide("mm.Interactor", (function() {
 	cssNode.href = _dir + "styles.css";
 	$("head").append(cssNode);
 	
-	return class Interactor {
+	let Interactor = class Interactor {
 		constructor(abstractGraph, renderers, editor) {
 			this._abstractGraph = abstractGraph;
 			this._renderers = renderers;
@@ -246,6 +246,30 @@ load.provide("mm.Interactor", (function() {
 					e.pageY - $(elem).offset().top + $(elem).find(".mm-inner")[0].scrollTop]
 		}
 		
+		loadNodeDetails(node, rendererer, show, exapand, force) {
+			let panel = $(rendererer.getRoot()).find(".mm-details-panel");
+			if(panel.hasClass("long") && !force) return;
+			
+			panel.find(".mm-details-short").html(textGen.detailsShort(node));
+			
+			if(!this._editor) {
+				panel.find(".mm-details-long").html(textGen.detailsLong(node));
+			}else{
+				panel.find(".mm-details-edit-type").html(textGen.editSelect(node, this._abstractGraph.types));
+				panel.find(".mm-details-edit-inner").html(textGen.editForm(node));
+			}
+			
+			if(show) {
+				panel.removeClass("hidden");
+			}
+			
+			if(expand) {
+				panel.addClass("long");
+			}
+			
+			panel.attr("data-id", node.id);
+		}
+		
 		_loadDetails(node, root, show, expand, force) {
 			let panel = $(root).find(".mm-details-panel");
 			if(panel.hasClass("long") && !force) return;
@@ -275,4 +299,6 @@ load.provide("mm.Interactor", (function() {
 			this._editingBackup = node.toJson();
 		}
 	};
+	
+	return Interactor;
 })());
