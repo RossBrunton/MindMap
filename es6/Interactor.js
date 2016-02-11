@@ -8,6 +8,7 @@ load.provide("mm.Interactor", (function() {
 	let Pan = load.require("mm.interactions.Pan");
 	let Zoom = load.require("mm.interactions.Zoom");
 	let HoverView = load.require("mm.interactions.HoverView");
+	let EditHelp = load.require("mm.interactions.EditHelp");
 	
 	let _dir = getDirName("Interactor.js") + "interactorResources/";
 	
@@ -37,7 +38,8 @@ load.provide("mm.Interactor", (function() {
 			this._interactions = [
 				new Pan(this, abstractGraph, editor),
 				new Zoom(this, abstractGraph, editor),
-				new HoverView(this, abstractGraph, editor)
+				new HoverView(this, abstractGraph, editor),
+				new EditHelp(this, abstractGraph, editor)
 			];
 		}
 		
@@ -146,13 +148,6 @@ load.provide("mm.Interactor", (function() {
 					this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.nodeText(this._editingNode));
 				}
 			});
-			
-			
-			// ----
-			// Edit Help
-			// ----
-			$(node).find(".mm-help-button").click((e) => $(node).find(".mm-edit-help").removeClass("hidden"));
-			$(node).find(".mm-edit-help").click((e) => $(node).find(".mm-edit-help").addClass("hidden"));
 			
 			
 			// ----
