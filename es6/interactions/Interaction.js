@@ -12,17 +12,15 @@ load.provide("mm.interactions.Interaction", (function() {
 		}
 		
 		async addNode(renderer, joint, node) {
-			console.log("Added node");
 			this._nodes.set(node.id, [renderer, joint, node]);
 		}
 		
 		async addEdge(renderer, joint, edge) {
-			console.log("Added edge");
 			this._edges.push([renderer, joint, edge]);
 		}
 		
 		async addCanvas(renderer, html) {
-			console.log("Added Canvas");
+			// Pass
 		}
 		
 		*myEdges(renderer) {

@@ -30,11 +30,6 @@ load.provide("mm.Interactor", (function() {
 			
 			renderers.forEach((r) => r.setInteractor(this));
 			
-			this._edges = [];
-			this._nodes = new Map();
-			
-			this._vertexChangeEvent = null;
-			
 			this._interactions = [
 				new Pan(this, abstractGraph, editor),
 				new Zoom(this, abstractGraph, editor),
@@ -46,22 +41,16 @@ load.provide("mm.Interactor", (function() {
 			];
 		}
 		
-		addNode(renderer, object, node) {
+		async addNode(renderer, object, node) {
 			console.log("Node added: %o for %o", object, node);
 			
 			for(let i of this._interactions) {
 				i.addNode(renderer, object, node);
 			}
-			
-			let svgNode = $(`[model-id="${object.id}"]`)[0];
-			
-			this._nodes.set(node.id, [renderer, object, node, svgNode]);
 		}
 		
-		addEdge(renderer, object, edge) {
+		async addEdge(renderer, object, edge) {
 			console.log(`Edge added: ${edge}`);
-			
-			this._edges.push([renderer, object, edge]);
 			
 			for(let i of this._interactions) {
 				i.addEdge(renderer, object, edge);
@@ -135,30 +124,6 @@ load.provide("mm.Interactor", (function() {
 			let panel = $(rendererer.getRoot()).find(".mm-details-panel");
 			panel.addClass("hidden");
 			if(evenIfLong) panel.removeClass("long");
-		}
-		
-		_loadDetails(node, root, show, expand, force) {
-			let panel = $(root).find(".mm-details-panel");
-			if(panel.hasClass("long") && !force) return;
-			
-			panel.find(".mm-details-short").html(textGen.detailsShort(node));
-			
-			if(!this._editor) {
-				panel.find(".mm-details-long").html(textGen.detailsLong(node));
-			}else{
-				panel.find(".mm-details-edit-type").html(textGen.editSelect(node, this._abstractGraph.types));
-				panel.find(".mm-details-edit-inner").html(textGen.editForm(node));
-			}
-			
-			if(show) {
-				panel.removeClass("hidden");
-			}
-			
-			if(expand) {
-				panel.addClass("long");
-			}
-			
-			panel.attr("data-id", node.id);
 		}
 	};
 	
