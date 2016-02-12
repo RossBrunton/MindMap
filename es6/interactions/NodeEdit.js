@@ -70,6 +70,15 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				this._interactor.loadNodeDetails(this._nodes.get(newNode.id)[2], renderer, true, true);
 			});
 			
+			if(this._editor) $(node).find(".mm-create-button").on("click", (e) => {
+				let [xo, yo] = renderer.getOffsets();
+				let [xm, ym] = this._interactor.getMousePos(e, node);
+				let newNode = this._abstractGraph.objects.makeNewNode(xm - 100 - xo, ym + 50 - yo);
+				this._interactor.rerender();
+				this._setEditing(newNode);
+				this._interactor.loadNodeDetails(this._nodes.get(newNode.id)[2], renderer, true, true);
+			});
+			
 			
 			// ----
 			// Node editing
