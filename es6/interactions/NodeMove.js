@@ -24,9 +24,5 @@ load.provide("mm.interactions.NodeMove", (function() {
 				}
 			});
 		}
-		
-		async addCanvas(renderer, node) {
-			
-		}
 	};
 })());

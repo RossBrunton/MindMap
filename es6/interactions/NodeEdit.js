@@ -18,7 +18,9 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			let svgNode = renderer.getSvgNode(node.id);
 			
 			if(this._editor) $(svgNode).on("click", (e) => {
+				if(this._editingNode) return;
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
+				this._interactor.loadNodeDetails(node, renderer, true, true, true);
 				this._setEditing(node);
 				panel.find("input").first().focus();
 				e.preventDefault();
@@ -36,6 +38,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				this._editor.addToUndoStack("node_edit",
 					{id:this._editingNode.id, old:this._editingBackup, "new":this._editingNode.toJson()}
 				);
+				this._editingNode = null;
 			});
 			
 			$(node).find(".mm-details-edit-close").click((e) => {
@@ -56,6 +59,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			// Node adding
 			// ----
 			if(this._editor) $(node).on("dblclick", (e) => {
+				if(e.target.localName != "svg") return;
 				let [xo, yo] = renderer.getOffsets();
 				let [xm, ym] = this._interactor.getMousePos(e, node);
 				let newNode = this._abstractGraph.objects.makeNewNode(xm - xo, ym - yo);

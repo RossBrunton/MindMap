@@ -22,12 +22,15 @@ load.provide("mm.interactions.HoverView", (function() {
 			});
 			
 			$(svgNode).on("click", (e) => {
+				// We want the editor (if it is available) to handle this, because it has more sophisticated handling
+				if(this._editor) return;
 				this._interactor.loadNodeDetails(node, renderer, true, true, true);
 			});
 		}
 		
 		async addCanvas(renderer, node) {
 			node.addEventListener("click", (e) => {
+				if(e.target.localName != "svg") return;
 				this._interactor.hideDetailsPanel(renderer, true);
 			});
 		}
