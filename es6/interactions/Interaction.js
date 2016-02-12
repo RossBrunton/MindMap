@@ -17,12 +17,32 @@ load.provide("mm.interactions.Interaction", (function() {
 		 * @param {?mm.Editor} editor The editor for this graph. Will be null if editing is disabled.
 		 */
 		constructor(interactor, abstractGraph, editor) {
+			/** The interactor for this interaction
+			 * @type mm.Interactor
+			 * @protected
+			 */
 			this._interactor = interactor;
+			/** The abstract graph
+			 * @type mm.structs.AbstractGraph
+			 * @protected
+			 */
 			this._abstractGraph = abstractGraph;
+			/** The editor for this interaction, if it exists
+			 * @type ?mm.editor
+			 * @protected
+			 */
 			this._editor = editor;
 			
+			/** A mapping from (diagram) node ids to [renderer, joint, node] triples as per addNode
+			 * @type Map<int, array>
+			 * @protected
+			 */
 			this._nodes = new Map();
-			this._edges = [];
+			/** A mapping from (diagram) edge ids to [renderer, joint, edge] triples as per addEdge
+			 * @type Map<int, array>
+			 * @protected
+			 */
+			this._edges = new Map();
 		}
 		
 		/** Called when a new node is added to the diagram
@@ -44,7 +64,7 @@ load.provide("mm.interactions.Interaction", (function() {
 		 * @param {mm.objects.ObjectEdge} node The edge of the diagram.
 		 */
 		async addEdge(renderer, joint, edge) {
-			this._edges.push([renderer, joint, edge]);
+			this._edges.set(edge.id, [renderer, joint, edge]);
 		}
 		
 		/** Called when a new canvas is added to the diagram
@@ -63,7 +83,7 @@ load.provide("mm.interactions.Interaction", (function() {
 		 * @yield {array} A [renderer, joint, edge] triplet as per the arguments to addEdge.
 		 */
 		*myEdges(renderer) {
-			for(let e of this._edges) {
+			for(let e of this._edges.values()) {
 				if(e[0] == renderer) yield e;
 			}
 		}
@@ -74,7 +94,7 @@ load.provide("mm.interactions.Interaction", (function() {
 		 * @yield {array} A [renderer, joint, node] triplet as per the arguments to addNode.
 		 */
 		*myNodes(renderer) {
-			for(let e of this._nodes) {
+			for(let e of this._nodes.values()) {
 				if(e[0] == renderer) yield e;
 			}
 		}
