@@ -13,6 +13,13 @@
         "fields":{"name":"Some Book"},
         "x":110,
         "y":110
+    },
+    {
+        "type":"test2",
+        "id":3,
+        "fields":{"name":"Test Node"},
+        "x":20,
+        "y":150
     }],
     "edges":[{
         "id":1,

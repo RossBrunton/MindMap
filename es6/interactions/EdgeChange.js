@@ -8,6 +8,7 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			super(interactor, abstractGraph, editor);
 			
 			this._vertexChangeEvent = null;
+			this._vertexRetargetEvent = null;
 		}
 		
 		async addEdge(renderer, joint, edge) {
@@ -15,6 +16,14 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			
 			joint.on("change:vertices", (e, o) => {
 				this._vertexChangeEvent = [edge, e];
+			});
+			
+			joint.on("change:source", (e, o) => {
+				console.log(e, o);
+			});
+			
+			joint.on("change:target", (e, o) => {
+				this._vertexRetargetEvent = [edge, e, o, joint];
 			});
 		}
 		
@@ -30,6 +39,21 @@ load.provide("mm.interactions.EdgeChange", (function() {
 					if(this._editor) this._editor.addToUndoStack("edge_change", {id:edge.id, old:oldVerts, "new":edge.points});
 					
 					this._vertexChangeEvent = null;
+				}
+				
+				if(this._vertexRetargetEvent) {
+					let [edge, e, o, joint] = this._vertexRetargetEvent;
+					this._vertexRetargetEvent = null;
+					
+					if(!("id" in o)) return;
+					
+					let newTarget = renderer.getNodeFromJoint(o.id);
+					
+					if(edge.dest != newTarget) {
+						this._editor.addToUndoStack("edge_retarget", {id:edge.id, old:edge.dest, "new":newTarget});
+						edge.dest = newTarget;
+						this._interactor.rerender();
+					}
 				}
 			});
 		}

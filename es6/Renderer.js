@@ -79,6 +79,7 @@ load.provide("mm.Renderer", (function() {
 			this._editor = editor;
 			
 			this._nodeIds = new Map();
+			this._edgeIds = new Map();
 		}
 		
 		/** Given some objects, renders them from scratch.
@@ -128,6 +129,7 @@ load.provide("mm.Renderer", (function() {
 				link.set("connector", {name:"smooth"});
 				link.attr(e.type.attr);
 				this._graph.addCell(link);
+				this._edgeIds.set(e.id, link);
 				this._interactor.addEdge(this, link, e);
 				
 				// Text
@@ -161,7 +163,9 @@ load.provide("mm.Renderer", (function() {
 				gridSize:1,
 				width:0,
 				height:0,
-				interactive:this._editor
+				interactive:this._editor,
+				snapLinks:true,
+				linkPinning:false,
 			});
 			
 			this._interactor.addCanvas(this, this.node);
@@ -208,6 +212,26 @@ load.provide("mm.Renderer", (function() {
 		 */
 		getSvgNode(id) {
 			return $(`[model-id="${this._nodeIds.get(id).id}"]`)[0];
+		}
+		
+		/** Returns the node given by the JointJS ID
+		 * 
+		 * @param {string} jid The node's JointJS ID.
+		 * @return {mm.structs.ObjectNode} The graph node.
+		 */
+		getNodeFromJoint(jid) {
+			for(let [id, v] of this._nodeIds) {
+				if(v.id == jid) return id;
+			}
+		}
+		
+		/** Returns the SVGNode for the given (edge) node id
+		 * 
+		 * @param {int} The edge id.
+		 * @return {SVGGElement} The SVG node.
+		 */
+		getSvgEdge(id) {
+			return $(`[model-id="${this._edgeIds.get(id).id}"]`)[0];
 		}
 	};
 })());
