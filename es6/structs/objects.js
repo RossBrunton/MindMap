@@ -20,15 +20,30 @@ load.provide("mm.structs.ObjectNode", (function() {
 			for(let x of ["id", "x", "y", "fields"]) this[x] = object[x];
 		}
 		
+		/** Gets the field type of the specified field
+		 * 
+		 * @param {string} field The name of the field to look up.
+		 * @return {mm.structs.NodeType} The field type of that field.
+		 */
 		getFieldType(field) {
 			return this.type.getFieldType(field);
 		}
 		
+		/** Updates the x and y locations of this node.
+		 * @param {int} x The x coordinate.
+		 * @param {int} y The y coordinate.
+		 */
 		changePosition(x, y) {
 			this.x = x;
 			this.y = y;
 		}
 		
+		/** Converts this node into a JSON format
+		 * 
+		 * This is the same format as used to create it.
+		 * 
+		 * @return {object} The JSON version of this node.
+		 */
 		toJson() {
 			let fields = {}
 			for(let x in this.fields) fields[x] = this.fields[x];
@@ -42,6 +57,12 @@ load.provide("mm.structs.ObjectNode", (function() {
 			}
 		}
 		
+		/** Given the JSON representation of a node, updates this node to match it
+		 * 
+		 * Any fields or values from the object that are absent will be left alone.
+		 * 
+		 * @param {object} obj The object to copy from.
+		 */
 		update(obj) {
 			if("type" in obj) this.changeType(obj.type);
 			
@@ -52,6 +73,10 @@ load.provide("mm.structs.ObjectNode", (function() {
 			}
 		}
 		
+		/** Changes the type of this node to a new type
+		 * 
+		 * @param {string} newTypeName The name of the type to change to.
+		 */
 		changeType(newTypeName) {
 			if(this.type.name == newTypeName) return;
 			
@@ -80,6 +105,10 @@ load.provide("mm.structs.ObjectEdge", (function() {
 			for(let x of ["id", "origin", "dest", "text", "points"]) this[x] = object[x];
 		}
 		
+		/** Changes the vertices of this edge
+		 * 
+		 * @param {array<array<int>>} newPoints The new points around which to curve, as an array of [x, y] pairs.
+		 */
 		changePoints(newPoints) {
 			this.points = newPoints;
 		}
