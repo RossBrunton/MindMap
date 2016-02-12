@@ -52,6 +52,8 @@ load.provide("mm.interactions.NodeEdit", (function() {
 					this._editingNode.update(this._editingBackup);
 					this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.nodeText(this._editingNode));
 				}
+				
+				this._editingNode = null;
 			});
 			
 			
