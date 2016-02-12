@@ -11,6 +11,7 @@ load.provide("mm.Interactor", (function() {
 	let EditHelp = load.require("mm.interactions.EditHelp");
 	let NodeMove = load.require("mm.interactions.NodeMove");
 	let EdgeChange = load.require("mm.interactions.EdgeChange");
+	let NodeEdit = load.require("mm.interactions.NodeEdit");
 	
 	let _dir = getDirName("Interactor.js") + "interactorResources/";
 	
@@ -32,9 +33,6 @@ load.provide("mm.Interactor", (function() {
 			this._edges = [];
 			this._nodes = new Map();
 			
-			this._editingNode = null;
-			this._editingBackup = null;
-			
 			this._vertexChangeEvent = null;
 			
 			this._interactions = [
@@ -44,6 +42,7 @@ load.provide("mm.Interactor", (function() {
 				new EditHelp(this, abstractGraph, editor),
 				new NodeMove(this, abstractGraph, editor),
 				new EdgeChange(this, abstractGraph, editor),
+				new NodeEdit(this, abstractGraph, editor)
 			];
 		}
 		
@@ -55,18 +54,6 @@ load.provide("mm.Interactor", (function() {
 			}
 			
 			let svgNode = $(`[model-id="${object.id}"]`)[0];
-			
-			// ----
-			// Hangle mouse hover thing
-			// ----
-			// Would love to have defined panel here to avoid copy-paste, but the node probably isn't added yet
-			$(svgNode).on("click", (e) => {
-				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
-				this._setEditing(node);
-				panel.find("input").first().focus();
-				e.preventDefault();
-				e.stopPropagation();
-			});
 			
 			this._nodes.set(node.id, [renderer, object, node, svgNode]);
 		}
@@ -101,71 +88,6 @@ load.provide("mm.Interactor", (function() {
 				$(node).prepend(editHelp);
 			}
 			
-			
-			// ----
-			// Edit and save buttons
-			// ----
-			$(node).find(".mm-details-edit-save").click((e) => {
-				let panel = $(node).find(".mm-details-panel");
-				panel.removeClass("long");
-				e.preventDefault();
-				this._editor.addToUndoStack("node_edit",
-					{id:this._editingNode.id, old:this._editingBackup, "new":this._editingNode.toJson()}
-				);
-			});
-			
-			$(node).find(".mm-details-edit-close").click((e) => {
-				let panel = $(node).find(".mm-details-panel");
-				panel.removeClass("long");
-				e.preventDefault();
-				
-				if(this._editingBackup.type != this._editingNode.type.name) {
-					this._editingNode.update(this._editingBackup);
-					this.rerender();
-				}else{
-					this._editingNode.update(this._editingBackup);
-					this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.nodeText(this._editingNode));
-				}
-			});
-			
-			
-			// ----
-			// Node adding
-			// ----
-			if(this._editor) $(node).on("dblclick", (e) => {
-				let [xo, yo] = renderer.getOffsets();
-				let [xm, ym] = this._getMousePos(e, node);
-				let newNode = this._abstractGraph.objects.makeNewNode(xm - xo, ym - yo);
-				this.rerender();
-				this._setEditing(newNode);
-				this._loadDetails(this._nodes.get(newNode.id)[2], node, true, true);
-			});
-			
-			
-			// ----
-			// Node editing
-			// ----
-			if(this._editor) $(node).find(".mm-details-edit").on("input", (e) => {
-				let editing = $(node).find(".mm-details-panel").attr("data-id");
-				
-				let update = {fields:{}, type:$(node).find(".mm-details-edit-type").val()};
-				
-				// Load all the fields
-				for(let entry of $(node).find(".mm-details-edit form").serializeArray()) {
-					update.fields[entry.name] = entry.value;
-				}
-				
-				// Now check if the type has changed
-				let oldTypeName = this._editingNode.type.name;
-				this._editingNode.update(update);
-				if(this._editingNode.type.name != oldTypeName) {
-					this.rerender();
-					this._loadDetails(this._editingNode, node, true, true, true);
-				}else{
-					this._nodes.get(+editing)[1].attr("text/text", textGen.nodeText(this._nodes.get(+editing)[2]));
-				}
-			});
-			
 			for(let i of this._interactions) {
 				i.addCanvas(renderer, node);
 			}
@@ -180,7 +102,7 @@ load.provide("mm.Interactor", (function() {
 			this._edges = [];
 		}
 		
-		_getMousePos(e, elem) {
+		getMousePos(e, elem) {
 			return [e.pageX - $(elem).offset().left + $(elem).find(".mm-inner")[0].scrollLeft,
 					e.pageY - $(elem).offset().top + $(elem).find(".mm-inner")[0].scrollTop]
 		}
@@ -237,11 +159,6 @@ load.provide("mm.Interactor", (function() {
 			}
 			
 			panel.attr("data-id", node.id);
-		}
-		
-		_setEditing(node) {
-			this._editingNode = node;
-			this._editingBackup = node.toJson();
 		}
 	};
 	

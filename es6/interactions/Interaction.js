@@ -7,13 +7,13 @@ load.provide("mm.interactions.Interaction", (function() {
 			this._abstractGraph = abstractGraph;
 			this._editor = editor;
 			
-			this._nodes = [];
+			this._nodes = new Map();
 			this._edges = [];
 		}
 		
 		async addNode(renderer, joint, node) {
 			console.log("Added node");
-			this._nodes.push([renderer, joint, node]);
+			this._nodes.set(node.id, [renderer, joint, node]);
 		}
 		
 		async addEdge(renderer, joint, edge) {
