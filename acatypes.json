@@ -59,5 +59,25 @@
 				"ry":10
 			}
 		}
+	}, {
+		"name": "another",
+		"attr": {
+			".connection":{
+				"stroke":"#99ff99",
+				"stroke-width":"4px"
+			},
+			".marker-target":{
+				"stroke":"#99ff99",
+				"fill":"#99ff99"
+			}
+		},
+		"textAttr":{
+			"rect":{
+				"fill":"#ffffff",
+				"stroke":"#000000",
+				"rx":10,
+				"ry":10
+			}
+		}
 	}]
 }
