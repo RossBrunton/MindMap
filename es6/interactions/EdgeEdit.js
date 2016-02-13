@@ -29,17 +29,17 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 		}
 		
 		async addCanvas(renderer, node) {
-			/*// ----
+			// ----
 			// Edit and save buttons
 			// ----
-			$(node).find(".mm-details-edit-save").click((e) => {
+			$(node).find(".mm-details-edit-arrow-save").click((e) => {
 				this._interactor.hideDetailsPanel(renderer, true);
 				e.preventDefault();
-				this._editor.addToUndoStack("node_edit",
+				this._editor.addToUndoStack("edge_edit",
 					{id:this._editingEdge.id, old:this._editingBackup, "new":this._editingEdge.toJson()}
 				);
 				this._editingEdge = null;
-			});*/
+			});
 			
 			let cancel = () => {
 				if(!this._editingEdge) return;
