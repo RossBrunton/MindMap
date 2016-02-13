@@ -101,10 +101,9 @@ load.provide("mm.Renderer", (function() {
 				let rect = new joint.shapes.basic.Rect({
 					position:{x:n.x, y:n.y},
 					size:{width:100, height:30},
-					attrs:{}
+					attrs:n.type.nodeAttr
 				});
 				
-				rect.attr(n.type.nodeAttr);
 				rect.attr("text/text", textGen.nodeText(n));
 				
 				this._graph.addCell(rect);
@@ -122,9 +121,9 @@ load.provide("mm.Renderer", (function() {
 				
 				link.attr({
 					"path":{
-						fill:"transparent",
+						
 					},
-					".marker-target": {"fill": "black", "d":"M 10 0 L 0 5 L 10 10 z"}
+					".marker-target": {"d":"M 10 0 L 0 5 L 10 10 z"}
 				});
 				link.set("connector", {name:"smooth"});
 				link.attr(e.type.attr);
