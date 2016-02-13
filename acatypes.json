@@ -53,8 +53,8 @@
 		},
 		"textAttr":{
 			"rect":{
-				"fill":"#ffffff",
-				"stroke":"#000000",
+				"fill":"#ffcccc",
+				"stroke":"#ff9999",
 				"rx":10,
 				"ry":10
 			}
@@ -73,8 +73,8 @@
 		},
 		"textAttr":{
 			"rect":{
-				"fill":"#ffffff",
-				"stroke":"#000000",
+				"fill":"#ccffcc",
+				"stroke":"#99ff99",
 				"rx":10,
 				"ry":10
 			}
