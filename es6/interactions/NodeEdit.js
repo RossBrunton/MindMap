@@ -42,6 +42,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			});
 			
 			let cancel = () => {
+				if(!this._editingNode) return;
 				this._interactor.hideDetailsPanel(renderer, true);
 				
 				if(this._editingBackup.type != this._editingNode.type.name) {
