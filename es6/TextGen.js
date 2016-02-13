@@ -63,6 +63,22 @@ load.provide("mm.textGen", (function() {
 		return hold;
 	};
 	
+	/** Generates HTML for displaying in edge's type select widget
+	 * 
+	 * @param {mm.structs.ObjectNode} edge The edge to generate options for.
+	 * @param {mm.structs.TypesFile} typesFile The types file containing the options.
+	 * @return {string} The text to display as the select value.
+	 */
+	textGen.editEdgeSelect = function(edge, types) {
+		let hold = "";
+		
+		for(let x of types.arrowTypes) {
+			hold += `<option value='${x.name}' ${x != edge.type ? "" : "selected"}>${x.name}</option>`;
+		}
+		
+		return hold;
+	};
+	
 	/** Generates HTML for displaying in the node's edit form
 	 * 
 	 * @param {mm.structs.ObjectNode} node The node to generate a form for.

@@ -129,6 +129,28 @@ load.provide("mm.structs.ObjectEdge", (function() {
 				id:this.id,
 			}
 		}
+		
+		/** Given the JSON representation of an edge, updates this edge to match it
+		 * 
+		 * Any fields or values from the object that are absent will be left alone.
+		 * 
+		 * @param {object} obj The object to copy from.
+		 */
+		update(obj) {
+			if("type" in obj) this.changeType(obj.type);
+			
+			["text", "origin", "dest", "points"].forEach((x) => {if(x in obj) this[x] = obj[x]});
+		}
+		
+		/** Changes the type of this edge to a new type
+		 * 
+		 * @param {string} newTypeName The name of the type to change to.
+		 */
+		changeType(newTypeName) {
+			if(this.type.name == newTypeName) return;
+			
+			this.type = this.type.getOtherType(newTypeName);
+		}
 	};
 })());
 

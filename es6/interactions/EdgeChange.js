@@ -18,7 +18,6 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			let svgEdge = renderer.getSvgEdge(edge.id);
 			
 			$(svgEdge).on("mousedown", (e) => {
-				console.log(e.target);
 				if(!Array.prototype.includes.call(e.target.classList, "marker-vertex")
 				&& !Array.prototype.includes.call(e.target.classList, "marker-arrowhead")
 				) {

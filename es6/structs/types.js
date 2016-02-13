@@ -48,6 +48,10 @@ load.provide("mm.structs.ArrowType", (function() {
 			this.file = file;
 			for(let x of ["name", "attr", "textAttr"]) this[x] = object[x];
 		}
+		
+		getOtherType(name) {
+			return this.file.getArrowType(name);
+		}
 	};
 })());
 

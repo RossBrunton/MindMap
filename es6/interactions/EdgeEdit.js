@@ -96,32 +96,31 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				this._interactor.rerender();
 				this._setEditing(newNode);
 				this._interactor.loadNodeDetails(this._nodes.get(newNode.id)[2], renderer, true, true);
-			});
+			});*/
 			
 			
 			// ----
-			// Node editing
+			// Edge editing
 			// ----
-			if(this._editor) $(node).find(".mm-details-edit").on("input", (e) => {
-				let editing = $(node).find(".mm-details-panel").attr("data-id");
+			if(this._editor) $(node).find(".mm-details-edit-arrow").on("input", (e) => {
+				let editing = this._editingEdge.id;
 				
-				let update = {fields:{}, type:$(node).find(".mm-details-edit-type").val()};
-				
-				// Load all the fields
-				for(let entry of $(node).find(".mm-details-edit form").serializeArray()) {
-					update.fields[entry.name] = entry.value;
-				}
+				let update = {
+					text:$(node).find(".mm-details-edit-arrow-text").val(),
+					type:$(node).find(".mm-details-edit-arrow-type").val()
+				};
 				
 				// Now check if the type has changed
 				let oldTypeName = this._editingEdge.type.name;
 				this._editingEdge.update(update);
 				if(this._editingEdge.type.name != oldTypeName) {
+					console.log("Different");
 					this._interactor.rerender();
 					this._interactor.loadNodeDetails(this._editingEdge, renderer, true, true, true);
 				}else{
-					this._nodes.get(+editing)[1].attr("text/text", textGen.nodeText(this._nodes.get(+editing)[2]));
+					this._edges.get(+editing)[1].label(0, {position:0.5, attrs:{text:{text:this._editingEdge.text}}});
 				}
-			});*/
+			});
 		}
 		
 		_setEditing(edge) {
