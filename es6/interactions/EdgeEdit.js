@@ -1,27 +1,27 @@
 "use strict";
 
-load.provide("mm.interactions.NodeEdit", (function() {
+load.provide("mm.interactions.EdgeEdit", (function() {
 	let Interaction = load.require("mm.interactions.Interaction");
 	let textGen = load.require("mm.textGen");
 	
-	return class NodeEdit extends Interaction {
+	return class EdgeEdit extends Interaction {
 		constructor(interactor, abstractGraph, editor) {
 			super(interactor, abstractGraph, editor);
 			
-			this._editingNode = null;
+			this._editingEdge = null;
 			this._editingBackup = null;
 		}
 		
-		async addNode(renderer, joint, node) {
-			Interaction.prototype.addNode.call(this, renderer, joint, node);
+		async addEdge(renderer, joint, edge) {
+			Interaction.prototype.addEdge.call(this, renderer, joint, edge);
 			
-			let svgNode = renderer.getSvgNode(node.id);
+			let svgNode = renderer.getSvgEdge(edge.id);
 			
 			if(this._editor) $(svgNode).on("click", (e) => {
-				if(this._editingNode) return;
+				if(this._editingEdge) return;
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
-				this._interactor.loadNodeDetails(node, renderer, true, true, true);
-				this._setEditing(node);
+				this._interactor.loadDetails(edge, renderer, true, true, true);
+				this._setEditing(edge);
 				panel.find("input").first().focus();
 				e.preventDefault();
 				e.stopPropagation();
@@ -29,32 +29,30 @@ load.provide("mm.interactions.NodeEdit", (function() {
 		}
 		
 		async addCanvas(renderer, node) {
-			// ----
+			/*// ----
 			// Edit and save buttons
 			// ----
 			$(node).find(".mm-details-edit-save").click((e) => {
 				this._interactor.hideDetailsPanel(renderer, true);
 				e.preventDefault();
 				this._editor.addToUndoStack("node_edit",
-					{id:this._editingNode.id, old:this._editingBackup, "new":this._editingNode.toJson()}
+					{id:this._editingEdge.id, old:this._editingBackup, "new":this._editingEdge.toJson()}
 				);
-				this._editingNode = null;
+				this._editingEdge = null;
 			});
 			
 			let cancel = () => {
-				if(!this._editingNode) return;
-				if($(node).find(".mm-details-panel").hasClass("edge")) return;
 				this._interactor.hideDetailsPanel(renderer, true);
 				
-				if(this._editingBackup.type != this._editingNode.type.name) {
-					this._editingNode.update(this._editingBackup);
+				if(this._editingBackup.type != this._editingEdge.type.name) {
+					this._editingEdge.update(this._editingBackup);
 					this._interactor.rerender();
 				}else{
-					this._editingNode.update(this._editingBackup);
-					this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.nodeText(this._editingNode));
+					this._editingEdge.update(this._editingBackup);
+					this._nodes.get(+this._editingEdge.id)[1].attr("text/text", textGen.nodeText(this._editingEdge));
 				}
 				
-				this._editingNode = null;
+				this._editingEdge = null;
 			};
 			
 			$(node).find(".mm-details-edit-close").click((e) => {cancel(), e.preventDefault()});
@@ -66,17 +64,15 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			// Node deletion
 			// ----
 			$(node).find(".mm-details-edit-delete").click((e) => {
-				if($(node).find(".mm-details-panel").hasClass("edge")) return;
-				
 				this._interactor.hideDetailsPanel(renderer, true);
 				e.preventDefault();
 				
-				let rec = this._abstractGraph.cascadingRemoveNode(this._editingNode.id);
+				let rec = this._abstractGraph.cascadingRemoveNode(this._editingEdge.id);
 				this._editor.addToUndoStack("node_delete", {recover:rec});
 				
 				this._interactor.rerender();
 				
-				this._editingNode = null;
+				this._editingEdge = null;
 			});
 			
 			
@@ -107,8 +103,6 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			// Node editing
 			// ----
 			if(this._editor) $(node).find(".mm-details-edit").on("input", (e) => {
-				if($(node).find(".mm-details-panel").hasClass("edge")) return;
-				
 				let editing = $(node).find(".mm-details-panel").attr("data-id");
 				
 				let update = {fields:{}, type:$(node).find(".mm-details-edit-type").val()};
@@ -119,20 +113,20 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				}
 				
 				// Now check if the type has changed
-				let oldTypeName = this._editingNode.type.name;
-				this._editingNode.update(update);
-				if(this._editingNode.type.name != oldTypeName) {
+				let oldTypeName = this._editingEdge.type.name;
+				this._editingEdge.update(update);
+				if(this._editingEdge.type.name != oldTypeName) {
 					this._interactor.rerender();
-					this._interactor.loadNodeDetails(this._editingNode, renderer, true, true, true);
+					this._interactor.loadNodeDetails(this._editingEdge, renderer, true, true, true);
 				}else{
 					this._nodes.get(+editing)[1].attr("text/text", textGen.nodeText(this._nodes.get(+editing)[2]));
 				}
-			});
+			});*/
 		}
 		
-		_setEditing(node) {
-			this._editingNode = node;
-			this._editingBackup = node.toJson();
+		_setEditing(edge) {
+			this._editingEdge = edge;
+			this._editingBackup = edge.toJson();
 		}
 	};
 })());

@@ -81,6 +81,18 @@
     display:inherit;
 }
 
+.mm-edit .mm-details-panel.edge .mm-details-edit {
+    display:none;
+}
+
+.mm-edit .mm-details-panel .mm-details-edit-arrow {
+    display:none;
+}
+
+.mm-edit .mm-details-panel.edge .mm-details-edit-arrow {
+    display:inherit;
+}
+
 /** Help panel thing */
 .mm-edit-help {
     position:absolute;

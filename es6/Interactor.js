@@ -4,6 +4,7 @@ load.provide("mm.Interactor", (function() {
 	let getDirName = load.require("mm.utils.getDirName");
 	let getfile = load.require("mm.utils.getfile");
 	let textGen = load.require("mm.textGen");
+	let ObjectNode = load.require("mm.structs.ObjectNode");
 	
 	let Pan = load.require("mm.interactions.Pan");
 	let Zoom = load.require("mm.interactions.Zoom");
@@ -12,6 +13,7 @@ load.provide("mm.Interactor", (function() {
 	let NodeMove = load.require("mm.interactions.NodeMove");
 	let EdgeChange = load.require("mm.interactions.EdgeChange");
 	let NodeEdit = load.require("mm.interactions.NodeEdit");
+	let EdgeEdit = load.require("mm.interactions.EdgeEdit");
 	
 	let _dir = getDirName("Interactor.js") + "interactorResources/";
 	
@@ -37,7 +39,8 @@ load.provide("mm.Interactor", (function() {
 				new EditHelp(this, abstractGraph, editor),
 				new NodeMove(this, abstractGraph, editor),
 				new EdgeChange(this, abstractGraph, editor),
-				new NodeEdit(this, abstractGraph, editor)
+				new NodeEdit(this, abstractGraph, editor),
+				new EdgeEdit(this, abstractGraph, editor)
 			];
 		}
 		
@@ -96,17 +99,35 @@ load.provide("mm.Interactor", (function() {
 					e.pageY - $(elem).offset().top + $(elem).find(".mm-inner")[0].scrollTop]
 		}
 		
-		loadNodeDetails(node, rendererer, show, expand, force) {
-			let panel = $(rendererer.getRoot()).find(".mm-details-panel");
+		loadNodeDetails(node, renderer, show, expand, force) {
+			this.loadDetails(node, renderer, show, expand, force);
+		}
+		
+		loadDetails(object, renderer, show, expand, force) {
+			let panel = $(renderer.getRoot()).find(".mm-details-panel");
 			if(panel.hasClass("long") && !force) return;
 			
-			panel.find(".mm-details-short").html(textGen.detailsShort(node));
-			
-			if(!this._editor) {
-				panel.find(".mm-details-long").html(textGen.detailsLong(node));
+			if(object instanceof ObjectNode) {
+				panel.removeClass("edge");
+				panel.find(".mm-details-short").html(textGen.detailsShort(object));
+				
+				if(!this._editor) {
+					panel.find(".mm-details-long").html(textGen.detailsLong(object));
+				}else{
+					panel.find(".mm-details-edit-type").html(textGen.editSelect(object, this._abstractGraph.types));
+					panel.find(".mm-details-edit-inner").html(textGen.editForm(object));
+				}
 			}else{
-				panel.find(".mm-details-edit-type").html(textGen.editSelect(node, this._abstractGraph.types));
-				panel.find(".mm-details-edit-inner").html(textGen.editForm(node));
+				panel.addClass("edge");
+				panel.find(".mm-details-short").html("");
+				
+				if(!this._editor) {
+					//panel.find(".mm-details-long").html(textGen.detailsLong(object));
+					// Not possible for edges
+				}else{
+					panel.find(".mm-details-edit-type").html(textGen.editSelect(object, this._abstractGraph.types));
+					panel.find(".mm-details-edit-text").val(object.text);
+				}
 			}
 			
 			if(show) {
@@ -117,7 +138,7 @@ load.provide("mm.Interactor", (function() {
 				panel.addClass("long");
 			}
 			
-			panel.attr("data-id", node.id);
+			panel.attr("data-id", object.id);
 		}
 		
 		hideDetailsPanel(rendererer, evenIfLong) {
