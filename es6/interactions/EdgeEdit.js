@@ -39,9 +39,10 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 					{id:this._editingEdge.id, old:this._editingBackup, "new":this._editingEdge.toJson()}
 				);
 				this._editingEdge = null;
-			});
+			});*/
 			
 			let cancel = () => {
+				if(!this._editingEdge) return;
 				this._interactor.hideDetailsPanel(renderer, true);
 				
 				if(this._editingBackup.type != this._editingEdge.type.name) {
@@ -49,16 +50,16 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 					this._interactor.rerender();
 				}else{
 					this._editingEdge.update(this._editingBackup);
-					this._nodes.get(+this._editingEdge.id)[1].attr("text/text", textGen.nodeText(this._editingEdge));
+					this._edges.get(this._editingEdge.id)[1].label(0, {position:0.5, attrs:{text:{text:this._editingEdge.text}}});
 				}
 				
 				this._editingEdge = null;
 			};
 			
-			$(node).find(".mm-details-edit-close").click((e) => {cancel(), e.preventDefault()});
+			$(node).find(".mm-details-edit-arrow-close").click((e) => {cancel(), e.preventDefault()});
 			
 			$(node).on("click", (e) => {if(e.target.localName == "svg") cancel(e)});
-			
+			/*
 			
 			// ----
 			// Node deletion
@@ -73,29 +74,6 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				this._interactor.rerender();
 				
 				this._editingEdge = null;
-			});
-			
-			
-			// ----
-			// Node adding
-			// ----
-			if(this._editor) $(node).on("dblclick", (e) => {
-				if(e.target.localName != "svg") return;
-				let [xo, yo] = renderer.getOffsets();
-				let [xm, ym] = this._interactor.getMousePos(e, node);
-				let newNode = this._abstractGraph.objects.makeNewNode(xm - xo, ym - yo);
-				this._interactor.rerender();
-				this._setEditing(newNode);
-				this._interactor.loadNodeDetails(this._nodes.get(newNode.id)[2], renderer, true, true);
-			});
-			
-			if(this._editor) $(node).find(".mm-create-button").on("click", (e) => {
-				let [xo, yo] = renderer.getOffsets();
-				let [xm, ym] = this._interactor.getMousePos(e, node);
-				let newNode = this._abstractGraph.objects.makeNewNode(xm - 100 - xo, ym + 50 - yo);
-				this._interactor.rerender();
-				this._setEditing(newNode);
-				this._interactor.loadNodeDetails(this._nodes.get(newNode.id)[2], renderer, true, true);
 			});*/
 			
 			
