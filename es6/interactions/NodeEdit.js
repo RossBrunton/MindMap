@@ -41,9 +41,8 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				this._editingNode = null;
 			});
 			
-			$(node).find(".mm-details-edit-close").click((e) => {
+			let cancel = () => {
 				this._interactor.hideDetailsPanel(renderer, true);
-				e.preventDefault();
 				
 				if(this._editingBackup.type != this._editingNode.type.name) {
 					this._editingNode.update(this._editingBackup);
@@ -54,7 +53,11 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				}
 				
 				this._editingNode = null;
-			});
+			};
+			
+			$(node).find(".mm-details-edit-close").click((e) => {cancel(), e.preventDefault()});
+			
+			$(node).on("click", (e) => {if(e.target.localName == "svg") cancel(e)});
 			
 			
 			// ----
