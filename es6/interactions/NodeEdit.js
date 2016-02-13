@@ -58,6 +58,22 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			
 			
 			// ----
+			// Node deletion
+			// ----
+			$(node).find(".mm-details-edit-delete").click((e) => {
+				this._interactor.hideDetailsPanel(renderer, true);
+				e.preventDefault();
+				
+				let rec = this._abstractGraph.cascadingRemoveNode(this._editingNode.id);
+				this._editor.addToUndoStack("node_delete", {recover:rec});
+				
+				this._interactor.rerender();
+				
+				this._editingNode = null;
+			});
+			
+			
+			// ----
 			// Node adding
 			// ----
 			if(this._editor) $(node).on("dblclick", (e) => {

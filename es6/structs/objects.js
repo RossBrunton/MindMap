@@ -112,6 +112,23 @@ load.provide("mm.structs.ObjectEdge", (function() {
 		changePoints(newPoints) {
 			this.points = newPoints;
 		}
+		
+		/** Converts this node into a JSON format
+		 * 
+		 * This is the same format as used to create it.
+		 * 
+		 * @return {object} The JSON version of this node.
+		 */
+		toJson() {
+			return {
+				type:this.type.name,
+				origin:this.origin,
+				dest:this.dest,
+				text:this.text,
+				points:this.points,
+				id:this.id,
+			}
+		}
 	};
 })());
 
@@ -258,6 +275,42 @@ load.provide("mm.structs.ObjectsData", (function() {
 			let n = new ObjectNode(newNode, type);
 			this.nodes.push(n);
 			return n;
+		}
+		
+		/** Removes the node with the given id
+		 * 
+		 * @param {int} id The node to remove
+		 */
+		removeNode(id) {
+			this.nodes = this.nodes.filter((n) => n.id != id);
+		}
+		
+		/** Returns the node with the given id
+		 * 
+		 * @param {int} id The node to look up
+		 * @return {mm.structs.ObjectNode} The node.
+		 */
+		getNode(id) {
+			for(let n of this.nodes) {
+				if(n.id == id) {return n;}
+			}
+		}
+		
+		/** Returns an array of the edges that link to or from this node
+		 * 
+		 * @param {int} id The node to get edges for
+		 * @return {array<mm.structs.ObjectEdge>}
+		 */
+		getEdgesConnectedToNode(id) {
+			return this.edges.filter((e) => [e.origin, e.dest].includes(id));
+		}
+		
+		/** Removes the edge with the given id
+		 * 
+		 * @param {int} id The edge to remove
+		 */
+		removeEdge(id) {
+			this.edges = this.edges.filter((n) => n.id != id);
 		}
 	};
 })());

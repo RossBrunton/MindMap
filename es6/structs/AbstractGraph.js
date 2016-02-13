@@ -55,5 +55,26 @@ load.provide("mm.structs.AbstractGraph", (function() {
 				this.ready = true;
 			});
 		}
+		
+		/** Deletes the node with the given id, and any edges that happen to link it.
+		 * 
+		 * Then returns a special object that can be used to recover them.
+		 * 
+		 * @param {int} id The node to delete.
+		 * @return {object} A recovery object
+		 */
+		cascadingRemoveNode(id) {
+			let recovery = {};
+			
+			let edges = this.objects.getEdgesConnectedToNode(id);
+			recovery.edges = edges.map((e) => e.toJson());
+			edges.forEach((e) => this.objects.removeEdge(e.id));
+			
+			let node = this.objects.getNode(id);
+			recovery.node = node.toJson();
+			this.objects.removeNode(id);
+			
+			return recovery;
+		}
 	};
 })());
