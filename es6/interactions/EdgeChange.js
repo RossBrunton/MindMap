@@ -15,8 +15,20 @@ load.provide("mm.interactions.EdgeChange", (function() {
 		async addEdge(renderer, joint, edge) {
 			Interaction.prototype.addEdge.call(this, renderer, joint, edge);
 			
+			let svgEdge = renderer.getSvgEdge(edge.id);
+			
+			$(svgEdge).on("mousedown", (e) => {
+				console.log(e.target);
+				if(!Array.prototype.includes.call(e.target.classList, "marker-vertex")
+				&& !Array.prototype.includes.call(e.target.classList, "marker-arrowhead")
+				) {
+					e.stopPropagation();
+				}
+			});
+			
 			joint.on("change:vertices", (e, o) => {
 				this._vertexChangeEvent = [edge, e];
+				
 			});
 			
 			joint.on("change:source", (e, o) => {
