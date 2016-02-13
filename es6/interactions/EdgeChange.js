@@ -9,6 +9,7 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			
 			this._vertexChangeEvent = null;
 			this._vertexRetargetEvent = null;
+			this._vertexRehostEvent = null;
 		}
 		
 		async addEdge(renderer, joint, edge) {
@@ -19,7 +20,7 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			});
 			
 			joint.on("change:source", (e, o) => {
-				console.log(e, o);
+				this._vertexRehostEvent = [edge, e, o, joint];
 			});
 			
 			joint.on("change:target", (e, o) => {
@@ -52,6 +53,21 @@ load.provide("mm.interactions.EdgeChange", (function() {
 					if(edge.dest != newTarget) {
 						this._editor.addToUndoStack("edge_retarget", {id:edge.id, old:edge.dest, "new":newTarget});
 						edge.dest = newTarget;
+						this._interactor.rerender();
+					}
+				}
+				
+				if(this._vertexRehostEvent) {
+					let [edge, e, o, joint] = this._vertexRehostEvent;
+					this._vertexRehostEvent = null;
+					
+					if(!("id" in o)) return;
+					
+					let newHost = renderer.getNodeFromJoint(o.id);
+					
+					if(edge.origin != newHost) {
+						this._editor.addToUndoStack("edge_rehost", {id:edge.id, old:edge.origin, "new":newHost});
+						edge.origin = newHost;
 						this._interactor.rerender();
 					}
 				}
