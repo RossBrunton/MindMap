@@ -77,6 +77,14 @@
     display:inherit;
 }
 
+.mm-noedit .mm-details-panel .mm-details-edit-arrow {
+    display:none;
+}
+
+.mm-noedit .connection-wrap, .mm-noedit .marker-arrowheads {
+    display:none;
+}
+
 .mm-edit .mm-details-panel.long .mm-details-edit {
     display:inherit;
 }
