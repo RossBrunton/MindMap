@@ -58,7 +58,7 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			
 			$(node).find(".mm-details-edit-arrow-close").click((e) => {cancel(), e.preventDefault()});
 			
-			$(node).on("click", (e) => {if(e.target.localName == "svg") cancel(e)});
+			$(node).on("click", (e) => {if(e.target.classList[0] == "mm-background-grid") cancel(e)});
 			/*
 			
 			// ----

@@ -59,7 +59,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			
 			$(node).find(".mm-details-edit-close").click((e) => {cancel(), e.preventDefault()});
 			
-			$(node).on("click", (e) => {if(e.target.localName == "svg") cancel(e)});
+			$(node).on("click", (e) => {if(e.target.classList[0] == "mm-background-grid") cancel(e)});
 			
 			
 			// ----
@@ -84,7 +84,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			// Node adding
 			// ----
 			if(this._editor) $(node).on("dblclick", (e) => {
-				if(e.target.localName != "svg") return;
+				if(!e.target.classList[0] == "mm-background-grid") return;
 				let [xo, yo] = renderer.getOffsets();
 				let [xm, ym] = this._interactor.getMousePos(e, node);
 				let newNode = this._abstractGraph.objects.makeNewNode(xm - xo, ym - yo);

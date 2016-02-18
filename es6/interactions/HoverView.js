@@ -30,7 +30,7 @@ load.provide("mm.interactions.HoverView", (function() {
 		
 		async addCanvas(renderer, node) {
 			node.addEventListener("click", (e) => {
-				if(e.target.localName != "svg") return;
+				if(e.target.classList[0] != "mm-background-grid") return;
 				this._interactor.hideDetailsPanel(renderer, true);
 			});
 		}

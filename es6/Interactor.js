@@ -88,6 +88,23 @@ load.provide("mm.Interactor", (function() {
 			for(let i of this._interactions) {
 				i.addCanvas(renderer, node);
 			}
+			
+			// Now set the grid background
+			let svg = $(node).find("svg")[0];
+			
+			let defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+			defs.innerHTML = `
+				<pattern id='grid' width='16' height='16' patternUnits='userSpaceOnUse'>
+					<path d='M 16 0 L 0 0 0 16' fill='none' stroke='#cccccc' stroke-width='0.5'/>
+				</pattern>`;
+			svg.insertBefore(defs, svg.firstChild);
+			
+			let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+			rect.setAttribute("width", "100%");
+			rect.setAttribute("height", "100%");
+			rect.setAttribute("fill", "url(#grid)");
+			rect.setAttribute("class", "mm-background-grid");
+			svg.insertBefore(rect, defs);
 		}
 		
 		rerender() {
