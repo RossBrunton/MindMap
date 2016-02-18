@@ -17,7 +17,6 @@ load.provide("mm.interactions.Resize", (function() {
 				left = inner.scrollLeft;
 				
 				// Update locations of blocks
-				
 				if(top == 0) {
 					$(html).find(".mm-resize-top").show();
 				}else{
@@ -41,6 +40,51 @@ load.provide("mm.interactions.Resize", (function() {
 				}else{
 					$(html).find(".mm-resize-right").hide();
 				}
+			});
+			
+			// Resize buttons
+			$(html).find(".mm-resize-top .mm-extend").on("click", (e) => {
+				this._abstractGraph.objects.canvas.addTop(50);
+				this._interactor.rerender();
+				this._editor.addToUndoStack("resize_top", {val:50});
+			});
+			$(html).find(".mm-resize-top .mm-shrink").on("click", (e) => {
+				this._abstractGraph.objects.canvas.addTop(-50);
+				this._interactor.rerender();
+				this._editor.addToUndoStack("resize_top", {val:-50});
+			});
+			
+			$(html).find(".mm-resize-left .mm-extend").on("click", (e) => {
+				this._abstractGraph.objects.canvas.addLeft(50);
+				this._interactor.rerender();
+				this._editor.addToUndoStack("resize_left", {val:50});
+			});
+			$(html).find(".mm-resize-left .mm-shrink").on("click", (e) => {
+				this._abstractGraph.objects.canvas.addLeft(-50);
+				this._interactor.rerender();
+				this._editor.addToUndoStack("resize_left", {val:-50});
+			});
+			
+			$(html).find(".mm-resize-right .mm-extend").on("click", (e) => {
+				this._abstractGraph.objects.canvas.addRight(50);
+				this._interactor.rerender();
+				this._editor.addToUndoStack("resize_right", {val:50});
+			});
+			$(html).find(".mm-resize-right .mm-shrink").on("click", (e) => {
+				this._abstractGraph.objects.canvas.addRight(-50);
+				this._interactor.rerender();
+				this._editor.addToUndoStack("resize_right", {val:-50});
+			});
+			
+			$(html).find(".mm-resize-bottom .mm-extend").on("click", (e) => {
+				this._abstractGraph.objects.canvas.addBottom(50);
+				this._interactor.rerender();
+				this._editor.addToUndoStack("resize_bottom", {val:50});
+			});
+			$(html).find(".mm-resize-bottom .mm-shrink").on("click", (e) => {
+				this._abstractGraph.objects.canvas.addBottom(-50);
+				this._interactor.rerender();
+				this._editor.addToUndoStack("resize_bottom", {val:-50});
 			});
 		}
 	};
