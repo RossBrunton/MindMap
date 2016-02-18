@@ -14,6 +14,7 @@ load.provide("mm.Interactor", (function() {
 	let EdgeChange = load.require("mm.interactions.EdgeChange");
 	let NodeEdit = load.require("mm.interactions.NodeEdit");
 	let EdgeEdit = load.require("mm.interactions.EdgeEdit");
+	let Resize = load.require("mm.interactions.Resize");
 	
 	let _dir = getDirName("Interactor.js") + "interactorResources/";
 	
@@ -40,7 +41,8 @@ load.provide("mm.Interactor", (function() {
 				new NodeMove(this, abstractGraph, editor),
 				new EdgeChange(this, abstractGraph, editor),
 				new NodeEdit(this, abstractGraph, editor),
-				new EdgeEdit(this, abstractGraph, editor)
+				new EdgeEdit(this, abstractGraph, editor),
+				new Resize(this, abstractGraph, editor)
 			];
 		}
 		
@@ -78,6 +80,9 @@ load.provide("mm.Interactor", (function() {
 				
 				let editHelp = await getfile(_dir + "editHelp.html");
 				$(node).prepend(editHelp);
+				
+				let resizeWidgets = await getfile(_dir + "resizeWidgets.html");
+				$(node).find(".mm-inner").prepend(resizeWidgets);
 			}
 			
 			for(let i of this._interactions) {

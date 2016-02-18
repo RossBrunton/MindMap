@@ -18,7 +18,7 @@
 }
 
 /* Widgets */
-.mm-view-widget, .mm-edit-widget {
+.mm-view-widget, .mm-edit-widget, .mm-resize {
     position:absolute;
     top:3px;
     left:3px;
@@ -28,7 +28,7 @@
     display:inline-block;
 }
 
-.mm-view-widget a, .mm-edit-widget a {
+.mm-view-widget a, .mm-edit-widget a, .mm-resize a {
     border-radius:10px;
     background-color:#ccccdd;
     width:20px;
@@ -126,4 +126,32 @@
 /* Joint stuff */
 .mm-root .marker-vertex-remove-area,  .mm-root .marker-vertex-remove {
     visibility:hidden;
+}
+
+/* Resize Widgets */
+.mm-resize {
+    position:absolute;
+    overflow:hidden;
+    top:inherit;
+    left:inherit;
+}
+
+.mm-resize-top {
+    top:3px;
+    left:50%;
+}
+
+.mm-resize-bottom {
+    bottom:3px;
+    left:50%;
+}
+
+.mm-resize-left {
+    left:3px;
+    top:50%;
+}
+
+.mm-resize-right {
+    right:3px;
+    top:50%;
 }
