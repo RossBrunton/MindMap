@@ -69,6 +69,7 @@ load.provide("mm.interactions.Resize", (function() {
 				this._abstractGraph.objects.canvas.addRight(50);
 				this._interactor.rerender();
 				this._editor.addToUndoStack("resize_right", {val:50});
+				inner.scrollLeft += 50;
 			});
 			$(html).find(".mm-resize-right .mm-shrink").on("click", (e) => {
 				this._abstractGraph.objects.canvas.addRight(-50);
@@ -80,6 +81,7 @@ load.provide("mm.interactions.Resize", (function() {
 				this._abstractGraph.objects.canvas.addBottom(50);
 				this._interactor.rerender();
 				this._editor.addToUndoStack("resize_bottom", {val:50});
+				inner.scrollTop += 50;
 			});
 			$(html).find(".mm-resize-bottom .mm-shrink").on("click", (e) => {
 				this._abstractGraph.objects.canvas.addBottom(-50);
