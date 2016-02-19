@@ -113,9 +113,13 @@ load.provide("mm.Interactor", (function() {
 			this._edges = [];
 		}
 		
-		getMousePos(e, elem) {
-			return [e.pageX - $(elem).offset().left + $(elem).find(".mm-inner")[0].scrollLeft,
-					e.pageY - $(elem).offset().top + $(elem).find(".mm-inner")[0].scrollTop]
+		getMousePos(e, elem, renderer) {
+			let scale = renderer.getScale();
+			let hMargins = $(elem).find(".mm-inner").outerWidth() - $(elem).find(".mm-inner").innerWidth();
+			let vMargins = $(elem).find(".mm-inner").outerHeight() - $(elem).find(".mm-inner").innerHeight();
+			
+			return [e.pageX + (-$(elem).find("svg").offset().left/* - $(elem).find(".mm-inner")[0].scrollLeft*/),
+					e.pageY + (-$(elem).find("svg").offset().top/* - $(elem).find(".mm-inner")[0].scrollTop*/)].map((x) => x / scale);
 		}
 		
 		loadNodeDetails(node, renderer, show, expand, force) {

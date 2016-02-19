@@ -70,6 +70,8 @@ load.provide("mm.Renderer", (function() {
 			 */
 			this.inited = false;
 			
+			this._scale = 1.0;
+			
 			this._width = 0;
 			this._height = 0;
 			
@@ -99,7 +101,7 @@ load.provide("mm.Renderer", (function() {
 			
 			for(let n of objects.nodes) {
 				let rect = new joint.shapes.basic.Rect({
-					position:{x:n.x, y:n.y},
+					position:{x:n.x * this._scale, y:n.y * this._scale},
 					size:{width:100, height:30},
 					attrs:n.type.nodeAttr
 				});
@@ -116,7 +118,7 @@ load.provide("mm.Renderer", (function() {
 				let link = new joint.dia.Link({
 					source: {id:this._nodeIds.get(e.origin).id},
 					target: {id:this._nodeIds.get(e.dest).id},
-					vertices:e.points.map(([x, y]) => ({x:x, y:y}))
+					vertices:e.points.map(([x, y]) => ({x:x * this._scale, y:y * this._scale}))
 				});
 				
 				link.attr({
@@ -231,6 +233,14 @@ load.provide("mm.Renderer", (function() {
 		 */
 		getSvgEdge(id) {
 			return $(`[model-id="${this._edgeIds.get(id).id}"]`)[0];
+		}
+		
+		setScale(scale) {
+			this._scale = scale;
+		}
+		
+		getScale() {
+			return this._scale;
 		}
 	};
 })());

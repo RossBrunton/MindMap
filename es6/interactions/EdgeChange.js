@@ -46,7 +46,7 @@ load.provide("mm.interactions.EdgeChange", (function() {
 					let [edge, e] = this._vertexChangeEvent;
 					let oldVerts = edge.points;
 					
-					edge.changePoints(e.attributes.vertices.map(x => [x.x, x.y]));
+					edge.changePoints(e.attributes.vertices.map(x => [x.x / renderer.getScale(), x.y / renderer.getScale()]));
 					
 					if(this._editor) this._editor.addToUndoStack("edge_change", {id:edge.id, old:oldVerts, "new":edge.points});
 					

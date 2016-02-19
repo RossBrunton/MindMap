@@ -12,26 +12,29 @@ load.provide("mm.interactions.Zoom", (function() {
 				scale += mod;
 				if(scale < 0.2) scale = 0.2;
 				
+				renderer.setScale(scale);
+				this._interactor.rerender();
+				
 				//renderer.scale(scale);
 				
-				for(let x of this.myNodes(renderer)) {
+				/*for(let x of this.myNodes(renderer)) {
 					
 					x[1].position(x[2].x * scale, x[2].y * scale);
 					
 					/*$(x[3]).find("text").css("font-size", `${(1/scale) * 100}%`);
 					x[1].attr("rect/height", (x[1].attr("rect/height")/(1/oldscale)) * (1/scale));
-					x[1].attr("rect/width", (x[1].attr("rect/width")/(1/oldscale)) * (1/scale));*/
-				};
+					x[1].attr("rect/width", (x[1].attr("rect/width")/(1/oldscale)) * (1/scale));* /
+				};*/
 				//$(html).find(".mm-paper").css("font-size", `${(1/scale) * 100}%`);
 				
-				for(let x of this.myEdges(renderer)) {
+				/*for(let x of this.myEdges(renderer)) {
 					
 					x[1].set("vertices", x[2].points.map(([x, y]) => ({x:x * scale, y:y * scale})));
 					
 					/*$(x[3]).find("text").css("font-size", `${(1/scale) * 100}%`);
 					x[1].attr("rect/height", (x[1].attr("rect/height")/(1/oldscale)) * (1/scale));
-					x[1].attr("rect/width", (x[1].attr("rect/width")/(1/oldscale)) * (1/scale));*/
-				};
+					x[1].attr("rect/width", (x[1].attr("rect/width")/(1/oldscale)) * (1/scale));* /
+				};*/
 			}
 			
 			// Widget zoom buttons

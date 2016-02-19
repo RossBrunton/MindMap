@@ -18,7 +18,7 @@ load.provide("mm.interactions.NodeMove", (function() {
 					// Node has been moved
 					let oldPos = [node.x, node.y];
 					
-					node.changePosition(joint.changed.position.x, joint.changed.position.y);
+					node.changePosition(joint.changed.position.x / renderer.getScale(), joint.changed.position.y / renderer.getScale());
 					
 					this._editor.addToUndoStack("node_move", {id:node.id, old:oldPos, "new":[node.x, node.y]});
 				}
