@@ -91,6 +91,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				this._interactor.rerender();
 				this._setEditing(newNode);
 				this._interactor.loadNodeDetails(this._nodes.get(newNode.id)[2], renderer, true, true);
+				this._editor.addToUndoStack("node_add", {id:newNode.id, node:newNode.toJson()});
 			});
 			
 			if(this._editor) $(node).find(".mm-create-button").on("click", (e) => {
@@ -100,6 +101,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				this._interactor.rerender();
 				this._setEditing(newNode);
 				this._interactor.loadNodeDetails(this._nodes.get(newNode.id)[2], renderer, true, true);
+				this._editor.addToUndoStack("node_add", {id:newNode.id, node:newNode.toJson()});
 			});
 			
 			
