@@ -59,22 +59,22 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			$(node).find(".mm-details-edit-arrow-close").click((e) => {cancel(), e.preventDefault()});
 			
 			$(node).on("click", (e) => {if(e.target.classList[0] == "mm-background-grid") cancel(e)});
-			/*
+			
 			
 			// ----
-			// Node deletion
+			// Edge deletion
 			// ----
-			$(node).find(".mm-details-edit-delete").click((e) => {
+			$(node).find(".mm-details-edit-arrow-delete").click((e) => {
 				this._interactor.hideDetailsPanel(renderer, true);
 				e.preventDefault();
 				
-				let rec = this._abstractGraph.cascadingRemoveNode(this._editingEdge.id);
-				this._editor.addToUndoStack("node_delete", {recover:rec});
+				this._editor.addToUndoStack("node_delete", {id:this._editingEdge.id, json:this._editingBackup});
+				this._abstractGraph.objects.removeEdge(this._editingEdge.id);
 				
 				this._interactor.rerender();
 				
 				this._editingEdge = null;
-			});*/
+			});
 			
 			
 			// ----

@@ -122,7 +122,7 @@
 }
 
 /* Hide editor bits */
-.mm-noedit .link-tools {
+.mm-root .link-tools {
     visibility:hidden;
 }
 
