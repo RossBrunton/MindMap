@@ -11,6 +11,13 @@
     overflow:hidden;
     width:inherit;
     height:inherit;
+    background-color:#eeeeee;
+}
+
+.mm-inner svg {
+    background-color:#ffffff;
+    border:1px solid #eeeeee;
+    margin:50px;
 }
 
 .hidden {
