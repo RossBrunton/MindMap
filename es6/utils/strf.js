@@ -10,6 +10,11 @@ load.provide("mm.utils.strf", (function() {
 		singleLine: (x) => {return x.split("\n")[0]},
 		cap: (x, arg) => {return x.substring(0, arg)},
 		cape: (x, arg) => {return x.length >= arg ? x.substring(0, arg-3) + "..." : x},
+		dformat: (x, arg) => {
+			let d = new Date(x);
+			if(isNaN(d.getTime())) return "(Invalid date)";
+			return fecha.format(d, arg);
+		}
 	};
 	
 	/** Formats a string, given a template and an objects node
@@ -49,7 +54,7 @@ load.provide("mm.utils.strf", (function() {
 						break;
 						
 					case "date":
-						return "(date not supported)";
+						return _fns.dformat(v, "DD/MM/YY");
 						break;
 					
 					default:
