@@ -19,7 +19,7 @@
 				"ry":10
 			}
 		},
-		"viewText": "{name} - {testfield}",
+		"viewText": "{name} - {testfield} - {cape:name,5}",
 		"viewAddText": "HAI"
 	}, {
 		"name": "test2",

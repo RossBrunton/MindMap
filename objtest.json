@@ -3,7 +3,7 @@
     "nodes":[{
         "type":"test",
         "id":1,
-        "fields":{"name":"Incomprehensible Gibberish"},
+        "fields":{"name":"Incomprehensible\nGibberish", "url":"http://example.com"},
         "x":10,
         "y":10
     },
