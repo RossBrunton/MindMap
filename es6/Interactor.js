@@ -1,7 +1,6 @@
 "use strict";
 
 load.provide("mm.Interactor", (function() {
-	let getDirName = load.require("mm.utils.getDirName");
 	let getfile = load.require("mm.utils.getfile");
 	let textGen = load.require("mm.textGen");
 	let ObjectNode = load.require("mm.structs.ObjectNode");
@@ -16,21 +15,17 @@ load.provide("mm.Interactor", (function() {
 	let EdgeEdit = load.require("mm.interactions.EdgeEdit");
 	let Resize = load.require("mm.interactions.Resize");
 	
-	let _dir = getDirName("Interactor.js") + "interactorResources/";
-	
-	// First of all, load the CSS file
-	let cssNode = document.createElement("link");
-	cssNode.rel = "stylesheet";
-	cssNode.type = "text/css";
-	cssNode.href = _dir + "styles.css";
-	$("head").append(cssNode);
-	
 	let _resEditWidget = load.requireResource("interactorResources/editWidget.html");
 	let _resDetailsPanel = load.requireResource("interactorResources/detailsPanel.html");
 	let _resEditHelp = load.requireResource("interactorResources/editHelp.html");
 	let _resResizeWidgets = load.requireResource("interactorResources/resizeWidgets.html");
 	let _resViewWidget = load.requireResource("interactorResources/viewWidget.html");
 	let _resStyles = load.requireResource("interactorResources/styles.css");
+	
+	// First of all, insert CSS file
+	let cssNode = document.createElement("style");
+	cssNode.innerHTML = _resStyles;
+	$("head").append(cssNode);
 	
 	let Interactor = class Interactor {
 		constructor(abstractGraph, renderers, editor) {
