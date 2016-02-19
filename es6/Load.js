@@ -51,6 +51,12 @@ self.load = (function(self) {
 	var STATE_IMPORTING = 1;
 	var STATE_RAN = 2;
 	
+	var NFILENAME = 0;
+	var NSTATE = 1;
+	var NDEPS = 2;
+	var NSIZE = 3;
+	var NOBJ = 4;
+	
 	/** The functions that will be called when the given namespace is imported.
 	 * @type array
 	 * @private
@@ -198,11 +204,11 @@ self.load = (function(self) {
 		
 		//Set imported
 		if(name in _names) {
-			_names[name][1] = STATE_RAN;
+			_names[name][NSTATE] = STATE_RAN;
 		}
 		
 		//Set object
-		_names[name][4] = pack;
+		_names[name][NOBJ] = pack;
 		
 		//Seal objects
 		if(pack && (!("noSeal" in options) || !options.noSeal)) {
@@ -252,9 +258,9 @@ self.load = (function(self) {
 		
 		for(var i = provided.length-1; i >= 0; i--) {
 			if(!_names[provided[i]]
-			|| (_names[provided[i]][1] == STATE_NONE &&
-				(!(_names[provided[i]][0] in _files) || provided.length > _files[_names[provided[i]][0]][0].length))
-			|| (_names[provided[i]][1] == STATE_NONE && size < _names[provided[i]][3])
+			|| (_names[provided[i]][NSTATE] == STATE_NONE &&
+				(!(_names[provided[i]][NFILENAME] in _files) || provided.length > _files[_names[provided[i]][0]][0].length))
+			|| (_names[provided[i]][NSTATE] == STATE_NONE && size < _names[provided[i]][NSIZE])
 			){
 				_names[provided[i]] = [file, STATE_NONE, required, size, undefined, []];
 			}
@@ -286,7 +292,7 @@ self.load = (function(self) {
 		if(name.charAt(0) == ">") name = name.substring(1);
 		
 		if(onReady) {
-			if(name in _names && _names[name][1] == STATE_IMPORTING) {
+			if(name in _names && _names[name][NSTATE] == STATE_IMPORTING) {
 				onReady(load.require(name));
 			}else{
 				if(!(name in _readies)) _readies[name] = [];
@@ -295,7 +301,7 @@ self.load = (function(self) {
 		}
 		
 		if(name in _names) {
-			return _names[name][4];
+			return _names[name][NOBJ];
 		}
 	};
 	
@@ -321,7 +327,7 @@ self.load = (function(self) {
 		}else{
 			if(name.charAt(0) == ">") name = name.substring(1);
 			
-			return _names[name][4];
+			return _names[name][NOBJ];
 		}
 	};
 	
@@ -348,7 +354,7 @@ self.load = (function(self) {
 			}else{
 				if(name.charAt(0) == ">") name = name.substring(1);
 				
-				return fulfill(_names[name][4]);
+				return fulfill(_names[name][NOBJ]);
 			}
 		});
 	};
@@ -461,18 +467,18 @@ self.load = (function(self) {
 			throw new load.DependencyError(pack + " required but not found.");
 			return;
 		}
-		if(_names[pack][1] !== STATE_NONE) return;
+		if(_names[pack][NSTATE] !== STATE_NONE) return;
 		
 		_importSet.push(pack);
 		var p = _names[pack];
 		
-		for(var i = 0; i < p[2].length; i ++) {
-			if(p[2][i].charAt(0) == ">") {
-				_addToImportSet(p[2][i].substring(1));
+		for(var i = 0; i < p[NDEPS].length; i ++) {
+			if(p[NDEPS][i].charAt(0) == ">") {
+				_addToImportSet(p[NDEPS][i].substring(1));
 			}else if(p[2][i].charAt(0) == "@") {
-				_importSet.push(p[2][i]);
+				_importSet.push(p[NDEPS][i]);
 			}else{
-				_addToImportSet(p[2][i]);
+				_addToImportSet(p[NDEPS][i]);
 			}
 		}
 		
@@ -504,27 +510,27 @@ self.load = (function(self) {
 			var now = _names[_importSet[i]];
 			
 			var okay = true;
-			for(var d = 0; d < now[2].length; d ++) {
-				if(now[2][d].charAt(0) == ">") {
+			for(var d = 0; d < now[NDEPS].length; d ++) {
+				if(now[NDEPS][d].charAt(0) == ">") {
 					//Okay
-				}else if(now[2][d].charAt(0) == "@") {
+				}else if(now[NDEPS][d].charAt(0) == "@") {
 					//Also Okay
-				}else if(!(now[2][d] in _names)) {
-					console.warn(now[0] + " depends on "+now[2][d]+", which is not available.");
+				}else if(!(now[NDEPS][d] in _names)) {
+					console.warn(now[NFILENAME] + " depends on "+now[NDEPS][d]+", which is not available.");
 					okay = false;
 					break;
-				}else if(_names[now[2][d]][1] < STATE_RAN) {
+				}else if(_names[now[NDEPS][d]][NSTATE] < STATE_RAN) {
 					// Check if they are from the same file
-					if(_names[now[2][d]][0] != now[0]) {
+					if(_names[now[NDEPS][d]][NFILENAME] != now[NFILENAME]) {
 						okay = false;
-						if(trace) console.log(now[0] +" blocked by "+_names[now[2][d]][0]);
+						if(trace) console.log(now[NFILENAME] +" blocked by "+_names[now[NDEPS][d]][NFILENAME]);
 						break;
 					}
 				}
 			}
 			
 			if(okay) {
-				if(now[1] == 0) _packagesToImport.push(_importSet[i]);
+				if(now[NSTATE] == STATE_NONE) _packagesToImport.push(_importSet[i]);
 				_importSet.splice(i, 1);
 				i --;
 			}
@@ -537,7 +543,7 @@ self.load = (function(self) {
 			if(_packagesToImport[i].charAt(0) == "@") {
 				_doImportFile(_packagesToImport[i]);
 			}else{
-				_doImportFile(_names[_packagesToImport[i]][0]);
+				_doImportFile(_names[_packagesToImport[i]][NFILENAME]);
 			}
 		}
 	}
@@ -560,7 +566,7 @@ self.load = (function(self) {
 		f[2] = true;
 		
 		for(var i = 0; i < f[0].length; i ++) {
-			_names[f[0][i]][1] = STATE_IMPORTING;
+			_names[f[0][i]][NSTATE] = STATE_IMPORTING;
 		}
 		
 		if(!("document" in self) && !("window" in self)) {
