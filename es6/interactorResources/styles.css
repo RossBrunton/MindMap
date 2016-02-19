@@ -121,6 +121,25 @@
     padding:5px;
 }
 
+.mm-edit-help-content .left {
+    float:left;
+    width:60%
+}
+
+.mm-edit-help-content .right {
+    float:right;
+    width:40%;
+}
+
+.mm-edit-help-content ul {
+    list-style-type: none;
+    padding:3px;
+}
+
+.mm-edit-help-content li {
+    margin-bottom:10px;
+}
+
 /* Hide editor bits */
 .mm-root .link-tools {
     visibility:hidden;
