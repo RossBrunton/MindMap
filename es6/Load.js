@@ -47,6 +47,10 @@ self.load = (function(self) {
 	 */
 	var _names = {};
 	
+	var STATE_NONE = 0;
+	var STATE_IMPORTING = 1;
+	var STATE_RAN = 2;
+	
 	/** The functions that will be called when the given namespace is imported.
 	 * @type array
 	 * @private
@@ -194,7 +198,7 @@ self.load = (function(self) {
 		
 		//Set imported
 		if(name in _names) {
-			_names[name][1] = 2;
+			_names[name][1] = STATE_RAN;
 		}
 		
 		//Set object
@@ -248,11 +252,11 @@ self.load = (function(self) {
 		
 		for(var i = provided.length-1; i >= 0; i--) {
 			if(!_names[provided[i]]
-			|| (_names[provided[i]][1] == 0 &&
+			|| (_names[provided[i]][1] == STATE_NONE &&
 				(!(_names[provided[i]][0] in _files) || provided.length > _files[_names[provided[i]][0]][0].length))
-			|| (_names[provided[i]][1] == 0 && size < _names[provided[i]][3])
+			|| (_names[provided[i]][1] == STATE_NONE && size < _names[provided[i]][3])
 			){
-				_names[provided[i]] = [file, 0, required, size, undefined, []];
+				_names[provided[i]] = [file, STATE_NONE, required, size, undefined, []];
 			}
 		}
 		
@@ -282,7 +286,7 @@ self.load = (function(self) {
 		if(name.charAt(0) == ">") name = name.substring(1);
 		
 		if(onReady) {
-			if(name in _names && _names[name][1] == 2) {
+			if(name in _names && _names[name][1] == STATE_IMPORTING) {
 				onReady(load.require(name));
 			}else{
 				if(!(name in _readies)) _readies[name] = [];
@@ -457,7 +461,7 @@ self.load = (function(self) {
 			throw new load.DependencyError(pack + " required but not found.");
 			return;
 		}
-		if(_names[pack][1] !== 0) return;
+		if(_names[pack][1] !== STATE_NONE) return;
 		
 		_importSet.push(pack);
 		var p = _names[pack];
@@ -509,7 +513,7 @@ self.load = (function(self) {
 					console.warn(now[0] + " depends on "+now[2][d]+", which is not available.");
 					okay = false;
 					break;
-				}else if(_names[now[2][d]][1] < 2) {
+				}else if(_names[now[2][d]][1] < STATE_RAN) {
 					// Check if they are from the same file
 					if(_names[now[2][d]][0] != now[0]) {
 						okay = false;
@@ -556,7 +560,7 @@ self.load = (function(self) {
 		f[2] = true;
 		
 		for(var i = 0; i < f[0].length; i ++) {
-			_names[f[0][i]][1] = 1;
+			_names[f[0][i]][1] = STATE_IMPORTING;
 		}
 		
 		if(!("document" in self) && !("window" in self)) {
@@ -585,7 +589,7 @@ self.load = (function(self) {
 	 * @since 0.0.20-alpha
 	 */
 	load.isImported = function(name) {
-		if(name in _names && _names[name][1] == 2) {
+		if(name in _names && _names[name][1] == STATE_RAN) {
 			return true;
 		}
 		
