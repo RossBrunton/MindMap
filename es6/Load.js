@@ -37,7 +37,8 @@ self.load = (function(self) {
 	 *  the second is a state value, as shown below, 
 	 *  the third is an array of all the dependancies of the namespace,
 	 *  the fourth is the size of the file
-	 *  and the fifth is the thing that was provided.
+	 *  the fifth is the thing that was provided,
+	 *  and the sixth is whether it is a script package or a resource
 	 * 
 	 * Possible values for the state are either 0 (not imported), 
 	 *  1 (currently in the proccess of importing) or 2 (successfully imported and ran).
@@ -56,6 +57,10 @@ self.load = (function(self) {
 	var NDEPS = 2;
 	var NSIZE = 3;
 	var NOBJ = 4;
+	var NTYPE = 5;
+	
+	var TYPE_PACK = 0;
+	var TYPE_RES = 1;
 	
 	/** The functions that will be called when the given namespace is imported.
 	 * @type array
@@ -253,7 +258,7 @@ self.load = (function(self) {
 	 * @param {integer=0} size The size of the file, in bytes. Optional.
 	 * @since 0.0.12-alpha
 	 */
-	load.addDependency = function(file, provided, required, size) {
+	load.addDependency = function(file, provided, required, size, type) {
 		if(!size) size = 0;
 		
 		for(var i = provided.length-1; i >= 0; i--) {
@@ -262,7 +267,7 @@ self.load = (function(self) {
 				(!(_names[provided[i]][NFILENAME] in _files) || provided.length > _files[_names[provided[i]][0]][0].length))
 			|| (_names[provided[i]][NSTATE] == STATE_NONE && size < _names[provided[i]][NSIZE])
 			){
-				_names[provided[i]] = [file, STATE_NONE, required, size, undefined, []];
+				_names[provided[i]] = [file, STATE_NONE, required, size, undefined, type];
 			}
 		}
 		
@@ -431,7 +436,7 @@ self.load = (function(self) {
 					var deps = data.packages;
 					for(var i = deps.length-1; i >= 0; i--) {
 						if(deps[i][0].indexOf(":") === -1 && deps[i][0][0] != "/") deps[i][0] = absolutePath+deps[i][0];
-						load.addDependency(deps[i][0], deps[i][1], deps[i][2], deps[i][3]);
+						load.addDependency(deps[i][0], deps[i][1], deps[i][2], deps[i][3], TYPE_PACK);
 					}
 					
 					if("dependencies" in data) {
@@ -457,6 +462,7 @@ self.load = (function(self) {
 
 	/** Given a package, if it has not been imported, it is added to `{@link load._importSet}` and this function is
 	 *  called on all its dependancies.
+     * 
 	 * @param {string} pack The package to add to the import set.
 	 * @private
 	 * @since 0.0.21-alpha
@@ -541,44 +547,47 @@ self.load = (function(self) {
 		
 		for(var i = _packagesToImport.length-1; i >= 0; i --) {
 			if(_packagesToImport[i].charAt(0) == "@") {
-				_doImportFile(_packagesToImport[i]);
+				_doImportFile(_packagesToImport[i], TYPE_PACK);
 			}else{
-				_doImportFile(_names[_packagesToImport[i]][NFILENAME]);
+				_doImportFile(_names[_packagesToImport[i]][NFILENAME], _names[_packagesToImport[i]][NTYPE]);
 			}
 		}
 	}
 	
 	/** Adds the file to the HTML documents head in a script tag, actually importing the file.
 	 * @param {string} file The file to add. If it starts with "@" that character is stripped.
+	 * @param {int} type The type of the file; is it a resource (TYPE_RES) or package (TYPE_PACK).
 	 * @private
 	 * @since 0.0.21-alpha
 	 */
-	var _doImportFile = function(file) {
-		if(file.charAt(0) == "@") file = file.substring(1);
-		
-		if(!(file in _files)) {
-			_files[file] = [[], [], false];
-		}
-		
-		var f = _files[file];
-		
-		if(f[2]) return;
-		f[2] = true;
-		
-		for(var i = 0; i < f[0].length; i ++) {
-			_names[f[0][i]][NSTATE] = STATE_IMPORTING;
-		}
-		
-		if(!("document" in self) && !("window" in self)) {
-			importScripts(file);
-		}else{
-			var js = document.createElement("script");
-			js.src = file;
-			js.async = true;
-			js.addEventListener("error", function(e) {
-				throw new load.ImportError(file+" failed to import.");
-			});
-			document.head.appendChild(js);
+	var _doImportFile = function(file, type) {
+		if(type == TYPE_PACK) {
+			if(file.charAt(0) == "@") file = file.substring(1);
+			
+			if(!(file in _files)) {
+				_files[file] = [[], [], false];
+			}
+			
+			var f = _files[file];
+			
+			if(f[2]) return;
+			f[2] = true;
+			
+			for(var i = 0; i < f[0].length; i ++) {
+				_names[f[0][i]][NSTATE] = STATE_IMPORTING;
+			}
+			
+			if(!("document" in self) && !("window" in self)) {
+				importScripts(file);
+			}else{
+				var js = document.createElement("script");
+				js.src = file;
+				js.async = true;
+				js.addEventListener("error", function(e) {
+					throw new load.ImportError(file+" failed to import.");
+				});
+				document.head.appendChild(js);
+			}
 		}
 	};
 	
@@ -693,5 +702,5 @@ self.load = (function(self) {
 	return load;
 })(self);
 
-load.addDependency("", ["load"], []);
+load.addDependency("", ["load"], [], 0);
 load.provide("load", load);
