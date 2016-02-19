@@ -149,11 +149,11 @@ self.load = (function(self) {
 		 * @private
 		 */
 		var _workCounter = 0;
-        
-        /** A map from work ids to their promise fulfill functions.
-         * @type Map<integer, function(*)>
-         * @private
-         */
+		
+		/** A map from work ids to their promise fulfill functions.
+		 * @type Map<integer, function(*)>
+		 * @private
+		 */
 		var _workPromises = new Map();
 		
 		// Create workers
@@ -310,6 +310,16 @@ self.load = (function(self) {
 		}
 	};
 	
+	/** Marks the current file as requiring the specified resource as a dependency.
+	 * 
+	 * @param {string} name The path to the file to add.
+	 * @return {string} The string content of that resource.
+	 * @since 0.0.15-alpha
+	 */
+	load.requireResource = function(name) {
+		return load.require(name);
+	};
+	
 	/** Identical to `{@link load.require}` in operation, but the package won't be downloaded automatically.
 	 * 
 	 * @param {string} name The namespace to add as a dependency.
@@ -435,9 +445,27 @@ self.load = (function(self) {
 					
 					var deps = data.packages;
 					for(var i = deps.length-1; i >= 0; i--) {
+						var now = deps[i]
+						
 						if(deps[i][0].indexOf(":") === -1 && deps[i][0][0] != "/") deps[i][0] = absolutePath+deps[i][0];
-						load.addDependency(deps[i][0], deps[i][1], deps[i][2], deps[i][3], TYPE_PACK);
+						
+						var dlist = now[2];
+						if(now.length > 4) dlist = dlist.concat(now[4]);
+						load.addDependency(now[0], now[1], dlist, now[3], TYPE_PACK);
+						
+						if(now.length > 4) {
+							for(var j = now[4].length-1; j >= 0; j--) {
+								// Convert to absolute paths
+								var fpath = now[4][j]
+								if(fpath.indexOf(":") === -1 && fpath[0] != "/") {
+									fpath = absolutePath + now[4][j];
+								}
+								load.addDependency(fpath, [now[4][j]], [], 0, TYPE_RES);
+							}
+						}
 					}
+					
+					console.log(_names);
 					
 					if("dependencies" in data) {
 						return Promise.all(data.dependencies.map(function(e) {
@@ -462,7 +490,7 @@ self.load = (function(self) {
 
 	/** Given a package, if it has not been imported, it is added to `{@link load._importSet}` and this function is
 	 *  called on all its dependancies.
-     * 
+	 * 
 	 * @param {string} pack The package to add to the import set.
 	 * @private
 	 * @since 0.0.21-alpha
@@ -588,6 +616,33 @@ self.load = (function(self) {
 				});
 				document.head.appendChild(js);
 			}
+		}else{
+			var f = _files[file];
+			
+			for(var i = 0; i < f[0].length; i ++) {
+				_names[f[0][i]][NSTATE] = STATE_IMPORTING;
+			}
+			
+			var xhr = new XMLHttpRequest();
+		
+			xhr.onreadystatechange = function() {
+				if(xhr.readyState == 4 && xhr.status > 100 && xhr.status < 400) {
+					var content = xhr.response;
+					
+					for(var i = 0; i < f[0].length; i ++) {
+						_names[f[0][i]][NSTATE] = STATE_RAN;
+						_names[f[0][i]][NOBJ] = content;
+					}
+					
+					_tryImport();
+				}else if(xhr.readyState == 4) {
+					console.error("Error getting resource "+file+", "+xhr.statusText);
+				}
+			}
+			
+			xhr.open("GET", file, true);
+			xhr.responseType = "text";
+			xhr.send();
 		}
 	};
 	
@@ -628,7 +683,7 @@ self.load = (function(self) {
 	 */
 	load.submitWorkOrder = function(worker, order, transfer) {
 		if(load.worker) {
-            return new Promise(function(f, r) {
+			return new Promise(function(f, r) {
 				load.import(worker).then(function(pack) {
 					var data = pack(order);
 					f(data[0]);

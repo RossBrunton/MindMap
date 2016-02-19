@@ -25,6 +25,13 @@ load.provide("mm.Interactor", (function() {
 	cssNode.href = _dir + "styles.css";
 	$("head").append(cssNode);
 	
+	let _resEditWidget = load.requireResource("interactorResources/editWidget.html");
+	let _resDetailsPanel = load.requireResource("interactorResources/detailsPanel.html");
+	let _resEditHelp = load.requireResource("interactorResources/editHelp.html");
+	let _resResizeWidgets = load.requireResource("interactorResources/resizeWidgets.html");
+	let _resViewWidget = load.requireResource("interactorResources/viewWidget.html");
+	let _resStyles = load.requireResource("interactorResources/styles.css");
+	
 	let Interactor = class Interactor {
 		constructor(abstractGraph, renderers, editor) {
 			this._abstractGraph = abstractGraph;
@@ -66,23 +73,18 @@ load.provide("mm.Interactor", (function() {
 			console.log(`Canvas added: ${node}`);
 			
 			// Put the widget thing with the zoom things
-			let widgetHtml = await getfile(_dir + "viewWidget.html");
-			$(node).prepend(widgetHtml);
+			$(node).prepend(_resViewWidget);
 			
 			// And the details panel
-			let detailsHtml = await getfile(_dir + "detailsPanel.html");
-			$(node).prepend(detailsHtml);
+			$(node).prepend(_resDetailsPanel);
 			
 			// And maybe the edit and controls
 			if(this._editor) {
-				let editWidgetHtml = await getfile(_dir + "editWidget.html");
-				$(node).prepend(editWidgetHtml);
+				$(node).prepend(_resEditWidget);
 				
-				let editHelp = await getfile(_dir + "editHelp.html");
-				$(node).prepend(editHelp);
+				$(node).prepend(_resEditHelp);
 				
-				let resizeWidgets = await getfile(_dir + "resizeWidgets.html");
-				$(node).find(".mm-inner").prepend(resizeWidgets);
+				$(node).find(".mm-inner").prepend(_resResizeWidgets);
 			}
 			
 			for(let i of this._interactions) {
