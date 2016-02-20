@@ -1,6 +1,8 @@
 "use strict";
 
 load.provide("mm.utils.strf", (function() {
+	load.require("@libs/fecha.min.js");
+	
 	let _fns = {
 		link: (x, a, type) => {
 			if(type == "url") return `<a href='${encodeURI(x)}'>${x}</a>`;
