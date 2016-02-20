@@ -17,8 +17,20 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			
 			let svgNode = renderer.getSvgNode(node.id);
 			
+			let x = 0;
+			let y = 0;
+			
+			if(this._editor) $(svgNode).on("mousedown", (e) => {
+				x = node.x;
+				y = node.y;
+			});
+			
 			if(this._editor) $(svgNode).on("click", (e) => {
 				if(this._editingNode) return;
+				
+				// Check if the node was dragged
+				if(node.x != x || node.y != y) return;
+				
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
 				this._interactor.loadNodeDetails(node, renderer, true, true, true);
 				this._setEditing(node);
