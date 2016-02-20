@@ -1,9 +1,22 @@
 "use strict";
 
+load.provide("mm.structs.emptyGraph", (function() {
+	return {
+		"version":1,
+		"nodes":[],
+		"edges":[],
+		"canvas":{
+			"height":200,
+			"width":200,
+		}
+	};
+})());
+
 load.provide("mm.structs.AbstractGraph", (function() {
 	let TypesFile = load.require("mm.structs.TypesFile");
 	let ObjectsData = load.require("mm.structs.ObjectsData");
 	let getfile = load.require("mm.utils.getfile");
+	let emptyGraph = load.require("mm.structs.emptyGraph");
 	
 	/** This represents a graph. */
 	return class AbstractGraph {
@@ -44,16 +57,24 @@ load.provide("mm.structs.AbstractGraph", (function() {
 		 * @async
 		 */
 		async load() {
-			return Promise.all([
-				getfile(this._typesUrl),
-				getfile(this._objectsUrl)
-			]).then((contents) => {
-				this.types = new TypesFile(typeof contents[0] === "string"?JSON.parse(contents[0]):contents[0]);
-				this.objects =
-					new ObjectsData(typeof contents[1] === "string"?JSON.parse(contents[1]):contents[1], this.types);
+			if(this._objectsUrl) {
+				return Promise.all([
+					getfile(this._typesUrl),
+					getfile(this._objectsUrl)
+				]).then((contents) => {
+					this.types = new TypesFile(typeof contents[0] === "string"?JSON.parse(contents[0]):contents[0]);
+					this.objects =
+						new ObjectsData(typeof contents[1] === "string"?JSON.parse(contents[1]):contents[1], this.types);
+					
+					this.ready = true;
+				});
+			}else{
+				let typesf = await getfile(this._typesUrl);
 				
+				this.types = new TypesFile(typeof typesf === "string" ? JSON.parse(typesf) : typesf);
+				this.objects = new ObjectsData(emptyGraph, this.types);
 				this.ready = true;
-			});
+			}
 		}
 		
 		/** Deletes the node with the given id, and any edges that happen to link it.
