@@ -81,6 +81,28 @@ load.provide("mm.structs.ObjectNode", (function() {
 			if(this.type.name == newTypeName) return;
 			
 			this.type = this.type.getOtherType(newTypeName);
+			
+			// Now update all the fields if needed
+			for(let f of this.type.fields) {
+				if(f.name in this.fields) continue;
+				
+				if(f.default) {
+					this.fields[f.name] = f.default;
+				}else{
+					switch(f.type) {
+						case "text":
+						case "blockText":
+						case "url":
+						case "email":
+							this.fields[f.name] = "";
+							break;
+							
+						case "date":
+							this.fields[f.name] = (new Date()).toJSON();
+							break
+					}
+				}
+			}
 		}
 	};
 })());
@@ -279,17 +301,21 @@ load.provide("mm.structs.ObjectsData", (function() {
 			
 			newNode.fields = {};
 			for(let f of type.fields) {
-				switch(f.type) {
-					case "text":
-					case "blockText":
-					case "url":
-					case "email":
-						newNode.fields[f.name] = `[${f.name}]`;
-						break;
-						
-					case "date":
-						newNode.fields[f.name] = (new Date()).toJSON();
-						break
+				if(f.default) {
+					newNode.fields[f.name] = f.default;
+				}else{
+					switch(f.type) {
+						case "text":
+						case "blockText":
+						case "url":
+						case "email":
+							newNode.fields[f.name] = "";
+							break;
+							
+						case "date":
+							newNode.fields[f.name] = (new Date()).toJSON();
+							break
+					}
 				}
 			}
 			

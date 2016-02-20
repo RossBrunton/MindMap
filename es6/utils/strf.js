@@ -39,6 +39,8 @@ load.provide("mm.utils.strf", (function() {
 				if(!f) return "(null)";
 				let v = node.fields[varname];
 				
+				if(v === undefined) return "(undefined)";
+				
 				return _fns[fn](v, arg, f.type);
 			}else{
 				let f = node.getFieldType(t);

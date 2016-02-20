@@ -25,9 +25,9 @@
 	}, {
 		"name": "test2",
 		"fields": [
-			["testfield", "text"]
+			["testfield", "text", "Hello"]
 		],
-		"nodeText": "!{name}!",
+		"nodeText": "!{testfield}!",
 		"nodeAttr": {
 			"rect":{
 				"fill":"#ffaaaa",
