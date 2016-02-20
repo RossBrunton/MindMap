@@ -84,7 +84,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			// Node adding
 			// ----
 			if(this._editor) $(node).on("dblclick", (e) => {
-				if(!e.target.classList[0] == "mm-background-grid") return;
+				if(e.target.classList[0] != "mm-background-grid") return;
 				let scale = renderer.getScale();
 				let [xo, yo] = renderer.getOffsets();
 				let [xm, ym] = this._interactor.getMousePos(e, node, renderer);
