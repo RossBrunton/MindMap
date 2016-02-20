@@ -90,21 +90,28 @@ load.provide("mm.textGen", (function() {
 		for(let x of node.type.fields) {
 			hold += `${x.name}: `;
 			
+			let v = node.fields[x.name];
+			if(v === undefined) v = "";
+			
 			switch(x.type) {
 				case "text":
-					hold += `<input type='text' name='${x.name}' value='${node.fields[x.name]}'/>`;
+					hold += `<input type='text' name='${x.name}' value='${v}'/>`;
 					break;
 				
 				case "url":
-					hold += `<input type='url' name='${x.name}' value='${node.fields[x.name]}'/>`;
+					hold += `<input type='url' name='${x.name}' value='${v}'/>`;
 					break;
 				
 				case "email":
-					hold += `<input type='email' name='${x.name}' value='${node.fields[x.name]}'/>`;
+					hold += `<input type='email' name='${x.name}' value='${v}'/>`;
 					break;
 				
 				case "blockText":
-					hold += `<br/><textarea name='${x.name}'>${node.fields[x.name]}</textarea>`;
+					hold += `<br/><textarea name='${x.name}'>${v}</textarea>`;
+					break;
+				
+				case "date":
+					hold += `<input type='date' name='${x.name}' value='${v.split("T")[0]}'/>`;
 					break;
 			}
 			
