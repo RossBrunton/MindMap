@@ -10,6 +10,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			
 			this._editingNode = null;
 			this._editingBackup = null;
+			this._changingType = false;
 		}
 		
 		async addNode(renderer, joint, node) {
@@ -32,7 +33,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				if(node.x != x || node.y != y) return;
 				
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
-				this._interactor.loadNodeDetails(node, renderer, true, true, true);
+				this._interactor.loadDetails(node, renderer, true, true, true, this._cancel.bind(this, renderer));
 				this._setEditing(node);
 				panel.find("input").first().focus();
 				e.preventDefault();
@@ -45,33 +46,16 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			// Edit and save buttons
 			// ----
 			$(node).find(".mm-details-edit-save").click((e) => {
-				this._interactor.hideDetailsPanel(renderer, true);
 				e.preventDefault();
 				this._editor.addToUndoStack("node_edit",
 					{id:this._editingNode.id, old:this._editingBackup, "new":this._editingNode.toJson()}
 				);
 				this._editingNode = null;
+				this._interactor.hideDetailsPanel(renderer, true);
 			});
 			
-			let cancel = () => {
-				if(!this._editingNode) return;
-				if($(node).find(".mm-details-panel").hasClass("edge")) return;
-				this._interactor.hideDetailsPanel(renderer, true);
-				
-				if(this._editingBackup.type != this._editingNode.type.name) {
-					this._editingNode.update(this._editingBackup);
-					this._interactor.rerender();
-				}else{
-					this._editingNode.update(this._editingBackup);
-					this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.nodeText(this._editingNode));
-				}
-				
-				this._editingNode = null;
-			};
-			
-			$(node).find(".mm-details-edit-close").click((e) => {cancel(), e.preventDefault()});
-			
-			$(node).on("click", (e) => {if(e.target.classList[0] == "mm-background-grid") cancel(e)});
+			$(node).find(".mm-details-edit-close").click((e) => {this._interactor.hideDetailsPanel(renderer, true); e.preventDefault()});
+			//$(node).on("click", (e) => {if(e.target.classList[0] == "mm-background-grid") cancel(e)});
 			
 			
 			// ----
@@ -103,7 +87,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				let newNode = this._abstractGraph.objects.makeNewNode(xm - xo/scale, ym - yo/scale);
 				this._interactor.rerender();
 				this._setEditing(newNode);
-				this._interactor.loadNodeDetails(this._nodes.get(newNode.id)[2], renderer, true, true);
+				this._interactor.loadDetails(this._nodes.get(newNode.id)[2], renderer, true, true, this._cancel.bind(this, renderer));
 				this._editor.addToUndoStack("node_add", {id:newNode.id, node:newNode.toJson()});
 			});
 			
@@ -113,7 +97,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				let newNode = this._abstractGraph.objects.makeNewNode(xm - 100 - xo/scale, ym + 50 - yo/scale);
 				this._interactor.rerender();
 				this._setEditing(newNode);
-				this._interactor.loadNodeDetails(this._nodes.get(newNode.id)[2], renderer, true, true);
+				this._interactor.loadDetails(this._nodes.get(newNode.id)[2], renderer, true, true, this._cancel.bind(this, renderer));
 				this._editor.addToUndoStack("node_add", {id:newNode.id, node:newNode.toJson()});
 			});
 			
@@ -137,8 +121,11 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				let oldTypeName = this._editingNode.type.name;
 				this._editingNode.update(update);
 				if(this._editingNode.type.name != oldTypeName) {
+					this._changingType = true;
 					this._interactor.rerender();
-					this._interactor.loadNodeDetails(this._editingNode, renderer, true, true, true);
+					this._interactor.loadDetails
+						(this._editingNode, renderer, true, true, true, this._cancel.bind(this, renderer));
+					this._changingType = false;
 				}else{
 					this._nodes.get(+editing)[1].attr("text/text", textGen.nodeText(this._nodes.get(+editing)[2]));
 				}
@@ -149,5 +136,23 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			this._editingNode = node;
 			this._editingBackup = node.toJson();
 		}
+		
+		_cancel(renderer) {
+			console.log("Cancel called "+this._changingType);
+			if(!this._editingNode) return;
+			if(this._changingType) return;
+			
+			//this._interactor.hideDetailsPanel(renderer, true);
+			
+			if(this._editingBackup.type != this._editingNode.type.name) {
+				this._editingNode.update(this._editingBackup);
+				this._interactor.rerender();
+			}else{
+				this._editingNode.update(this._editingBackup);
+				this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.nodeText(this._editingNode));
+			}
+			
+			this._editingNode = null;
+		};
 	};
 })());

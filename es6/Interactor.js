@@ -32,6 +32,7 @@ load.provide("mm.Interactor", (function() {
 			this._abstractGraph = abstractGraph;
 			this._renderers = renderers;
 			this._editor = editor;
+			this._detailsSwitch = null;
 			
 			renderers.forEach((r) => r.setInteractor(this));
 			
@@ -110,7 +111,7 @@ load.provide("mm.Interactor", (function() {
 			this.loadDetails(node, renderer, show, expand, force);
 		}
 		
-		loadDetails(object, renderer, show, expand, force) {
+		loadDetails(object, renderer, show, expand, force, handler) {
 			let panel = $(renderer.getRoot()).find(".mm-details-panel");
 			if(panel.hasClass("long") && !force) return;
 			
@@ -145,13 +146,22 @@ load.provide("mm.Interactor", (function() {
 				panel.addClass("long");
 			}
 			
+			if(this._detailsSwitch) this._detailsSwitch();
+			this._detailsSwitch = handler;
+			
 			panel.attr("data-id", object.id);
 		}
 		
 		hideDetailsPanel(rendererer, evenIfLong) {
 			let panel = $(rendererer.getRoot()).find(".mm-details-panel");
+			
+			if(panel.hasClass("long") && !evenIfLong) return;
+			
 			panel.addClass("hidden");
-			if(evenIfLong) panel.removeClass("long");
+			panel.removeClass("long");
+			
+			if(this._detailsSwitch) this._detailsSwitch();
+			this._detailsSwitch = null;
 		}
 	};
 	
