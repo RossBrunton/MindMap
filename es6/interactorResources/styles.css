@@ -155,8 +155,18 @@
 }
 
 /* Resize Widgets */
+.mm-resize-container-hor {
+    position: absolute;
+    left: 50%;
+}
+
+.mm-resize-container-ver {
+    position: absolute;
+    top: 50%;
+}
+
 .mm-resize {
-    position:absolute;
+    position:relative;
     overflow:hidden;
     top:inherit;
     left:inherit;
@@ -164,20 +174,26 @@
 
 .mm-resize-top {
     top:3px;
-    left:50%;
+    left:-50%;
 }
 
 .mm-resize-bottom {
+    left:-50%;
+}
+
+.mm-resize-bottom-cont {
     bottom:3px;
-    left:50%;
 }
 
 .mm-resize-left {
     left:3px;
-    top:50%;
+    top:-50%;
 }
 
 .mm-resize-right {
+    top:-50%;
+}
+
+.mm-resize-right-cont {
     right:3px;
-    top:50%;
 }
