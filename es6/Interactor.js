@@ -88,6 +88,7 @@ load.provide("mm.Interactor", (function() {
 		}
 		
 		rerender() {
+			this._interactions.forEach((i) => i.clean());
 			this._renderers.forEach((r) => r.rerender(this._abstractGraph.objects));
 		}
 		

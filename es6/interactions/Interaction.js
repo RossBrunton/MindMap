@@ -77,6 +77,14 @@ load.provide("mm.interactions.Interaction", (function() {
 			// Pass
 		}
 		
+		/** Called by the Interactor when it is being rerendered, asking the Interaction to delete all the nodes and
+		 * edges it knows about.
+		 */
+		clean() {
+			this._edges = new Map();
+			this._nodes = new Map();
+		}
+		
 		/** Iterates through all the edges of the given iterator
 		 * 
 		 * @param {mm.Renderer} renderer The renderer that added the edges.
