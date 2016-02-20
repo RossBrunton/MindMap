@@ -183,10 +183,14 @@ load.provide("mm.structs.ObjectCanvas", (function() {
 	 *  purpose as the source object file.
 	 * 
 	 * @param {object} object The "canvas" object from the objects file.
+	 * @param {function(int, int)} translateFn A function that takes an x,y pair and translates everything by that
+	 *  value, called when space is added at the top.
 	 */
 	return class ObjectCanvas {
-		constructor(object) {
+		constructor(object, translateFn) {
 			for(let x of ["width", "height", "offsetX", "offsetY"]) this[x] = object[x];
+			
+			this._translateFn = translateFn;
 		}
 	
 		/** Adds the given amount of pixels to the top of the document
@@ -197,7 +201,7 @@ load.provide("mm.structs.ObjectCanvas", (function() {
 		 */
 		addTop(n) {
 			this.height += n;
-			this.offsetY += n;
+			this._translateFn(0, n);
 		}
 		
 		/** Adds the given amount of pixels to the left of the document
@@ -208,7 +212,7 @@ load.provide("mm.structs.ObjectCanvas", (function() {
 		 */
 		addLeft(n) {
 			this.width += n;
-			this.offsetX += n;
+			this._translateFn(n, 0);
 		}
 		
 		/** Adds the given amount of pixels to the right of the document
@@ -271,7 +275,7 @@ load.provide("mm.structs.ObjectsData", (function() {
 			 * 
 			 * @type array<mm.structs.ObjectCanvas>
 			 */
-			this.canvas = new ObjectCanvas(object.canvas);
+			this.canvas = new ObjectCanvas(object.canvas, this.translate.bind(this));
 			
 			// Todo: Editor part
 		}
@@ -358,6 +362,22 @@ load.provide("mm.structs.ObjectsData", (function() {
 		 */
 		removeEdge(id) {
 			this.edges = this.edges.filter((n) => n.id != id);
+		}
+		
+		/** For every node in the diagram, moves it by (x, y). For every edge, move all its points by (x, y)
+		 * 
+		 * @param {int} x The x coordinate to translate.
+		 * @param {int} y The y coordinate to translate.
+		 */
+		translate(x, y) {
+			for(let n of this.nodes) {
+				n.x += x;
+				n.y += y;
+			}
+			
+			for(let e of this.edges) {
+				e.points = e.points.map(([px, py]) => [px + x, py + y]);
+			}
 		}
 	};
 })());

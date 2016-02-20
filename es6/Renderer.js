@@ -96,7 +96,7 @@ load.provide("mm.Renderer", (function() {
 			this._height = objects.canvas.height;
 			this._paper.setDimensions(objects.canvas.width * this._scale, objects.canvas.height * this._scale);
 			[this._offsetX, this._offsetY] = [objects.canvas.offsetX, objects.canvas.offsetY];
-			this._paper.setOrigin(objects.canvas.offsetX, objects.canvas.offsetY);
+			//this._paper.setOrigin(objects.canvas.offsetX, objects.canvas.offsetY);
 			this._graph.clear();
 			
 			for(let n of objects.nodes) {
