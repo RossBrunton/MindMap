@@ -82,9 +82,8 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			if(this._editor) $(node).on("dblclick", (e) => {
 				if(e.target.classList[0] != "mm-background-grid") return;
 				let scale = renderer.getScale();
-				let [xo, yo] = renderer.getOffsets();
 				let [xm, ym] = this._interactor.getMousePos(e, node, renderer);
-				let newNode = this._abstractGraph.objects.makeNewNode(xm - xo/scale, ym - yo/scale);
+				let newNode = this._abstractGraph.objects.makeNewNode(xm, ym);
 				this._interactor.rerender();
 				this._setEditing(newNode);
 				this._interactor.loadDetails(this._nodes.get(newNode.id)[2], renderer, true, true, this._cancel.bind(this, renderer));
@@ -92,9 +91,8 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			});
 			
 			if(this._editor) $(node).find(".mm-create-button").on("click", (e) => {
-				let [xo, yo] = renderer.getOffsets();
 				let [xm, ym] = this._interactor.getMousePos(e, node, renderer);
-				let newNode = this._abstractGraph.objects.makeNewNode(xm - 100 - xo/scale, ym + 50 - yo/scale);
+				let newNode = this._abstractGraph.objects.makeNewNode(xm - 100, ym + 50);
 				this._interactor.rerender();
 				this._setEditing(newNode);
 				this._interactor.loadDetails(this._nodes.get(newNode.id)[2], renderer, true, true, this._cancel.bind(this, renderer));

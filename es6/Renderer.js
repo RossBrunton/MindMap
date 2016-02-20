@@ -75,9 +75,6 @@ load.provide("mm.Renderer", (function() {
 			this._width = 0;
 			this._height = 0;
 			
-			this._offsetX = 0;
-			this._offsetY = 0;
-			
 			this._editor = editor;
 			
 			this._nodeIds = new Map();
@@ -95,8 +92,6 @@ load.provide("mm.Renderer", (function() {
 			this._width = objects.canvas.width;
 			this._height = objects.canvas.height;
 			this._paper.setDimensions(objects.canvas.width * this._scale, objects.canvas.height * this._scale);
-			[this._offsetX, this._offsetY] = [objects.canvas.offsetX, objects.canvas.offsetY];
-			//this._paper.setOrigin(objects.canvas.offsetX, objects.canvas.offsetY);
 			this._graph.clear();
 			
 			for(let n of objects.nodes) {
@@ -210,14 +205,6 @@ load.provide("mm.Renderer", (function() {
 		scale(scale) {
 			this._paper.scale(scale, scale);
 			this._paper.setDimensions(this._width*scale, this._height * scale);
-		}
-		
-		/** Returns the offsets of the currently rendered diagram
-		 * 
-		 * @return {array<integer>} An x,y offset pair.
-		 */
-		getOffsets() {
-			return [this._offsetX, this._offsetY];
 		}
 		
 		/** Returns the root node for this renderer
