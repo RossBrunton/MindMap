@@ -64,6 +64,9 @@ load.provide("mm.structs.TypesFile", (function() {
 		constructor(object) {
 			this.version = object.version;
 			
+			this.defaultType = object.defaultType;
+			this.defaultArrowType = object.defaultArrowType;
+			
 			this.types = object.types.map((x) => new NodeType(x, this));
 			this.arrowTypes = object.arrows.map((x) => new ArrowType(x, this));
 		}
@@ -81,10 +84,18 @@ load.provide("mm.structs.TypesFile", (function() {
 			return null;
 		}
 		
+		/** Returns the default node type.
+		 * 
+		 * @return {mm.structs.NodeType} The default node type.
+		 */
+		getDefaultNodeType() {
+			return this.getNodeType(this.defaultType);
+		}
+		
 		/** Returns the arrow type with the given name.
 		 * 
 		 * @param {string} The name to look up.
-		 * @return {mm.structs.NodeType?} The arrow type, or null if it wasn't found.
+		 * @return {mm.structs.ArrowType?} The arrow type, or null if it wasn't found.
 		 */
 		getArrowType(name) {
 			for(let t of this.arrowTypes) {
@@ -92,6 +103,14 @@ load.provide("mm.structs.TypesFile", (function() {
 			}
 			
 			return null;
+		}
+		
+		/** Returns the default arrow type.
+		 * 
+		 * @return {mm.structs.ArrowType} The default arrow type.
+		 */
+		getDefaultArrowType() {
+			return this.getArrowType(this.defaultArrowType);
 		}
 	};
 })());

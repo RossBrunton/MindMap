@@ -1,5 +1,6 @@
 {
 	"version": 1,
+	"defaultType":"test2",
 	"types": [{
 		"name": "test",
 		"fields": [

@@ -267,8 +267,7 @@ load.provide("mm.structs.ObjectsData", (function() {
 				}
 			}
 			
-			// TODO: Improve selection
-			let type = this.types.types[0];
+			let type = this.types.getDefaultNodeType();
 			
 			let newNode = {};
 			
