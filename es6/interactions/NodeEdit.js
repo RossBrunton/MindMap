@@ -64,12 +64,11 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			$(node).find(".mm-details-edit-delete").click((e) => {
 				if($(node).find(".mm-details-panel").hasClass("edge")) return;
 				
-				this._interactor.hideDetailsPanel(renderer, true);
 				e.preventDefault();
 				
 				let rec = this._abstractGraph.cascadingRemoveNode(this._editingNode.id);
 				this._editor.addToUndoStack("node_delete", {recover:rec});
-				
+				this._interactor.hideDetailsPanel(renderer, true);
 				this._interactor.rerender();
 				
 				this._editingNode = null;
