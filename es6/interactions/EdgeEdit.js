@@ -11,6 +11,7 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			this._editingEdge = null;
 			this._editingBackup = null;
 			this._changingType = false;
+			this._commit = false;
 		}
 		
 		async addEdge(renderer, joint, edge) {
@@ -34,11 +35,13 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			// Edit and save buttons
 			// ----
 			$(node).find(".mm-details-edit-arrow-save").click((e) => {
-				this._interactor.hideDetailsPanel(renderer, true);
 				e.preventDefault();
 				this._editor.addToUndoStack("edge_edit",
 					{id:this._editingEdge.id, old:this._editingBackup, "new":this._editingEdge.toJson()}
 				);
+				this._commit = true;
+				this._interactor.hideDetailsPanel(renderer, true);
+				this._commit = false;
 				this._editingEdge = null;
 			});
 			
@@ -138,6 +141,7 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			console.log("Edge cancel called "+this._changingType);
 			if(!this._editingEdge) return;
 			if(this._changingType) return;
+			if(this._commit) return;
 			
 			if(this._editingBackup.type != this._editingEdge.type.name) {
 				this._editingEdge.update(this._editingBackup);
