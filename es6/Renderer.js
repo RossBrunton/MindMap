@@ -12,6 +12,35 @@ load.provide("mm.Renderer", (function() {
 	</div>
 </div>`;
 	
+	let node = joint.shapes.basic.Generic.extend({
+		markup: `<g class="rotatable">
+				
+				<g class="scalable"><rect/></g><text/><g class='outPorts'>
+					<circle class='mag mag-a' y-alignment='middle' magnet='true' ref='rect'/>
+				</g>
+			</g>
+		`,
+
+		defaults: joint.util.deepSupplement({
+			type:'basic.Rect',
+			attrs: {
+				'rect': {'follow-scale':true, width:100, height:30},
+				'text': {
+					'font-size':14,'ref-x':0.5,'ref-y':0.5, ref:'rect', 'y-alignment':'middle', 'x-alignment':'middle',
+					fill:"black"
+				},
+				'.outPorts circle': {
+					r:5,
+					fill:'#ff0000',
+					ref:'rect',
+					"ref-x":0.999,
+					"ref-y":0.5
+				}
+			}
+		}, joint.shapes.basic.Generic.prototype.defaults)
+	});
+	
+	
 	let _idCount = 1;
 	
 	/** This is given a HTML node (of type graph-display) and creates all the necessary HTML children and updates it 
@@ -95,10 +124,11 @@ load.provide("mm.Renderer", (function() {
 			this._graph.clear();
 			
 			for(let n of objects.nodes) {
-				let rect = new joint.shapes.basic.Rect({
+				let rect = new node({
 					position:{x:n.x * this._scale, y:n.y * this._scale},
+					attrs:n.type.nodeAttr,
+					outPorts: ["mag-a"],
 					size:{width:100, height:30},
-					attrs:n.type.nodeAttr
 				});
 				
 				rect.attr("text/text", textGen.nodeText(n));
@@ -187,7 +217,7 @@ load.provide("mm.Renderer", (function() {
 			rect.setAttribute("class", "mm-background-grid");
 			svg.insertBefore(rect, defs);
 			
-			this._interactor.addCanvas(this, this.node);
+			this._interactor.addCanvas(this, this.node, this._graph);
 			this.inited = true;
 		}
 		
@@ -232,6 +262,17 @@ load.provide("mm.Renderer", (function() {
 		 */
 		getNodeFromJoint(jid) {
 			for(let [id, v] of this._nodeIds) {
+				if(v.id == jid) return id;
+			}
+		}
+		
+		/** Returns the edge given by the JointJS ID
+		 * 
+		 * @param {string} jid The edge's JointJS ID.
+		 * @return {mm.structs.ObjectEdge} The graph edge.
+		 */
+		getEdgeFromJoint(jid) {
+			for(let [id, v] of this._edgeIds) {
 				if(v.id == jid) return id;
 			}
 		}

@@ -65,7 +65,7 @@ load.provide("mm.Interactor", (function() {
 			}
 		}
 		
-		async addCanvas(renderer, node) {
+		async addCanvas(renderer, node, graph) {
 			console.log(`Canvas added: ${node}`);
 			
 			// Put the widget thing with the zoom things
@@ -84,7 +84,7 @@ load.provide("mm.Interactor", (function() {
 			}
 			
 			for(let i of this._interactions) {
-				i.addCanvas(renderer, node);
+				i.addCanvas(renderer, node, graph);
 			}
 		}
 		

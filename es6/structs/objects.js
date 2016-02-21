@@ -280,7 +280,7 @@ load.provide("mm.structs.ObjectsData", (function() {
 			// Todo: Editor part
 		}
 		
-		/** Makes a brand new, "empty" node of an unspecified type
+		/** Makes a brand new, "empty" node of the default type
 		 * 
 		 * @param {int=0} x The x coordinate at which to place the node.
 		 * @param {int=0} y The y coordinate at which to place the node.
@@ -289,7 +289,7 @@ load.provide("mm.structs.ObjectsData", (function() {
 			let highest = 0;
 			for(let x of this.nodes) {
 				if(x.id >= highest) {
-					highest = x.id + highest;
+					highest = x.id + 1;
 				}
 			}
 			
@@ -354,6 +354,38 @@ load.provide("mm.structs.ObjectsData", (function() {
 		 */
 		getEdgesConnectedToNode(id) {
 			return this.edges.filter((e) => [e.origin, e.dest].includes(id));
+		}
+		
+		/** Makes a brand new, "empty" edge of the default type
+		 * 
+		 * @param {int} source The source of the node.
+		 * @param {int} dest The destination id of the node.
+		 */
+		makeNewEdge(source, dest) {
+			let highest = 0;
+			for(let x of this.edges) {
+				if(x.id >= highest) {
+					highest = x.id + 1;
+				}
+			}
+			
+			let type = this.types.getDefaultArrowType();
+			
+			let newEdge = {};
+			
+			newEdge.id = highest;
+			newEdge.type = type.name;
+			
+			newEdge.origin = source;
+			newEdge.dest = dest;
+			
+			newEdge.points = [];
+			
+			newEdge.text = "";
+			
+			let e = new ObjectEdge(newEdge, type);
+			this.edges.push(e);
+			return e;
 		}
 		
 		/** Removes the edge with the given id

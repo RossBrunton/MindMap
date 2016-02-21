@@ -1,6 +1,7 @@
 {
 	"version": 1,
 	"defaultType":"test2",
+	"defaultArrowType":"default",
 	"types": [{
 		"name": "test",
 		"fields": [

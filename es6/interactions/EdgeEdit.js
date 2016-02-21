@@ -29,7 +29,7 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			});
 		}
 		
-		async addCanvas(renderer, node) {
+		async addCanvas(renderer, node, graph) {
 			// ----
 			// Edit and save buttons
 			// ----
@@ -101,6 +101,30 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 					this._changingType = false;
 				}else{
 					this._edges.get(+editing)[1].label(0, {position:0.5, attrs:{text:{text:this._editingEdge.text}}});
+				}
+			});
+			
+			
+			// ----
+			// Adding new edges
+			// ----
+			/*graph.on("add", (e, i, o, u) => {
+				console.log(e, i, o, u);
+			});*/
+			
+			graph.on("change", (e, i, o, u) => {
+				if(i.updateConnectionOnly) return;
+				if(e.attributes.type != "link") return;
+				
+				if("id" in e.attributes.target) {
+					// Check if it's an edge we already know about
+					if(renderer.getEdgeFromJoint(e.id)) return;
+					
+					let t = renderer.getNodeFromJoint(e.attributes.target.id);
+					let s = renderer.getNodeFromJoint(e.attributes.source.id);
+					
+					let ne = this._abstractGraph.objects.makeNewEdge(s, t);
+					this._interactor.rerender();
 				}
 			});
 		}
