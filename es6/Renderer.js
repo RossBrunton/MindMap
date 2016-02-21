@@ -154,12 +154,13 @@ load.provide("mm.Renderer", (function() {
 				});
 				link.set("connector", {name:"smooth"});
 				link.attr(e.type.attr);
+				
 				this._graph.addCell(link);
 				this._edgeIds.set(e.id, link);
 				this._interactor.addEdge(this, link, e);
 				
 				// Text
-				if(e.text) {
+				if(e.text || this._editor) {
 					link.label(0, {
 						position: 0.5,
 						attrs: e.type.textAttr
