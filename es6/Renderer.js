@@ -167,6 +167,7 @@ load.provide("mm.Renderer", (function() {
 				interactive:this._editor,
 				snapLinks:true,
 				linkPinning:false,
+				perpendicularLinks:true
 			});
 			
 			// Now set the grid background
