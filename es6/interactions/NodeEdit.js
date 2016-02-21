@@ -124,7 +124,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 						(this._editingNode, renderer, true, true, true, this._cancel.bind(this, renderer));
 					this._changingType = false;
 				}else{
-					this._nodes.get(+editing)[1].attr("text/text", textGen.nodeText(this._nodes.get(+editing)[2]));
+					this._setText(textGen.nodeText(this._nodes.get(+editing)[2]));
 				}
 			});
 		}
@@ -146,10 +146,14 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				this._interactor.rerender();
 			}else{
 				this._editingNode.update(this._editingBackup);
-				this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.nodeText(this._editingNode));
+				this._setText(textGen.nodeText(this._editingNode));
 			}
 			
 			this._editingNode = null;
-		};
+		}
+		
+		_setText(text) {
+			this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.wrapText(text, 100));
+		}
 	};
 })());

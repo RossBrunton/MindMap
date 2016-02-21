@@ -124,6 +124,8 @@ load.provide("mm.Renderer", (function() {
 			this._graph.clear();
 			
 			for(let n of objects.nodes) {
+				let tts = textGen.wrapText(textGen.nodeText(n), 100);
+				
 				let rect = new node({
 					position:{x:n.x * this._scale, y:n.y * this._scale},
 					attrs:n.type.nodeAttr,
@@ -131,7 +133,7 @@ load.provide("mm.Renderer", (function() {
 					size:{width:100, height:30},
 				});
 				
-				rect.attr("text/text", textGen.nodeText(n));
+				rect.attr("text/text", tts);
 				
 				this._graph.addCell(rect);
 				this._nodeIds.set(n.id, rect);

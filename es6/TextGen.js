@@ -121,5 +121,20 @@ load.provide("mm.textGen", (function() {
 		return hold;
 	};
 	
+	/** Returns the first line of the text if it exceeds the specified width.
+	 * 
+	 * @param {string} str The string to break.
+	 * @param {int} size The width of the container
+	 * @return {string} The first line if it is too long.
+	 */
+	textGen.wrapText = function(str, size) {
+		size = {width:size};
+		let bt = joint.util.breakText;
+		
+		let lines = bt(str, size);
+		
+		return lines.split("\n")[0];
+	};
+	
 	return textGen;
 })());
