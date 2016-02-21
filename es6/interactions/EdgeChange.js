@@ -20,6 +20,7 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			$(svgEdge).on("mousedown", (e) => {
 				if(!Array.prototype.includes.call(e.target.classList, "marker-vertex")
 				&& !Array.prototype.includes.call(e.target.classList, "marker-arrowhead")
+				&& edge.points.length >= 1
 				) {
 					e.stopPropagation();
 				}
