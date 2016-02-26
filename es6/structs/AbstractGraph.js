@@ -1,6 +1,11 @@
 "use strict";
 
 load.provide("mm.structs.emptyGraph", (function() {
+	/** Just a simple, emtpy graph
+	 * 
+	 * For use when a graph is needed, but none is provided.
+	 * @type object
+	 */
 	return {
 		"version":1,
 		"nodes":[],

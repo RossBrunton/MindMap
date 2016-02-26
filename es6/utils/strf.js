@@ -3,6 +3,11 @@
 load.provide("mm.utils.strf", (function() {
 	load.require("@libs/fecha.min.js");
 	
+	/** An object containing all the functions used when formatting strings
+	 * 
+	 * @type object<string, function(string, ?string, string):string>
+	 * @private
+	 */
 	let _fns = {
 		link: (x, a, type) => {
 			if(type == "url") return `<a href='${encodeURI(x)}'>${x}</a>`;
@@ -68,6 +73,7 @@ load.provide("mm.utils.strf", (function() {
 		});
 	};
 	
+	// Testing. TODO: Remove this
 	window.strf = strf;
 	return strf;
 })());

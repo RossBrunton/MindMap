@@ -14,7 +14,7 @@ load.provide("mm.interactions.HoverView", (function() {
 			// ----
 			// Would love to have defined panel here to avoid copy-paste, but the node probably isn't added yet
 			$(svgNode).on("mousemove", (e) => {
-				this._interactor.loadNodeDetails(node, renderer, true);
+				this._interactor.loadDetails(node, renderer, true);
 			});
 			
 			$(svgNode).on("mouseout", (e) => {
@@ -24,7 +24,7 @@ load.provide("mm.interactions.HoverView", (function() {
 			$(svgNode).on("click", (e) => {
 				// We want the editor (if it is available) to handle this, because it has more sophisticated handling
 				if(this._editor) return;
-				this._interactor.loadNodeDetails(node, renderer, true, true, true);
+				this._interactor.loadDetails(node, renderer, true, true, true);
 			});
 		}
 		

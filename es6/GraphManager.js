@@ -55,6 +55,5 @@ load.provide("mm.graphManager", (function() {
 		}
 	}
 	
-	
 	return graphManager;
 })());

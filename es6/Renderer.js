@@ -4,7 +4,13 @@ load.provide("mm.Renderer", (function() {
 	let ObjectsData = load.require("mm.structs.ObjectsData");
 	let TypesFile = load.require("mm.structs.TypesFile");
 	let textGen = load.require("mm.textGen");
-
+	
+	/** The basic template to be inserted into the node when it is set up.
+	 * 
+	 * @const
+	 * @private
+	 * @type string
+	 */
 	const _TEMPLATE =
 `<div class='mm-inner'>
 	<div class='mm-paper'>
@@ -12,7 +18,13 @@ load.provide("mm.Renderer", (function() {
 	</div>
 </div>`;
 	
-	let node = joint.shapes.basic.Generic.extend({
+	/** The node type for nodes in the graph
+	 * 
+	 * Similar to a normal rectangle, only it adds a small circle for creating edges from.
+	 * @type joint.shape
+	 * @private
+	 */
+	let _node = joint.shapes.basic.Generic.extend({
 		markup: `<g class="rotatable">
 				
 				<g class="scalable"><rect/></g><text/><g class='outPorts'>
@@ -40,7 +52,12 @@ load.provide("mm.Renderer", (function() {
 		}, joint.shapes.basic.Generic.prototype.defaults)
 	});
 	
-	
+	/** The counter for new element ids
+	 * 
+	 * Increased every time a new element is set up, in order for each to have a unique number.
+	 * @type integer
+	 * @private
+	 */
 	let _idCount = 1;
 	
 	/** This is given a HTML node (of type graph-display) and creates all the necessary HTML children and updates it 
@@ -99,14 +116,47 @@ load.provide("mm.Renderer", (function() {
 			 */
 			this.inited = false;
 			
+			/** The scale of this graph
+			 * 
+			 * All locations of objects are multiplied by this amount.
+			 * @type float
+			 * @default 1.0
+			 * @private
+			 */
 			this._scale = 1.0;
 			
+			/** The width of the current diagram
+			 * 
+			 * @type int
+			 * @private
+			 */
 			this._width = 0;
+			/** The height of the current diagram
+			 * 
+			 * @type int
+			 * @private
+			 */
 			this._height = 0;
 			
+			/** The editor object
+			 * 
+			 * Null if editing is disabled.
+			 * @type ?dusk.Editor
+			 * @private
+			 */
 			this._editor = editor;
 			
+			/** A mapping of node ids to their respective jointjs nodes
+			 * 
+			 * @type Map<int, _node>
+			 * @private
+			 */
 			this._nodeIds = new Map();
+			/** A mapping of edge ids to their respective jointjs links
+			 * 
+			 * @type Map<int, joint.dia.Link>
+			 * @private
+			 */
 			this._edgeIds = new Map();
 		}
 		
@@ -126,7 +176,7 @@ load.provide("mm.Renderer", (function() {
 			for(let n of objects.nodes) {
 				let tts = textGen.wrapText(textGen.nodeText(n), 100);
 				
-				let rect = new node({
+				let rect = new _node({
 					position:{x:n.x * this._scale, y:n.y * this._scale},
 					attrs:n.type.nodeAttr,
 					outPorts: ["mag-a"],
@@ -289,10 +339,18 @@ load.provide("mm.Renderer", (function() {
 			return $(`[model-id="${this._edgeIds.get(id).id}"]`)[0];
 		}
 		
+		/** Sets the scale to display this diagram
+		 * 
+		 * @param {float} The new scale.
+		 */
 		setScale(scale) {
 			this._scale = scale;
 		}
 		
+		/** Returns the scale this diagram is being desplayed in
+		 * 
+		 * @return {float} The scale.
+		 */
 		getScale() {
 			return this._scale;
 		}

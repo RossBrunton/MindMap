@@ -27,15 +27,52 @@ load.provide("mm.Interactor", (function() {
 	cssNode.innerHTML = _resStyles;
 	$("head").append(cssNode);
 	
+	/** An interactor manages the interactions that a user can make with a graph
+	 * 
+	 * It connects with the renderers, and a list of "Interactions", and forms the glue that holds them together, as
+	 *  well as providing "general" access to features shared across all interactions, such as the details panel.
+	 * 
+	 * @param {mm.structs.AbstractGraph} abstractGraph The abstract graph for the current graph.
+	 * @param {array<mm.Renderer>} renderers An array of renderers that are rendering this graph.
+	 * @param {?mm.Editor} editor The editor for this graph. Null if editing is disabled.
+	 */
 	let Interactor = class Interactor {
 		constructor(abstractGraph, renderers, editor) {
+			/** The abstract graph being interacted with
+			 * @type mm.structs.AbstractGraph
+			 * @private
+			 */
 			this._abstractGraph = abstractGraph;
+			/** The array of renderers rendering this graph
+			 * @type mm.Renderer
+			 * @private
+			 */
 			this._renderers = renderers;
+			/** The editor (if editing is enabled, else null) editing this graph
+			 * @type mm.Editor
+			 * @private
+			 */
 			this._editor = editor;
+			
+			/** The handler function called when the details panel closes
+			 * 
+			 * Null if no such handler exists.
+			 * @type ?function()
+			 * @private
+			 */
 			this._detailsSwitch = null;
 			
+			// Tell the renderers of their interactor
 			renderers.forEach((r) => r.setInteractor(this));
 			
+			/** An array of all the interactions
+			 * 
+			 * To add an interaction, import it and add it to this list. Just be aware that the order is probably
+			 * important.
+			 * 
+			 * @type array<mm.interactions.Interaction>
+			 * @private
+			 */
 			this._interactions = [
 				new Pan(this, abstractGraph, editor),
 				new Zoom(this, abstractGraph, editor),
@@ -49,6 +86,14 @@ load.provide("mm.Interactor", (function() {
 			];
 		}
 		
+		/** Called by renderers when adding a new node
+		 * 
+		 * Passes the details onto interactions for them to handle.
+		 * @async
+		 * @param {mm.Renderer} renderer The renderer that added this node.
+		 * @param {mm.Renderer._node} object The jointjs node that was added.
+		 * @param {mm.structs.ObjectNode} node The (mindmap) node that was added.
+		 */
 		async addNode(renderer, object, node) {
 			console.log("Node added: %o for %o", object, node);
 			
@@ -57,6 +102,14 @@ load.provide("mm.Interactor", (function() {
 			}
 		}
 		
+		/** Called by renderers when adding a new edge
+		 * 
+		 * Passes the details onto interactions for them to handle.
+		 * @async
+		 * @param {mm.Renderer} renderer The renderer that added this edge.
+		 * @param {joint.dia.Link} object The jointjs link that was added.
+		 * @param {mm.structs.ObjectArrow} node The (mindmap) edge that was added.
+		 */
 		async addEdge(renderer, object, edge) {
 			console.log(`Edge added: ${edge}`);
 			
@@ -65,6 +118,14 @@ load.provide("mm.Interactor", (function() {
 			}
 		}
 		
+		/** Called by renderers when adding a new canvas
+		 * 
+		 * Passes the details onto interactions for them to handle.
+		 * @async
+		 * @param {mm.Renderer} renderer The renderer that added this canvas.
+		 * @param {HTMLElement} node The html node for this canvas, the outermost element (with .mm-root)
+		 * @param {joint.dia.Graph} graph The jointjs graph that was added.
+		 */
 		async addCanvas(renderer, node, graph) {
 			console.log(`Canvas added: ${node}`);
 			
@@ -88,16 +149,26 @@ load.provide("mm.Interactor", (function() {
 			}
 		}
 		
+		/** Causes all the renderers to redraw the graph, in case things have changed */
 		rerender() {
 			this._interactions.forEach((i) => i.clean());
 			this._renderers.forEach((r) => r.rerender(this._abstractGraph.objects));
 		}
 		
+		/** Causes the interactor to forget all the nodes and edges it knows about */
 		clear() {
 			this._nodes = new Map();
 			this._edges = [];
 		}
 		
+		/** Returns an [x, y] pair indicating where the mouse is on the given canvas
+		 * 
+		 * This takes into account scaling.
+		 * @param {object} e A jquery mouse event.
+		 * @param {HTMLElement} elem The element on which to check.
+		 * @param {mm.Renderer} renderer The renderer for that element.
+		 * @return {array<float>} The [x, y] location of the mouse.
+		 */
 		getMousePos(e, elem, renderer) {
 			let scale = renderer.getScale();
 			let hMargins = $(elem).find(".mm-inner").outerWidth() - $(elem).find(".mm-inner").innerWidth();
@@ -107,10 +178,18 @@ load.provide("mm.Interactor", (function() {
 					e.pageY + (-$(elem).find("svg").offset().top/* - $(elem).find(".mm-inner")[0].scrollTop*/)].map((x) => x / scale);
 		}
 		
-		loadNodeDetails(node, renderer, show, expand, force) {
-			this.loadDetails(node, renderer, show, expand, force);
-		}
-		
+		/** Loads information about a specific object into the details panel and displays it
+		 * 
+		 * Both nodes and edges are displayed using this function, the type is detected automatically.
+		 * 
+		 * @param {mm.structs.ObjectNode|mm.structs.ObjectEdge} object The object to display.
+		 * @param {mm.Renderer} renderer The renderer to load details with.
+		 * @param {boolean=false} show To show the panel.
+		 * @param {boolean=false} expand To expard the panel and show more information (for nodes).
+		 * @param {boolean=false} force If the panel is already loaded and is expanded, default is to not change it.
+		 *  This forces the change.
+		 * @param {?function()} handler Function to call when the panel is closed or changes to something else.
+		 */
 		loadDetails(object, renderer, show, expand, force, handler) {
 			let panel = $(renderer.getRoot()).find(".mm-details-panel");
 			if(panel.hasClass("long") && !force) return;
@@ -152,8 +231,14 @@ load.provide("mm.Interactor", (function() {
 			panel.attr("data-id", object.id);
 		}
 		
-		hideDetailsPanel(rendererer, evenIfLong) {
-			let panel = $(rendererer.getRoot()).find(".mm-details-panel");
+		/** Hides the details panel
+		 * 
+		 * @param {mm.Renderer} renderer The renderer on which to hide the panel.
+		 * @param {boolean=false} evenIfLong By default the panel isn't closed if it is expanded. This forces it to be
+		 *  closed even then.
+		 */
+		hideDetailsPanel(renderer, evenIfLong) {
+			let panel = $(renderer.getRoot()).find(".mm-details-panel");
 			
 			if(panel.hasClass("long") && !evenIfLong) return;
 			
