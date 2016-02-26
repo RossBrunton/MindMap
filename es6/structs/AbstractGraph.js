@@ -102,5 +102,16 @@ load.provide("mm.structs.AbstractGraph", (function() {
 			
 			return recovery;
 		}
+		
+		/** Returns an array of links where both ends are connected to a node in the given set.
+		 * 
+		 * @param {array<mm.structs.ObjectNode>} nodes The set of nodes to find edges for.
+		 * @return {array<mm.structs.ObjectEdge>} All edges connected between any nodes.
+		 */
+		connectedEdges(nodes) {
+			return this.objects.edges.filter((e) => 
+				nodes.some((n) => e.origin == n.id) && nodes.some((n) => e.dest == n.id)
+			);
+		}
 	};
 })());

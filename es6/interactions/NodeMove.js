@@ -20,6 +20,16 @@ load.provide("mm.interactions.NodeMove", (function() {
 						let sn = this._nodes.get(n.id)[1];
 						sn.translate(e.originalEvent.movementX, e.originalEvent.movementY);
 					}
+					
+					let edges = this._abstractGraph.connectedEdges(multiSel);
+					for(let ed of edges) {
+						let je = this._edges.get(ed.id)[1];
+						
+						je.set("vertices", je.get("vertices").map(function(o) {return {
+							x:o.x + e.originalEvent.movementX,
+							y:o.y + e.originalEvent.movementY
+						}}.bind(this)));
+					}
 				}
 			});
 			
