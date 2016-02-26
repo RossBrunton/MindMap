@@ -132,9 +132,6 @@ load.provide("mm.Interactor", (function() {
 			// Put the widget thing with the zoom things
 			$(node).prepend(_resViewWidget);
 			
-			// And the details panel
-			$(node).prepend(_resDetailsPanel);
-			
 			// And maybe the edit and controls
 			if(this._editor) {
 				$(node).prepend(_resEditWidget);
@@ -143,6 +140,9 @@ load.provide("mm.Interactor", (function() {
 				
 				$(node).find(".mm-inner").prepend(_resResizeWidgets);
 			}
+			
+			// And the details panel
+			$(node).append(_resDetailsPanel);
 			
 			for(let i of this._interactions) {
 				i.addCanvas(renderer, node, graph);
