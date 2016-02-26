@@ -273,6 +273,10 @@ load.provide("mm.Interactor", (function() {
 			this._updateMultiSel();
 		}
 		
+		countMultiSel() {
+			return this._multiSel.length;
+		}
+		
 		_updateMultiSel() {
 			console.log(this._multiSel);
 			

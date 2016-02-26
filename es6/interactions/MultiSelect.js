@@ -16,6 +16,8 @@ load.provide("mm.interactions.MultiSelect", (function() {
 					}else{
 						this._interactor.addToMultiSel(node);
 					}
+					
+					this._interactor.hideDetailsPanel(renderer, true);
 				}
 			});
 		}

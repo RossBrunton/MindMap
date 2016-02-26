@@ -28,9 +28,12 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			
 			if(this._editor) $(svgNode).on("click", (e) => {
 				if(this._editingNode) return;
+				if(e.shiftKey) return;
 				
 				// Check if the node was dragged
 				if(node.x != x || node.y != y) return;
+				
+				this._interactor.clearMultiSel();
 				
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
 				this._interactor.loadDetails(node, renderer, true, true, true, this._cancel.bind(this, renderer));
