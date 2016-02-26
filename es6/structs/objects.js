@@ -29,6 +29,15 @@ load.provide("mm.structs.ObjectNode", (function() {
 			return this.type.getFieldType(field);
 		}
 		
+		/** Adds the x and y oordinate to the location
+		 * @param {int} x The x coordinate.
+		 * @param {int} y The y coordinate.
+		 */
+		translate(x, y) {
+			this.x += x;
+			this.y += y;
+		}
+		
 		/** Updates the x and y locations of this node.
 		 * @param {int} x The x coordinate.
 		 * @param {int} y The y coordinate.

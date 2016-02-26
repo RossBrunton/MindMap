@@ -277,15 +277,16 @@ load.provide("mm.Interactor", (function() {
 			return this._multiSel.length;
 		}
 		
+		getMultiSel() {
+			return this._multiSel;
+		}
+		
 		_updateMultiSel() {
-			console.log(this._multiSel);
-			
 			for(let r of this._renderers) {
 				$(r.getRoot()).find(".mm-selected").each((i, n) => n.classList.remove("mm-selected"));
 				
 				for(let n of this._multiSel) {
 					r.getSvgNode(n.id).classList.add("mm-selected");
-					console.log(r.getSvgNode(n.id));
 				}
 			}
 		}
