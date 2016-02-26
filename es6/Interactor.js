@@ -14,6 +14,7 @@ load.provide("mm.Interactor", (function() {
 	let NodeEdit = load.require("mm.interactions.NodeEdit");
 	let EdgeEdit = load.require("mm.interactions.EdgeEdit");
 	let Resize = load.require("mm.interactions.Resize");
+	let MultiSelect = load.require("mm.interactions.MultiSelect");
 	
 	let _resEditWidget = load.requireResource("interactorResources/editWidget.html");
 	let _resDetailsPanel = load.requireResource("interactorResources/detailsPanel.html");
@@ -62,6 +63,8 @@ load.provide("mm.Interactor", (function() {
 			 */
 			this._detailsSwitch = null;
 			
+			this._multiSel = [];
+			
 			// Tell the renderers of their interactor
 			renderers.forEach((r) => r.setInteractor(this));
 			
@@ -82,7 +85,8 @@ load.provide("mm.Interactor", (function() {
 				new EdgeChange(this, abstractGraph, editor),
 				new NodeEdit(this, abstractGraph, editor),
 				new EdgeEdit(this, abstractGraph, editor),
-				new Resize(this, abstractGraph, editor)
+				new Resize(this, abstractGraph, editor),
+				new MultiSelect(this, abstractGraph, editor)
 			];
 		}
 		
@@ -247,6 +251,39 @@ load.provide("mm.Interactor", (function() {
 			
 			if(this._detailsSwitch) this._detailsSwitch();
 			this._detailsSwitch = null;
+		}
+		
+		addToMultiSel(node) {
+			if(this._multiSel.includes(node)) return;
+			this._multiSel.push(node);
+			this._updateMultiSel();
+		}
+		
+		inMultiSel(node) {
+			return this._multiSel.some((x) => x == node);
+		}
+		
+		removeFromMultiSel(node) {
+			this._multiSel = this._multiSel.filter((x) => x != node);
+			this._updateMultiSel();
+		}
+		
+		clearMultiSel() {
+			this._multiSel = [];
+			this._updateMultiSel();
+		}
+		
+		_updateMultiSel() {
+			console.log(this._multiSel);
+			
+			for(let r of this._renderers) {
+				$(r.getRoot()).find(".mm-selected").each((i, n) => n.classList.remove("mm-selected"));
+				
+				for(let n of this._multiSel) {
+					r.getSvgNode(n.id).classList.add("mm-selected");
+					console.log(r.getSvgNode(n.id));
+				}
+			}
 		}
 	};
 	

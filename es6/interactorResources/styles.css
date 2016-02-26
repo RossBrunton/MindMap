@@ -158,6 +158,12 @@
     visibility:hidden;
 }
 
+/* Multi select */
+.mm-root svg .mm-selected rect {
+    stroke:#ffcc00;
+    stroke-width:3;
+}
+
 /* Resize Widgets */
 .mm-resize-container-hor {
     position: absolute;
