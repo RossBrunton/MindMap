@@ -165,11 +165,11 @@ load.provide("mm.Interactor", (function() {
 		 * 
 		 * This takes into account scaling.
 		 * @param {object} e A jquery mouse event.
-		 * @param {HTMLElement} elem The element on which to check.
 		 * @param {mm.Renderer} renderer The renderer for that element.
 		 * @return {array<float>} The [x, y] location of the mouse.
 		 */
-		getMousePos(e, elem, renderer) {
+		getMousePos(e, renderer) {
+			let elem = renderer.getRoot();
 			let scale = renderer.getScale();
 			let hMargins = $(elem).find(".mm-inner").outerWidth() - $(elem).find(".mm-inner").innerWidth();
 			let vMargins = $(elem).find(".mm-inner").outerHeight() - $(elem).find(".mm-inner").innerHeight();

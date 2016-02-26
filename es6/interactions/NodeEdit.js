@@ -81,7 +81,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			if(this._editor) $(node).on("dblclick", (e) => {
 				if(e.target.classList[0] != "mm-background-grid") return;
 				let scale = renderer.getScale();
-				let [xm, ym] = this._interactor.getMousePos(e, node, renderer);
+				let [xm, ym] = this._interactor.getMousePos(e, renderer);
 				let newNode = this._abstractGraph.objects.makeNewNode(xm, ym);
 				this._interactor.rerender();
 				this._setEditing(newNode);
@@ -90,7 +90,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			});
 			
 			if(this._editor) $(node).find(".mm-create-button").on("click", (e) => {
-				let [xm, ym] = this._interactor.getMousePos(e, node, renderer);
+				let [xm, ym] = this._interactor.getMousePos(e, renderer);
 				let newNode = this._abstractGraph.objects.makeNewNode(xm - 100, ym + 50);
 				this._interactor.rerender();
 				this._setEditing(newNode);
