@@ -7,7 +7,16 @@ load.provide("mm.interactions.Zoom", (function() {
 		async addCanvas(renderer, html) {
 			let scale = 1.0;
 			
-			let _updateZoom = (mod) => {
+			let _updateZoom = (mod, e) => {
+				let elem = $(html).find(".mm-inner")[0];
+				
+				// mx, my are not scaled
+				let [mx, my] = [0, 0];
+				if(e) {
+					[mx, my] = this._interactor.getMousePos(e, renderer).map((x) => x * scale);
+					[mx, my] = [mx - elem.scrollLeft, my - elem.scrollTop];
+				}
+				
 				let oldscale = scale;
 				scale += mod;
 				if(scale < 0.2) scale = 0.2;
@@ -15,26 +24,32 @@ load.provide("mm.interactions.Zoom", (function() {
 				renderer.setScale(scale);
 				this._interactor.rerender();
 				
-				//renderer.scale(scale);
+				console.log(mx, my);
 				
-				/*for(let x of this.myNodes(renderer)) {
+				if(mod != 0) {
+					let top = elem.scrollTop;
+					let left = elem.scrollLeft;
+					let otop = top;
+					let oleft = left;
 					
-					x[1].position(x[2].x * scale, x[2].y * scale);
+					left += mx;
+					top += my;
 					
-					/*$(x[3]).find("text").css("font-size", `${(1/scale) * 100}%`);
-					x[1].attr("rect/height", (x[1].attr("rect/height")/(1/oldscale)) * (1/scale));
-					x[1].attr("rect/width", (x[1].attr("rect/width")/(1/oldscale)) * (1/scale));* /
-				};*/
-				//$(html).find(".mm-paper").css("font-size", `${(1/scale) * 100}%`);
-				
-				/*for(let x of this.myEdges(renderer)) {
+					top /= oldscale;
+					left /= oldscale;
 					
-					x[1].set("vertices", x[2].points.map(([x, y]) => ({x:x * scale, y:y * scale})));
+					top *= scale;
+					left *= scale;
 					
-					/*$(x[3]).find("text").css("font-size", `${(1/scale) * 100}%`);
-					x[1].attr("rect/height", (x[1].attr("rect/height")/(1/oldscale)) * (1/scale));
-					x[1].attr("rect/width", (x[1].attr("rect/width")/(1/oldscale)) * (1/scale));* /
-				};*/
+					//top += otop - top;
+					//left += oleft - left;
+					
+					left -= mx;
+					top -= my;
+					
+					elem.scrollTop = top;
+					elem.scrollLeft = left;
+				}
 			}
 			
 			// Widget zoom buttons
@@ -46,15 +61,15 @@ load.provide("mm.interactions.Zoom", (function() {
 				// Browser compatability! :D
 				if("detail" in e.originalEvent && e.originalEvent.detail) {
 					if(e.originalEvent.detail > 0) {
-						_updateZoom(-0.1);
+						_updateZoom(-0.2, e);
 					}else{
-						_updateZoom(0.1);
+						_updateZoom(0.2, e);
 					}
 				}else{
 					if(e.originalEvent.deltaY > 0) {
-						_updateZoom(-0.1);
+						_updateZoom(-0.2, e);
 					}else{
-						_updateZoom(0.1);
+						_updateZoom(0.2, e);
 					}
 				}
 				
