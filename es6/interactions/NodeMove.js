@@ -26,11 +26,13 @@ load.provide("mm.interactions.NodeMove", (function() {
 					let multiSel = this._state.getMultiSel();
 					let moving = this._moves.get(renderer);
 					
-					for(let n of multiSel) {
-						if(n == moving) continue;
-						
-						let sn = this._nodes.get(n.id)[1];
-						sn.translate(e.originalEvent.movementX, e.originalEvent.movementY);
+					if(this._state.inMultiSel(moving)) {
+						for(let n of multiSel) {
+							if(n == moving) continue;
+							
+							let sn = this._nodes.get(n.id)[1];
+							sn.translate(e.originalEvent.movementX, e.originalEvent.movementY);
+						}
 					}
 					
 					let edges = this._abstractGraph.connectedEdges(multiSel);
@@ -66,9 +68,9 @@ load.provide("mm.interactions.NodeMove", (function() {
 						for(let n of multiSel) {
 							let oldPos = [n.x, n.y];
 							
-							//let newPos = this._nodes.get(n.id)[1].get("position");
+							let newPos = this._nodes.get(n.id)[1].get("position");
 							
-							n.changePosition(npx / renderer.getScale(), npy / renderer.getScale());
+							n.changePosition(newPos.x / renderer.getScale(), newPos.y / renderer.getScale());
 							
 							arg.nodes.push({id:n.id, old:[oldPos[0], oldPos[1]], "new":[newPos.x, newPos.y]});
 						}
