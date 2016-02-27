@@ -10,14 +10,18 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			this._vertexChangeEvent = null;
 			this._vertexRetargetEvent = null;
 			this._vertexRehostEvent = null;
+			this._mouseDown = false;
 		}
 		
 		async addEdge(renderer, joint, edge) {
 			Interaction.prototype.addEdge.call(this, renderer, joint, edge);
 			
 			let svgEdge = renderer.getSvgEdge(edge.id);
+			let mdown = false;
 			
 			$(svgEdge).on("mousedown", (e) => {
+				this._mouseDown = true;
+				
 				if(!Array.prototype.includes.call(e.target.classList, "marker-vertex")
 				&& !Array.prototype.includes.call(e.target.classList, "marker-arrowhead")
 				&& edge.points.length >= 1
@@ -27,6 +31,7 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			});
 			
 			joint.on("change:vertices", (e, o) => {
+				if(!this._mouseDown) return;
 				this._vertexChangeEvent = [edge, e];
 				
 			});
@@ -43,6 +48,8 @@ load.provide("mm.interactions.EdgeChange", (function() {
 		async addCanvas(renderer, node) {
 			$(node).on("mouseup", (e) => {
 				// This doesn't handle mouse going out of widget
+				this._mouseDown = false;
+				
 				if(this._vertexChangeEvent) {
 					let [edge, e] = this._vertexChangeEvent;
 					let oldVerts = edge.points;

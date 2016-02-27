@@ -49,6 +49,8 @@ load.provide("mm.interactions.NodeMove", (function() {
 				// The changed position seems to be in joint.changed.position. Not sure if I'm supposed to use it, but
 				// it's public.
 				let movedNode = this._moves.get(renderer);
+				if(!movedNode) return;
+				
 				let movedNodeJoint = this._nodes.get(movedNode.id)[1];
 				
 				let newPos = movedNodeJoint.get("position");
@@ -81,7 +83,7 @@ load.provide("mm.interactions.NodeMove", (function() {
 					}
 				}
 				
-				this._moves.set(renderer, null)
+				this._moves.set(renderer, null);
 			});
 		}
 	};
