@@ -171,6 +171,9 @@ load.provide("mm.Renderer", (function() {
 			this._width = objects.canvas.width;
 			this._height = objects.canvas.height;
 			this._paper.setDimensions(objects.canvas.width * this._scale, objects.canvas.height * this._scale);
+			
+			this._paper.options.gridSize = this._scale * 10;
+			
 			this._graph.clear();
 			
 			this._nodeIds = new Map();
@@ -247,7 +250,7 @@ load.provide("mm.Renderer", (function() {
 			let paper = this._paper = new joint.dia.Paper({
 				el:$(`#${this._id} .mm-paper`),
 				model:graph,
-				gridSize:1,
+				gridSize:10,
 				width:0,
 				height:0,
 				interactive:this._editor,
