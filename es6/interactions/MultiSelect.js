@@ -85,6 +85,21 @@ load.provide("mm.interactions.MultiSelect", (function() {
 			$(node).on("mouseup", (e) => {
 				if(e.button != 2) return;
 				
+				let [mx, my] = this._interactor.getMousePos(e, renderer);
+				let [w, h] = [mx - ox, my - oy];
+				let x = w < 0 ? ox + w : ox;
+				let y = h < 0 ? oy + h : oy;
+				[w, h] = [w, h].map(Math.abs);
+				
+				// Now find all the nodes in that selection
+				let nodeset = this._abstractGraph.objects.nodes.filter((n) => 
+					n.x > x && n.y > y && n.x < x + w && n.y < y + h
+				);
+				
+				if(!e.shiftKey) this._state.clearMultiSel();
+				nodeset.forEach(this._state.addToMultiSel.bind(this._state));
+				this._interactor.updateMultiSel();
+				
 				rmouse = false;
 				rect.setAttribute("width", 0);
 			});
