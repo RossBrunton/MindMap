@@ -5,8 +5,8 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 	let textGen = load.require("mm.textGen");
 	
 	return class EdgeEdit extends Interaction {
-		constructor(interactor, abstractGraph, editor) {
-			super(interactor, abstractGraph, editor);
+		constructor(interactor, abstractGraph, editor, interactorState) {
+			super(interactor, abstractGraph, editor, interactorState);
 			
 			this._editingEdge = null;
 			this._editingBackup = null;
@@ -127,6 +127,7 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 					let s = renderer.getNodeFromJoint(e.attributes.source.id);
 					
 					let ne = this._abstractGraph.objects.makeNewEdge(s, t);
+					
 					this._interactor.rerender();
 				}
 			});

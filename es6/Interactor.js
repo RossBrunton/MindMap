@@ -15,6 +15,7 @@ load.provide("mm.Interactor", (function() {
 	let EdgeEdit = load.require("mm.interactions.EdgeEdit");
 	let Resize = load.require("mm.interactions.Resize");
 	let MultiSelect = load.require("mm.interactions.MultiSelect");
+	let InteractorState = load.require("mm.InteractorState");
 	
 	let _resEditWidget = load.requireResource("interactorResources/editWidget.html");
 	let _resDetailsPanel = load.requireResource("interactorResources/detailsPanel.html");
@@ -65,6 +66,8 @@ load.provide("mm.Interactor", (function() {
 			
 			this._multiSel = [];
 			
+			this._interactorState = new InteractorState();
+			
 			// Tell the renderers of their interactor
 			renderers.forEach((r) => r.setInteractor(this));
 			
@@ -77,16 +80,16 @@ load.provide("mm.Interactor", (function() {
 			 * @private
 			 */
 			this._interactions = [
-				new Pan(this, abstractGraph, editor),
-				new Zoom(this, abstractGraph, editor),
-				new HoverView(this, abstractGraph, editor),
-				new EditHelp(this, abstractGraph, editor),
-				new NodeMove(this, abstractGraph, editor),
-				new EdgeChange(this, abstractGraph, editor),
-				new NodeEdit(this, abstractGraph, editor),
-				new EdgeEdit(this, abstractGraph, editor),
-				new Resize(this, abstractGraph, editor),
-				new MultiSelect(this, abstractGraph, editor)
+				new Pan(this, abstractGraph, editor, this._interactorState),
+				new Zoom(this, abstractGraph, editor, this._interactorState),
+				new HoverView(this, abstractGraph, editor, this._interactorState),
+				new EditHelp(this, abstractGraph, editor, this._interactorState),
+				new NodeMove(this, abstractGraph, editor, this._interactorState),
+				new EdgeChange(this, abstractGraph, editor, this._interactorState),
+				new NodeEdit(this, abstractGraph, editor, this._interactorState),
+				new EdgeEdit(this, abstractGraph, editor, this._interactorState),
+				new Resize(this, abstractGraph, editor, this._interactorState),
+				new MultiSelect(this, abstractGraph, editor, this._interactorState)
 			];
 		}
 		
@@ -155,8 +158,10 @@ load.provide("mm.Interactor", (function() {
 		
 		/** Causes all the renderers to redraw the graph, in case things have changed */
 		rerender() {
+			this._interactorState.rerendering = true;
 			this._interactions.forEach((i) => i.clean());
 			this._renderers.forEach((r) => r.rerender(this._abstractGraph.objects));
+			this._interactorState.rerendering = false;
 		}
 		
 		/** Causes the interactor to forget all the nodes and edges it knows about */

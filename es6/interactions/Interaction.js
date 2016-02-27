@@ -16,7 +16,7 @@ load.provide("mm.interactions.Interaction", (function() {
 		 * @param {mm.structs.AbstractGraph} abstractGraph The abstract graph.
 		 * @param {?mm.Editor} editor The editor for this graph. Will be null if editing is disabled.
 		 */
-		constructor(interactor, abstractGraph, editor) {
+		constructor(interactor, abstractGraph, editor, interactorState) {
 			/** The interactor for this interaction
 			 * @type mm.Interactor
 			 * @protected
@@ -32,6 +32,8 @@ load.provide("mm.interactions.Interaction", (function() {
 			 * @protected
 			 */
 			this._editor = editor;
+			
+			this._state = interactorState;
 			
 			/** A mapping from (diagram) node ids to [renderer, joint, node] triples as per addNode
 			 * @type Map<int, array>
