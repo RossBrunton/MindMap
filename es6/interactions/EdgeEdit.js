@@ -71,11 +71,12 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			// Edge deletion
 			// ----
 			$(node).find(".mm-details-edit-arrow-delete").click((e) => {
-				this._interactor.hideDetailsPanel(renderer, true);
 				e.preventDefault();
+				let editing = this._editingEdge;
 				
-				this._editor.addToUndoStack("node_delete", {id:this._editingEdge.id, json:this._editingBackup});
-				this._abstractGraph.objects.removeEdge(this._editingEdge.id);
+				this._interactor.hideDetailsPanel(renderer, true);
+				this._editor.addToUndoStack("node_delete", {id:editing.id, json:this._editingBackup});
+				this._abstractGraph.objects.removeEdge(editing.id);
 				
 				this._interactor.rerender();
 				
@@ -118,6 +119,7 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			graph.on("change", (e, i, o, u) => {
 				if(i.updateConnectionOnly) return;
 				if(e.attributes.type != "link") return;
+				if(this._state.rerendering) return;
 				
 				if("id" in e.attributes.target) {
 					// Check if it's an edge we already know about
