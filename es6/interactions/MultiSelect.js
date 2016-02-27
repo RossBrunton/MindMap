@@ -23,9 +23,70 @@ load.provide("mm.interactions.MultiSelect", (function() {
 		}
 		
 		async addCanvas(renderer, node) {
+			if(!this._editor) return;
+			
 			node.addEventListener("click", (e) => {
 				if(e.target.classList[0] != "mm-background-grid") return;
 				this._state.clearMultiSel();
+			});
+			
+			let rmouse = false;
+			
+			let svg = $(node).find("svg")[0];
+			
+			let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+			rect.setAttribute("width", "0");
+			rect.setAttribute("height", "0");
+			rect.setAttribute("fill", "#ffee22");
+			rect.setAttribute("stroke", "#ffcc00");
+			rect.setAttribute("class", "mm-multiselrect");
+			svg.insertBefore(rect, $(svg).find(".mm-background-grid")[0]);
+			
+			let [ox, oy] = [0, 0];
+			
+			$(node).on("mousemove", (e) => {
+				let [mx, my] = this._interactor.getMousePos(e, renderer);
+				
+				if(rmouse) {
+					let [w, h] = [mx - ox, my - oy];
+					
+					if(w < 0) {
+						rect.setAttribute("width", -w);
+						rect.setAttribute("x", ox + w);
+					}else{
+						rect.setAttribute("width", w);
+						rect.setAttribute("x", ox);
+					}
+					
+					if(h < 0) {
+						rect.setAttribute("height", -h);
+						rect.setAttribute("y", oy + h);
+					}else{
+						rect.setAttribute("height", h);
+						rect.setAttribute("y", oy);
+					}
+				}
+			});
+			
+			$(node).on("contextmenu", (e) => {
+				e.preventDefault();
+			});
+			
+			$(node).on("mousedown", (e) => {
+				if(e.button != 2) return;
+				
+				rmouse = true;
+				
+				let [mx, my] = this._interactor.getMousePos(e, renderer);
+				ox = mx;
+				oy = my;
+			});
+			
+			$(node).on("mouseup", (e) => {
+				if(e.button != 2) return;
+				
+				rmouse = false;
+				rect.setAttribute("width", 0);
 			});
 		}
 	};

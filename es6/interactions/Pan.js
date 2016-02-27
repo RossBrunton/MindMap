@@ -10,6 +10,7 @@ load.provide("mm.interactions.Pan", (function() {
 			let startY = 0;
 			
 			html.addEventListener("mousedown", function(e) {
+				if(e.button != 0) return;
 				if(e.target.classList[0] != "mm-background-grid") return;
 				mouseDown = true;
 				startX = e.clientX;
