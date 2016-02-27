@@ -4,8 +4,8 @@ load.provide("mm.interactions.NodeMove", (function() {
 	let Interaction = load.require("mm.interactions.Interaction");
 	
 	return class NodeMove extends Interaction {
-		constructor(interactor, abstractGraph, editor) {
-			super(interactor, abstractGraph, editor);
+		constructor(interactor, abstractGraph, editor, state) {
+			super(interactor, abstractGraph, editor, state);
 			
 			this._moves = new Map();
 		}
@@ -23,7 +23,7 @@ load.provide("mm.interactions.NodeMove", (function() {
 		async addCanvas(renderer, html) {
 			if(this._editor) $(html).on("mousemove", (e) => {
 				if(this._moves.has(renderer) && this._moves.get(renderer)) {
-					let multiSel = this._interactor.getMultiSel();
+					let multiSel = this._state.getMultiSel();
 					let moving = this._moves.get(renderer);
 					
 					for(let n of multiSel) {
@@ -58,8 +58,8 @@ load.provide("mm.interactions.NodeMove", (function() {
 				
 				if(movedNode.x != npx && movedNode.y != npy) {
 					// Node has been moved
-					if(this._interactor.inMultiSel(movedNode)) {
-						let multiSel = this._interactor.getMultiSel();
+					if(this._state.inMultiSel(movedNode)) {
+						let multiSel = this._state.getMultiSel();
 						
 						let arg = {nodes:[]};
 						

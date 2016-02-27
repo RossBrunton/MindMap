@@ -64,9 +64,7 @@ load.provide("mm.Interactor", (function() {
 			 */
 			this._detailsSwitch = null;
 			
-			this._multiSel = [];
-			
-			this._interactorState = new InteractorState();
+			this._interactorState = new InteractorState(this, this._abstractGraph, editor);
 			
 			// Tell the renderers of their interactor
 			renderers.forEach((r) => r.setInteractor(this));
@@ -162,6 +160,7 @@ load.provide("mm.Interactor", (function() {
 			this._interactions.forEach((i) => i.clean());
 			this._renderers.forEach((r) => r.rerender(this._abstractGraph.objects));
 			this._interactorState.rerendering = false;
+			this.updateMultiSel();
 		}
 		
 		/** Causes the interactor to forget all the nodes and edges it knows about */
@@ -258,39 +257,11 @@ load.provide("mm.Interactor", (function() {
 			this._detailsSwitch = null;
 		}
 		
-		addToMultiSel(node) {
-			if(this._multiSel.includes(node)) return;
-			this._multiSel.push(node);
-			this._updateMultiSel();
-		}
-		
-		inMultiSel(node) {
-			return this._multiSel.some((x) => x == node);
-		}
-		
-		removeFromMultiSel(node) {
-			this._multiSel = this._multiSel.filter((x) => x != node);
-			this._updateMultiSel();
-		}
-		
-		clearMultiSel() {
-			this._multiSel = [];
-			this._updateMultiSel();
-		}
-		
-		countMultiSel() {
-			return this._multiSel.length;
-		}
-		
-		getMultiSel() {
-			return this._multiSel;
-		}
-		
-		_updateMultiSel() {
+		updateMultiSel() {
 			for(let r of this._renderers) {
 				$(r.getRoot()).find(".mm-selected").each((i, n) => n.classList.remove("mm-selected"));
 				
-				for(let n of this._multiSel) {
+				for(let n of this._interactorState.getMultiSel()) {
 					r.getSvgNode(n.id).classList.add("mm-selected");
 				}
 			}

@@ -11,10 +11,10 @@ load.provide("mm.interactions.MultiSelect", (function() {
 			
 			$(svgNode).on("click", (e) => {
 				if(e.shiftKey) {
-					if(this._interactor.inMultiSel(node)) {
-						this._interactor.removeFromMultiSel(node);
+					if(this._state.inMultiSel(node)) {
+						this._state.removeFromMultiSel(node);
 					}else{
-						this._interactor.addToMultiSel(node);
+						this._state.addToMultiSel(node);
 					}
 					
 					this._interactor.hideDetailsPanel(renderer, true);
@@ -25,7 +25,7 @@ load.provide("mm.interactions.MultiSelect", (function() {
 		async addCanvas(renderer, node) {
 			node.addEventListener("click", (e) => {
 				if(e.target.classList[0] != "mm-background-grid") return;
-				this._interactor.clearMultiSel();
+				this._state.clearMultiSel();
 			});
 		}
 	};

@@ -5,8 +5,8 @@ load.provide("mm.interactions.NodeEdit", (function() {
 	let textGen = load.require("mm.textGen");
 	
 	return class NodeEdit extends Interaction {
-		constructor(interactor, abstractGraph, editor) {
-			super(interactor, abstractGraph, editor);
+		constructor(interactor, abstractGraph, editor, state) {
+			super(interactor, abstractGraph, editor, state);
 			
 			this._editingNode = null;
 			this._editingBackup = null;
@@ -33,7 +33,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				// Check if the node was dragged
 				if(node.x != x || node.y != y) return;
 				
-				this._interactor.clearMultiSel();
+				this._state.clearMultiSel();
 				
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
 				this._interactor.loadDetails(node, renderer, true, true, true, this._cancel.bind(this, renderer));
