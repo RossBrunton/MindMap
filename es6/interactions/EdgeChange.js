@@ -24,6 +24,8 @@ load.provide("mm.interactions.EdgeChange", (function() {
 				
 				if(!Array.prototype.includes.call(e.target.classList, "marker-vertex")
 				&& !Array.prototype.includes.call(e.target.classList, "marker-arrowhead")
+				&& !Array.prototype.includes.call(e.target.classList, "marker-vertex-remove-area")
+				&& !Array.prototype.includes.call(e.target.classList, "marker-vertex-remove")
 				&& edge.points.length >= 1
 				) {
 					e.stopPropagation();
@@ -57,8 +59,8 @@ load.provide("mm.interactions.EdgeChange", (function() {
 					edge.changePoints(e.attributes.vertices.map(x => [x.x / renderer.getScale(), x.y / renderer.getScale()]));
 					
 					if(this._editor) this._editor.addToUndoStack("edge_change", {id:edge.id, old:oldVerts, "new":edge.points});
-					
 					this._vertexChangeEvent = null;
+					this._interactor.rerender();
 				}
 				
 				if(this._vertexRetargetEvent) {

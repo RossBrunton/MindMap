@@ -204,7 +204,7 @@ load.provide("mm.Renderer", (function() {
 					},
 					".marker-target": {"d":"M 10 0 L 0 5 L 10 10 z"}
 				});
-				link.set("connector", {name:"smooth"});
+				if(e.points.length) link.set("connector", {name:"smooth"});
 				link.attr(e.type.attr);
 				
 				this._graph.addCell(link);

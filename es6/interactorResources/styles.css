@@ -154,9 +154,9 @@
 }
 
 /* Joint stuff */
-.mm-root .marker-vertex-remove-area, .mm-root .marker-vertex-remove {
+/*.mm-root .marker-vertex-remove-area, .mm-root .marker-vertex-remove {
     visibility:hidden;
-}
+}*/
 
 /* Multi select */
 .mm-root svg .mm-selected rect {
