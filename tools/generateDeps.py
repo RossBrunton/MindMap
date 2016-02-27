@@ -17,6 +17,7 @@ import json
 reqPatt = re.compile("load\.require\(\"(.*?)\"(?:,.*)?\)")
 reqRPatt = re.compile("load\.requireResource\(\"(.*?)\"(?:,.*)?\)")
 provPatt = re.compile("load\.provide\(\"(.*?)\"")
+provRPatt = re.compile("load\.provideResource\(\"(.*?)\"")
 data = []
 
 if len(sys.argv) > 1:
@@ -29,13 +30,20 @@ for root, dirs, files in os.walk("."):
 				data.append([posixpath.join(root, f)[2:], [], [], 0, []])
 				for line in reader:
 					for match in provPatt.finditer(line):
-						data[-1][1].append(match.group(1))
+						if match.group(1) not in data[-1][1]:
+							data[-1][1].append(match.group(1))
+					
+					for match in provRPatt.finditer(line):
+						if match.group(1) not in data[-1][1]:
+							data[-1][1].append(match.group(1))
 					
 					for match in reqPatt.finditer(line):
-						data[-1][2].append(match.group(1))
+						if match.group(1) not in data[-1][2]:
+							data[-1][2].append(match.group(1))
 					
 					for match in reqRPatt.finditer(line):
-						data[-1][4].append(match.group(1))
+						if match.group(1) not in data[-1][4]:
+							data[-1][4].append(match.group(1))
 				
 				data[-1][3] = os.path.getsize(os.path.join(root, f));
 				data[-1][1].sort()

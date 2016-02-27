@@ -205,6 +205,8 @@ self.load = (function(self) {
 	 * @since 0.0.12-alpha
 	 */
 	load.provide = function(name, pack, options) {
+		console.log("Provided "+name);
+		
 		if(!options) options = {};
 		
 		//Set imported
@@ -246,6 +248,33 @@ self.load = (function(self) {
 		_tryImport();
 	};
 	
+	load.provideResource = function(name, data) {
+		console.log("Provided resource "+name);
+		
+		//Set imported
+		if(name in _names) {
+			_names[name][NSTATE] = STATE_RAN;
+		}
+		
+		//Set object
+		_names[name][NOBJ] = data;
+		
+		//Fire all the functions
+		if(name in _readies) {
+			for(var i = 0; i < _readies[name].length; i ++) {
+				_readies[name][i](pack);
+			}
+		}
+		
+		//Fire Event
+		if(load.onProvide) {
+			setTimeout(load.onProvide.fire.bind(load.onProvide, {"package":name}, name), 1);
+		}
+		
+		// And try to import more if possible
+		_tryImport();
+	};
+	
 	/** Adds a dependency.
 	 * 
 	 *  This tells the engine the file in which the namespaces are provided,
@@ -265,7 +294,6 @@ self.load = (function(self) {
 			if(!_names[provided[i]]
 			|| (_names[provided[i]][NSTATE] == STATE_NONE &&
 				(!(_names[provided[i]][NFILENAME] in _files) || provided.length > _files[_names[provided[i]][0]][0].length))
-			|| (_names[provided[i]][NSTATE] == STATE_NONE && size < _names[provided[i]][NSIZE])
 			){
 				_names[provided[i]] = [file, STATE_NONE, required, size, undefined, type];
 			}

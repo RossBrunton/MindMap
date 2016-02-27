@@ -6,6 +6,15 @@ compile:
 compile_watch:
 	tools/babel -w --presets es2015,stage-3 -D -d es5 es6
 
+bigfile:
+	rm -f es5/everything.js
+	tools/generateDeps.py es5 > es5/deps.json
+	tools/catter.py > es5/everything.js
+	tools/generateDeps.py es5 > es5/deps.json
+
+rmbigfile:
+	rm -f es5/everything.js
+
 mkdeps:
 	tools/generateDeps.py es5 > es5/deps.json
 
