@@ -86,19 +86,26 @@ load.provide("mm.structs.AbstractGraph", (function() {
 		 * 
 		 * Then returns a special object that can be used to recover them.
 		 * 
-		 * @param {int} id The node to delete.
+		 * You can either specify one node, or multiple nodes. If specifying multiple, they all get deleted.
+		 * 
+		 * @param {int|node|array<node>} id The node(s) to delete.
 		 * @return {object} A recovery object
 		 */
-		cascadingRemoveNode(id) {
-			let recovery = {};
+		cascadingRemoveNode(nodes) {
+			let recovery = {edges:[], nodes:[]};
 			
-			let edges = this.objects.getEdgesConnectedToNode(id);
-			recovery.edges = edges.map((e) => e.toJson());
-			edges.forEach((e) => this.objects.removeEdge(e.id));
+			if(!Array.isArray(nodes)) nodes = [nodes];
+			nodes = nodes.map((x) => typeof(x) == "number" ? x : x.id);
 			
-			let node = this.objects.getNode(id);
-			recovery.node = node.toJson();
-			this.objects.removeNode(id);
+			for(let n of nodes) {
+				let edges = this.objects.getEdgesConnectedToNode(n);
+				recovery.edges = recovery.edges.concat(edges.map((e) => e.toJson()));
+				edges.forEach((e) => this.objects.removeEdge(e.id));
+				
+				let node = this.objects.getNode(n);
+				recovery.nodes.push(node.toJson());
+				this.objects.removeNode(n);
+			}
 			
 			return recovery;
 		}

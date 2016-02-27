@@ -173,6 +173,9 @@ load.provide("mm.Renderer", (function() {
 			this._paper.setDimensions(objects.canvas.width * this._scale, objects.canvas.height * this._scale);
 			this._graph.clear();
 			
+			this._nodeIds = new Map();
+			this._edgeIds = new Map();
+			
 			for(let n of objects.nodes) {
 				let tts = textGen.wrapText(textGen.nodeText(n), 100);
 				
@@ -305,6 +308,7 @@ load.provide("mm.Renderer", (function() {
 		 * @return {SVGGElement} The SVG node.
 		 */
 		getSvgNode(id) {
+			if(!this._nodeIds.get(id)) return null;
 			return $(`[model-id="${this._nodeIds.get(id).id}"]`)[0];
 		}
 		

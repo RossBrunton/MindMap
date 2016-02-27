@@ -15,6 +15,7 @@ load.provide("mm.Interactor", (function() {
 	let EdgeEdit = load.require("mm.interactions.EdgeEdit");
 	let Resize = load.require("mm.interactions.Resize");
 	let MultiSelect = load.require("mm.interactions.MultiSelect");
+	let Keyboard = load.require("mm.interactions.Keyboard");
 	let InteractorState = load.require("mm.InteractorState");
 	
 	let _resEditWidget = load.requireResource("interactorResources/editWidget.html");
@@ -87,7 +88,8 @@ load.provide("mm.Interactor", (function() {
 				new NodeEdit(this, abstractGraph, editor, this._interactorState),
 				new EdgeEdit(this, abstractGraph, editor, this._interactorState),
 				new Resize(this, abstractGraph, editor, this._interactorState),
-				new MultiSelect(this, abstractGraph, editor, this._interactorState)
+				new MultiSelect(this, abstractGraph, editor, this._interactorState),
+				new Keyboard(this, abstractGraph, editor, this._interactorState)
 			];
 		}
 		
@@ -262,7 +264,9 @@ load.provide("mm.Interactor", (function() {
 				$(r.getRoot()).find(".mm-selected").each((i, n) => n.classList.remove("mm-selected"));
 				
 				for(let n of this._interactorState.getMultiSel()) {
-					r.getSvgNode(n.id).classList.add("mm-selected");
+					if(r.getSvgNode(n.id)) {
+						r.getSvgNode(n.id).classList.add("mm-selected");
+					}
 				}
 			}
 		}
