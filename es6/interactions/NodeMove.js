@@ -4,18 +4,30 @@ load.provide("mm.interactions.NodeMove", (function() {
 	let Interaction = load.require("mm.interactions.Interaction");
 	
 	return class NodeMove extends Interaction {
+		constructor(interactor, abstractGraph, editor) {
+			super(interactor, abstractGraph, editor);
+			
+			this._moves = new Map();
+		}
+		
 		async addNode(renderer, joint, node) {
 			Interaction.prototype.addNode.call(this, renderer, joint, node);
 			
 			let svgNode = renderer.getSvgNode(node.id);
-			let moving = false;
 			
-			if(this._editor) $(svgNode).on("mousemove", (e) => {
-				if(moving && this._interactor.inMultiSel(node)) {
+			if(this._editor) $(svgNode).on("mousedown", (e) => {
+				this._moves.set(renderer, node);
+			});
+		}
+		
+		async addCanvas(renderer, html) {
+			if(this._editor) $(html).on("mousemove", (e) => {
+				if(this._moves.has(renderer) && this._moves.get(renderer)) {
 					let multiSel = this._interactor.getMultiSel();
+					let moving = this._moves.get(renderer);
 					
 					for(let n of multiSel) {
-						if(n == node) continue;
+						if(n == moving) continue;
 						
 						let sn = this._nodes.get(n.id)[1];
 						sn.translate(e.originalEvent.movementX, e.originalEvent.movementY);
@@ -33,19 +45,18 @@ load.provide("mm.interactions.NodeMove", (function() {
 				}
 			});
 			
-			if(this._editor) $(svgNode).on("mousedown", (e) => {
-				moving = true;
-			});
-			
-			if(this._editor) $(svgNode).on("mouseup", (e) => {
+			if(this._editor) $(html).on("mouseup", (e) => {
 				// The changed position seems to be in joint.changed.position. Not sure if I'm supposed to use it, but
 				// it's public.
-				moving = false;
-				if(!joint.changed || !joint.changed.position) return;
+				let movedNode = this._moves.get(renderer);
+				let movedNodeJoint = this._nodes.get(movedNode.id)[1];
 				
-				if(node.x != joint.changed.position.x && node.y != joint.changed.position.y) {
+				let newPos = movedNodeJoint.get("position");
+				let [npx, npy] = [newPos.x, newPos.y];
+				
+				if(movedNode.x != npx && movedNode.y != npy) {
 					// Node has been moved
-					if(this._interactor.inMultiSel(node)) {
+					if(this._interactor.inMultiSel(movedNode)) {
 						let multiSel = this._interactor.getMultiSel();
 						
 						let arg = {nodes:[]};
@@ -53,23 +64,24 @@ load.provide("mm.interactions.NodeMove", (function() {
 						for(let n of multiSel) {
 							let oldPos = [n.x, n.y];
 							
-							let newPos = this._nodes.get(n.id)[1].get("position");
+							//let newPos = this._nodes.get(n.id)[1].get("position");
 							
-							n.changePosition(newPos.x / renderer.getScale(), newPos.y / renderer.getScale());
+							n.changePosition(npx / renderer.getScale(), npy / renderer.getScale());
 							
 							arg.nodes.push({id:n.id, old:[oldPos[0], oldPos[1]], "new":[newPos.x, newPos.y]});
 						}
 						
 						this._editor.addToUndoStack("node_multimove", arg);
 					}else{
-						let oldPos = [node.x, node.y];
+						let oldPos = [movedNode.x, movedNode.y];
 					
-						node.changePosition(joint.changed.position.x / renderer.getScale(), joint.changed.position.y / renderer.getScale());
+						movedNode.changePosition(npx / renderer.getScale(), npy / renderer.getScale());
 					
-						this._editor.addToUndoStack("node_move", {id:node.id, old:oldPos, "new":[node.x, node.y]});
+						this._editor.addToUndoStack("node_move", {id:movedNode.id, old:oldPos, "new":[movedNode.x, movedNode.y]});
 					}
-					
 				}
+				
+				this._moves.set(renderer, null)
 			});
 		}
 	};
