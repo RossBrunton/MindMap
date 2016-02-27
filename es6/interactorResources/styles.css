@@ -21,7 +21,7 @@
 }
 
 .hidden {
-    display:none;
+    visibility:hidden;
 }
 
 /* Widgets */
@@ -111,14 +111,22 @@
 /** Help panel thing */
 .mm-edit-help {
     position:absolute;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
     width:100%;
     height:100%;
     z-index:1;
-    background-color:#eeeeff;
 }
 
 .mm-edit-help-content {
     padding:5px;
+    background-color:#eeeeff;
+    border:2px solid #ccccee;
+    border-radius:5px;
+    width:90%;
+    height:90%;
+    margin:auto;
 }
 
 .mm-edit-help-content .left {
