@@ -211,6 +211,8 @@ class LoadState():
         # NOW DO IT ALL AGAIN
         if len(self._importSet):
             self._doBatchSet()
+        else:
+            self._batching = False
     
     
     def _doImportFile(self, file, type):

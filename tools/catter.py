@@ -28,4 +28,5 @@ class Catter(LoadState):
 importList("es5/deps.json")
 
 c = Catter()
+c.importPackage("load")
 c.importPackage("mm.main")

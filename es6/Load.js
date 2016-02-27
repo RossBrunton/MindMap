@@ -209,13 +209,13 @@ self.load = (function(self) {
 		
 		if(!options) options = {};
 		
-		//Set imported
+		//Set object and imported
 		if(name in _names) {
+			_names[name][NOBJ] = pack;
 			_names[name][NSTATE] = STATE_RAN;
+		}else{
+			_names[name] = ["", STATE_RAN, [], 0, pack, TYPE_PACK];
 		}
-		
-		//Set object
-		_names[name][NOBJ] = pack;
 		
 		//Seal objects
 		if(pack && (!("noSeal" in options) || !options.noSeal)) {
@@ -251,9 +251,12 @@ self.load = (function(self) {
 	load.provideResource = function(name, data) {
 		console.log("Provided resource "+name);
 		
-		//Set imported
+		//Set object and imported
 		if(name in _names) {
+			_names[name][NOBJ] = pack;
 			_names[name][NSTATE] = STATE_RAN;
+		}else{
+			_names[name] = ["", STATE_RAN, [], 0, data, TYPE_RES];
 		}
 		
 		//Set object
