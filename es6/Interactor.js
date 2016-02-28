@@ -246,17 +246,20 @@ load.provide("mm.Interactor", (function() {
 		 * @param {mm.Renderer} renderer The renderer on which to hide the panel.
 		 * @param {boolean=false} evenIfLong By default the panel isn't closed if it is expanded. This forces it to be
 		 *  closed even then.
+		 * @return {boolean} True if the panel was closed, false if it isn't or it isn't open.
 		 */
 		hideDetailsPanel(renderer, evenIfLong) {
 			let panel = $(renderer.getRoot()).find(".mm-details-panel");
 			
-			if(panel.hasClass("long") && !evenIfLong) return;
+			if(panel.hasClass("long") && !evenIfLong) return false;
+			if(panel.hasClass("hidden")) return false;
 			
 			panel.addClass("hidden");
 			panel.removeClass("long");
 			
 			if(this._detailsSwitch) this._detailsSwitch();
 			this._detailsSwitch = null;
+			return true;
 		}
 		
 		updateMultiSel() {

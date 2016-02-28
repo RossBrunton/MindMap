@@ -26,7 +26,20 @@ load.provide("mm.interactions.Keyboard", (function() {
 				}
 				
 				if(key == 27) { // Escape
-					this._interactor.hideDetailsPanel(renderer, true);
+					$(html).focus();
+					if(this._interactor.hideDetailsPanel(renderer, true)) return;
+					this._state.clearMultiSel();
+					
+				}
+				
+				if(e.ctrlKey) {
+					if(key == 65) { // CTRL + A
+						for(let n of this.myNodes(renderer)) {
+							this._state.addToMultiSel(n[2]);
+						}
+						
+						e.preventDefault();
+					}
 				}
 			});
 		}
