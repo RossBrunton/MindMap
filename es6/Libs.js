@@ -1,7 +1,7 @@
 "use strict";
 
 (function() {
-    /** Just a simple package that improts libraries that the game engine uses */
+    /** Just a simple package that imports libraries that the game engine uses */
     if(!("window" in self)) return;
     
     let _mkLib = function(url) {
@@ -34,7 +34,8 @@
         }else if(("joint" in window) && stage == 4) {
             stage ++;
         }else if(stage == 5) {
-            load.provide("mm.libs", function(){});
+            load.provide("mm.mainwrap", function(){});
+            load.require("mm.main");
             return;
         }
         

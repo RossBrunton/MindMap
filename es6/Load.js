@@ -339,8 +339,8 @@ self.load = (function(self) {
 		
 		if(name in _names) {
 			if(_names[name][NSTATE] == STATE_IMPORTED) {
-				_names[name][NOBJ] = _names[name][NOBJ](self);
 				_names[name][NSTATE] = STATE_RAN;
+				_names[name][NOBJ] = _names[name][NOBJ](self);
 			}
 			return _names[name][NOBJ];
 		}

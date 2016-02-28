@@ -4,7 +4,6 @@ load.provide("mm.Interactor", (function() {
 	let getfile = load.require("mm.utils.getfile");
 	let textGen = load.require("mm.textGen");
 	let ObjectNode = load.require("mm.structs.ObjectNode");
-	load.require("mm.libs");
 	
 	let Pan = load.require("mm.interactions.Pan");
 	let Zoom = load.require("mm.interactions.Zoom");
