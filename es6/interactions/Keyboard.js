@@ -7,7 +7,9 @@ load.provide("mm.interactions.Keyboard", (function() {
 		async addCanvas(renderer, html) {
 			$(html).attr("tabindex", 0);
 			
-			$(html).on("click", (x) => $(html).focus()); // I have no idea why this doesn't happen automatically
+			$(html).on("mousedown", (x) => {
+				if(!$.contains(html, document.activeElement)) $(html).focus()}
+			); // I have no idea why this doesn't happen automatically
 			
 			if(this._editor) $(html).on("keydown", (e) => {
 				console.log(e.keyCode);
@@ -21,6 +23,10 @@ load.provide("mm.interactions.Keyboard", (function() {
 						this._state.clearMultiSel();
 						this._interactor.rerender();
 					}
+				}
+				
+				if(key == 27) { // Escape
+					this._interactor.hideDetailsPanel(renderer, true);
 				}
 			});
 		}
