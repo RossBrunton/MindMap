@@ -2,6 +2,7 @@
 
 load.provide("mm.main", (function() {
 	let graphManager = load.require("mm.graphManager");
+	load.require("mm.libs");
 	
 	/** Main object. Should be the main entry point and is in change of setting everything up.
 	 */

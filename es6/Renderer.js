@@ -4,6 +4,7 @@ load.provide("mm.Renderer", (function() {
 	let ObjectsData = load.require("mm.structs.ObjectsData");
 	let TypesFile = load.require("mm.structs.TypesFile");
 	let textGen = load.require("mm.textGen");
+	load.require("mm.libs");
 	
 	/** The basic template to be inserted into the node when it is set up.
 	 * 
