@@ -156,7 +156,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 		}
 		
 		_setText(text) {
-			this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.wrapText(text, 100));
+			this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.wrapText(text, this._editingNode.width));
 		}
 	};
 })());

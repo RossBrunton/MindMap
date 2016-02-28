@@ -180,13 +180,13 @@ load.provide("mm.Renderer", (function() {
 			this._edgeIds = new Map();
 			
 			for(let n of objects.nodes) {
-				let tts = textGen.wrapText(textGen.nodeText(n), 100);
+				let tts = textGen.wrapText(textGen.nodeText(n), n.width);
 				
 				let rect = new _node({
 					position:{x:n.x * this._scale, y:n.y * this._scale},
 					attrs:n.type.nodeAttr,
 					outPorts: ["mag-a"],
-					size:{width:100, height:30},
+					size:{width:n.width, height:30},
 				});
 				
 				rect.attr("text/text", tts);

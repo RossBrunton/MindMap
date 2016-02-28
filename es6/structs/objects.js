@@ -17,7 +17,7 @@ load.provide("mm.structs.ObjectNode", (function() {
 			 */
 			this.type = type;
 			
-			for(let x of ["id", "x", "y", "fields"]) this[x] = object[x];
+			for(let x of ["id", "x", "y", "fields", "width"]) this[x] = object[x];
 		}
 		
 		/** Gets the field type of the specified field
@@ -63,6 +63,7 @@ load.provide("mm.structs.ObjectNode", (function() {
 				y:this.y,
 				id:this.id,
 				fields:fields,
+				width:this.width
 			}
 		}
 		
@@ -75,7 +76,7 @@ load.provide("mm.structs.ObjectNode", (function() {
 		update(obj) {
 			if("type" in obj) this.changeType(obj.type);
 			
-			["x", "y"].forEach((x) => {if(x in obj) this[x] = obj[x]});
+			["x", "y", "width"].forEach((x) => {if(x in obj) this[x] = obj[x]});
 			
 			if("fields" in obj) for(let x in obj.fields) {
 				this.fields[x] = obj.fields[x];
@@ -311,6 +312,7 @@ load.provide("mm.structs.ObjectsData", (function() {
 			
 			newNode.x = x ? x : 0;
 			newNode.y = y ? y : 0;
+			newNode.width = 100;
 			
 			newNode.fields = {};
 			for(let f of type.fields) {
