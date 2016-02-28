@@ -46,24 +46,25 @@ load.provide("mm.interactions.MultiSelect", (function() {
 			
 			$(node).on("mousemove", (e) => {
 				let [mx, my] = this._interactor.getMousePos(e, renderer);
+				let s = renderer.getScale();
 				
 				if(rmouse) {
 					let [w, h] = [mx - ox, my - oy];
 					
 					if(w < 0) {
-						rect.setAttribute("width", -w);
-						rect.setAttribute("x", ox + w);
+						rect.setAttribute("width", -w*s);
+						rect.setAttribute("x", (ox + w)*s);
 					}else{
-						rect.setAttribute("width", w);
-						rect.setAttribute("x", ox);
+						rect.setAttribute("width", w*s);
+						rect.setAttribute("x", ox*s);
 					}
 					
 					if(h < 0) {
-						rect.setAttribute("height", -h);
-						rect.setAttribute("y", oy + h);
+						rect.setAttribute("height", -h*s);
+						rect.setAttribute("y", (oy + h)*s);
 					}else{
-						rect.setAttribute("height", h);
-						rect.setAttribute("y", oy);
+						rect.setAttribute("height", h*s);
+						rect.setAttribute("y", oy*s);
 					}
 				}
 			});
