@@ -110,7 +110,8 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				
 				let editing = $(node).find(".mm-details-panel").attr("data-id");
 				
-				let update = {fields:{}, type:$(node).find(".mm-details-edit-type").val()};
+				let update = {fields:{}, type:$(node).find(".mm-details-edit-type").val(), width:+$(node).find(".mm-details-edit-width").val()};
+				console.log(update);
 				
 				// Load all the fields
 				for(let entry of $(node).find(".mm-details-edit form").serializeArray()) {
@@ -157,6 +158,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 		
 		_setText(text) {
 			this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.wrapText(text, this._editingNode.width));
+			this._nodes.get(+this._editingNode.id)[1].resize(this._editingNode.width, 30);
 		}
 	};
 })());
