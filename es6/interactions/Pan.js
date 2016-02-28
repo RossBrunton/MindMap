@@ -29,4 +29,4 @@ load.provide("mm.interactions.Pan", (function() {
 			});
 		}
 	};
-})());
+}));

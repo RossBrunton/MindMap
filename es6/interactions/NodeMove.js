@@ -89,4 +89,4 @@ load.provide("mm.interactions.NodeMove", (function() {
 			});
 		}
 	};
-})());
+}));

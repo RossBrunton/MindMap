@@ -47,4 +47,4 @@ load.provide("mm.Editor", (function() {
 			this._undoStack.push([type, arg]);
 		}
 	};
-})());
+}));

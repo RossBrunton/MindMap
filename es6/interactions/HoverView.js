@@ -35,4 +35,4 @@ load.provide("mm.interactions.HoverView", (function() {
 			});
 		}
 	};
-})());
+}));

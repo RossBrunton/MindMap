@@ -52,4 +52,4 @@ load.provide("mm.InteractorState", (function() {
 			return this._multiSel;
 		}
 	}
-})());
+}));

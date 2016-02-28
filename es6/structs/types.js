@@ -8,7 +8,7 @@ load.provide("mm.structs.NodeTypeField", (function() {
 			[this.name, this.type, this.default, this.arg] = arr;
 		}
 	};
-})());
+}));
 
 load.provide("mm.structs.NodeType", (function() {
 	let NodeTypeField = load.require("mm.structs.NodeTypeField");
@@ -37,7 +37,7 @@ load.provide("mm.structs.NodeType", (function() {
 			return this.file.getNodeType(name);
 		}
 	};
-})());
+}));
 
 
 load.provide("mm.structs.ArrowType", (function() {
@@ -53,7 +53,7 @@ load.provide("mm.structs.ArrowType", (function() {
 			return this.file.getArrowType(name);
 		}
 	};
-})());
+}));
 
 
 load.provide("mm.structs.TypesFile", (function() {
@@ -113,4 +113,4 @@ load.provide("mm.structs.TypesFile", (function() {
 			return this.getArrowType(this.defaultArrowType);
 		}
 	};
-})());
+}));

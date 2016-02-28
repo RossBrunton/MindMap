@@ -95,4 +95,4 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			});
 		}
 	};
-})());
+}));

@@ -14,4 +14,4 @@ load.provide("mm.main", (function() {
 	});
 	
 	return main;
-})());
+}));

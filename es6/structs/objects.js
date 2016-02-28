@@ -115,7 +115,7 @@ load.provide("mm.structs.ObjectNode", (function() {
 			}
 		}
 	};
-})());
+}));
 
 load.provide("mm.structs.ObjectEdge", (function() {
 	/** Stores information about a single edge between nodes
@@ -184,7 +184,7 @@ load.provide("mm.structs.ObjectEdge", (function() {
 			this.type = this.type.getOtherType(newTypeName);
 		}
 	};
-})());
+}));
 
 load.provide("mm.structs.ObjectCanvas", (function() {
 	/** Stores information about the canvas
@@ -241,7 +241,7 @@ load.provide("mm.structs.ObjectCanvas", (function() {
 			this.height += n;
 		}
 	};
-})());
+}));
 
 load.provide("mm.structs.ObjectsData", (function() {
 	let ObjectNode = load.require("mm.structs.ObjectNode");
@@ -423,4 +423,4 @@ load.provide("mm.structs.ObjectsData", (function() {
 			}
 		}
 	};
-})());
+}));

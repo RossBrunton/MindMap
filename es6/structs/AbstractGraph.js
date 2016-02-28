@@ -15,7 +15,7 @@ load.provide("mm.structs.emptyGraph", (function() {
 			"width":200,
 		}
 	};
-})());
+}));
 
 load.provide("mm.structs.AbstractGraph", (function() {
 	let TypesFile = load.require("mm.structs.TypesFile");
@@ -121,4 +121,4 @@ load.provide("mm.structs.AbstractGraph", (function() {
 			);
 		}
 	};
-})());
+}));

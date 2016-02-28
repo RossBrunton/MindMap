@@ -109,4 +109,4 @@ load.provide("mm.interactions.Interaction", (function() {
 			}
 		}
 	};
-})());
+}));

@@ -16,4 +16,4 @@ load.provide("mm.utils.getDirName", (function() {
 		
 		return url.protocol + "//" + url.host + url.pathname.replace(/[^/]+$/, "");
 	};
-})());
+}));

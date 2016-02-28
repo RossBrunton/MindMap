@@ -50,7 +50,8 @@ self.load = (function(self) {
 	
 	var STATE_NONE = 0;
 	var STATE_IMPORTING = 1;
-	var STATE_RAN = 2;
+	var STATE_IMPORTED = 2;
+	var STATE_RAN = 3;
 	
 	var NFILENAME = 0;
 	var NSTATE = 1;
@@ -212,9 +213,9 @@ self.load = (function(self) {
 		//Set object and imported
 		if(name in _names) {
 			_names[name][NOBJ] = pack;
-			_names[name][NSTATE] = STATE_RAN;
+			_names[name][NSTATE] = STATE_IMPORTED;
 		}else{
-			_names[name] = ["", STATE_RAN, [], 0, pack, TYPE_PACK];
+			_names[name] = ["", STATE_IMPORTED, [], 0, pack, TYPE_PACK];
 		}
 		
 		//Seal objects
@@ -337,6 +338,10 @@ self.load = (function(self) {
 		}
 		
 		if(name in _names) {
+			if(_names[name][NSTATE] == STATE_IMPORTED) {
+				_names[name][NOBJ] = _names[name][NOBJ](self);
+				_names[name][NSTATE] = STATE_RAN;
+			}
 			return _names[name][NOBJ];
 		}
 	};
@@ -584,7 +589,7 @@ self.load = (function(self) {
 					console.warn(now[NFILENAME] + " depends on "+now[NDEPS][d]+", which is not available.");
 					okay = false;
 					break;
-				}else if(_names[now[NDEPS][d]][NSTATE] < STATE_RAN) {
+				}else if(_names[now[NDEPS][d]][NSTATE] < STATE_IMPORTED) {
 					// Check if they are from the same file
 					if(_names[now[NDEPS][d]][NFILENAME] != now[NFILENAME]) {
 						okay = false;
@@ -690,7 +695,7 @@ self.load = (function(self) {
 	 * @since 0.0.20-alpha
 	 */
 	load.isImported = function(name) {
-		if(name in _names && _names[name][1] == STATE_RAN) {
+		if(name in _names && _names[name][1] >= STATE_RAN) {
 			return true;
 		}
 		

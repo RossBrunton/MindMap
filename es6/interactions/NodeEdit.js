@@ -161,4 +161,4 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			this._nodes.get(+this._editingNode.id)[1].resize(this._editingNode.width, 30);
 		}
 	};
-})());
+}));

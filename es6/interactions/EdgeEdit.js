@@ -157,4 +157,4 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			this._editingEdge = null;
 		};
 	};
-})());
+}));

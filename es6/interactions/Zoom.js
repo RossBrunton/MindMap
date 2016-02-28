@@ -77,4 +77,4 @@ load.provide("mm.interactions.Zoom", (function() {
 			});
 		}
 	};
-})());
+}));

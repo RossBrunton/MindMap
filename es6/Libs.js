@@ -34,7 +34,7 @@
         }else if(("joint" in window) && stage == 4) {
             stage ++;
         }else if(stage == 5) {
-            load.provide("mm.libs", undefined);
+            load.provide("mm.libs", function(){});
             return;
         }
         

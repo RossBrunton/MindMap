@@ -363,4 +363,4 @@ load.provide("mm.Renderer", (function() {
 			return this._scale;
 		}
 	};
-})());
+}));

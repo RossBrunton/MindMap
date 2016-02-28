@@ -106,4 +106,4 @@ load.provide("mm.interactions.MultiSelect", (function() {
 			});
 		}
 	};
-})());
+}));

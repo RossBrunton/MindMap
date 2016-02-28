@@ -20,4 +20,4 @@ load.provide("mm.utils.getfile", (function() {
 			return new Promise((f, r) => void $.get(url, "", f).fail(r));
 		}
 	};
-})());
+}));

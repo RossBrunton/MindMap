@@ -16,7 +16,7 @@ load.provide("mm.HTMLGraphFinder", (function() {
 			};
 		}
 	}
-})());
+}));
 
 
 load.provide("mm.graphManager", (function() {
@@ -56,4 +56,4 @@ load.provide("mm.graphManager", (function() {
 	}
 	
 	return graphManager;
-})());
+}));

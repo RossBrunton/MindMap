@@ -278,4 +278,4 @@ load.provide("mm.Interactor", (function() {
 	};
 	
 	return Interactor;
-})());
+}));

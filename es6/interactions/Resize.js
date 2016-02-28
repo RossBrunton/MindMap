@@ -90,4 +90,4 @@ load.provide("mm.interactions.Resize", (function() {
 			});
 		}
 	};
-})());
+}));

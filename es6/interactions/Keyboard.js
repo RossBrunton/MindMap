@@ -44,4 +44,4 @@ load.provide("mm.interactions.Keyboard", (function() {
 			});
 		}
 	};
-})());
+}));

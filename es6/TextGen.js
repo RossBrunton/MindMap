@@ -137,4 +137,4 @@ load.provide("mm.textGen", (function() {
 	};
 	
 	return textGen;
-})());
+}));

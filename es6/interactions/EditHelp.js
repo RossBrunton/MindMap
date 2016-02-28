@@ -9,4 +9,4 @@ load.provide("mm.interactions.EditHelp", (function() {
 			$(node).find(".mm-edit-help").click((e) => $(node).find(".mm-edit-help").addClass("hidden"));
 		}
 	};
-})());
+}));
