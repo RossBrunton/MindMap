@@ -10,6 +10,15 @@
         document.head.appendChild(script);
     };
     
+    let _mkCss = function(url) {
+        let link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = url;
+        document.head.appendChild(link);
+    };
+    
+    _mkCss("//cdnjs.cloudflare.com/ajax/libs/jointjs/0.9.7/joint.min.css");
+    
     if("jQuery" in window) {
         if(jQuery.fn.jquery != "2.2.0") {
             console.warn(`JQuery already found in document. This has been tested with version 2.2.0, but you are`+
@@ -30,7 +39,7 @@
             _mkLib("//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js");
         }else if(("Backbone" in window) && stage == 3) {
             stage ++;
-            _mkLib("/libs/joint.min.js");
+            _mkLib("//cdnjs.cloudflare.com/ajax/libs/jointjs/0.9.7/joint.min.js");
         }else if(("joint" in window) && stage == 4) {
             stage ++;
         }else if(stage == 5) {
