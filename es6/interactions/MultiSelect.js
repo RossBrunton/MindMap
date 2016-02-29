@@ -26,7 +26,7 @@ load.provide("mm.interactions.MultiSelect", (function() {
 			if(!this._editor) return;
 			
 			node.addEventListener("click", (e) => {
-				if(e.target.classList[0] != "mm-background-grid") return;
+				if(!$(e.target).hasClass("mm-background-grid")) return;
 				this._state.clearMultiSel();
 			});
 			
