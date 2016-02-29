@@ -16,6 +16,7 @@ load.provide("mm.Interactor", (function() {
 	let Resize = load.require("mm.interactions.Resize");
 	let MultiSelect = load.require("mm.interactions.MultiSelect");
 	let Keyboard = load.require("mm.interactions.Keyboard");
+	let EditSimpleImpExp = load.require("mm.interactions.EditSimpleImpExp");
 	let InteractorState = load.require("mm.InteractorState");
 	
 	let _resEditWidget = load.requireResource("interactorResources/editWidget.html");
@@ -89,7 +90,8 @@ load.provide("mm.Interactor", (function() {
 				new EdgeEdit(this, abstractGraph, editor, this._interactorState),
 				new Resize(this, abstractGraph, editor, this._interactorState),
 				new MultiSelect(this, abstractGraph, editor, this._interactorState),
-				new Keyboard(this, abstractGraph, editor, this._interactorState)
+				new Keyboard(this, abstractGraph, editor, this._interactorState),
+				new EditSimpleImpExp(this, abstractGraph, editor, this._interactorState)
 			];
 		}
 		

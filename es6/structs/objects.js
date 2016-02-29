@@ -198,7 +198,7 @@ load.provide("mm.structs.ObjectCanvas", (function() {
 	 */
 	return class ObjectCanvas {
 		constructor(object, translateFn) {
-			for(let x of ["width", "height", "offsetX", "offsetY"]) this[x] = object[x];
+			for(let x of ["width", "height"]) this[x] = object[x];
 			
 			this._translateFn = translateFn;
 		}
@@ -239,6 +239,18 @@ load.provide("mm.structs.ObjectCanvas", (function() {
 		 */
 		addBottom(n) {
 			this.height += n;
+		}
+		
+		/** Exports the canvas to a JSON format
+		 * 
+		 * In the same format as the "canvas" property of the input file.
+		 * @return {object} The JSON of this canvas.
+		 */
+		toJson() {
+			return {
+				width:this.width,
+				height:this.height
+			}
 		}
 	};
 }));
@@ -420,6 +432,20 @@ load.provide("mm.structs.ObjectsData", (function() {
 			
 			for(let e of this.edges) {
 				e.points = e.points.map(([px, py]) => [px + x, py + y]);
+			}
+		}
+		
+		/** Exports the whole graph to a JSON format
+		 * 
+		 * In the same format as the import file.
+		 * @return {object} An import-like file.
+		 */
+		toJson() {
+			return {
+				version:this.version,
+				nodes:this.nodes.map((x) => x.toJson()),
+				edges:this.edges.map((x) => x.toJson()),
+				canvas:this.canvas.toJson()
 			}
 		}
 	};

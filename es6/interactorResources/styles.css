@@ -38,7 +38,7 @@
 .mm-view-widget a, .mm-edit-widget a, .mm-resize a {
     border-radius:10px;
     background-color:#ccccdd;
-    width:20px;
+    min-width:20px;
     display:inline-block;
     text-align:center;
     cursor:pointer;
@@ -48,6 +48,11 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.mm-view-widget a.text, .mm-edit-widget a.text, .mm-resize a.text {
+    padding-left:5px;
+    padding-right:5px;
 }
 
 .mm-edit-widget {
