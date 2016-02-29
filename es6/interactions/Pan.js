@@ -11,7 +11,7 @@ load.provide("mm.interactions.Pan", (function() {
 			
 			html.addEventListener("mousedown", function(e) {
 				if(e.button != 0) return;
-				if(e.target.classList[0] != "mm-background-grid") return;
+				if(!$(e.target).hasClass("mm-background-grid")) return;
 				mouseDown = true;
 				startX = e.clientX;
 				startY = e.clientY;

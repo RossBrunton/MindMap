@@ -267,11 +267,11 @@ load.provide("mm.Interactor", (function() {
 		
 		updateMultiSel() {
 			for(let r of this._renderers) {
-				$(r.getRoot()).find(".mm-selected").each((i, n) => n.classList.remove("mm-selected"));
+				$(r.getRoot()).find(".mm-selected").each((i, n) => $(n).removeClass("mm-selected"));
 				
 				for(let n of this._interactorState.getMultiSel()) {
 					if(r.getSvgNode(n.id)) {
-						r.getSvgNode(n.id).classList.add("mm-selected");
+						$(r.getSvgNode(n.id)).addClass("mm-selected");
 					}
 				}
 			}

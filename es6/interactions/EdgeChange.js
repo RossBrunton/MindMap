@@ -22,10 +22,10 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			$(svgEdge).on("mousedown", (e) => {
 				this._mouseDown = true;
 				
-				if(!Array.prototype.includes.call(e.target.classList, "marker-vertex")
-				&& !Array.prototype.includes.call(e.target.classList, "marker-arrowhead")
-				&& !Array.prototype.includes.call(e.target.classList, "marker-vertex-remove-area")
-				&& !Array.prototype.includes.call(e.target.classList, "marker-vertex-remove")
+				if(!$(e.target).hasClass("marker-vertex")
+				&& !$(e.target).hasClass("marker-arrowhead")
+				&& !$(e.target).hasClass("marker-vertex-remove-area")
+				&& !$(e.target).hasClass("marker-vertex-remove")
 				&& edge.points.length >= 1
 				) {
 					e.stopPropagation();
