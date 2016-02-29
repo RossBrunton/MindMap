@@ -265,7 +265,7 @@ load.provide("mm.Renderer", (function() {
 			let defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
 			defs.innerHTML = `
 				<pattern id='${this._id}-gridpatt' width='16' height='16' patternUnits='userSpaceOnUse'>
-					<path d='M 16 0 L 0 0 0 16' fill='none' stroke='#cccccc' stroke-width='0.5'/>
+					<path d='M 16 0 L 0 0 0 16' fill='white' stroke='#cccccc' stroke-width='0.5'/>
 				</pattern>`;
 			svg.insertBefore(defs, svg.firstChild);
 			
