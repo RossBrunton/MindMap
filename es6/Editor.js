@@ -46,5 +46,10 @@ load.provide("mm.Editor", (function() {
 			console.log(`Added event of type ${type}, %o`, arg);
 			this._undoStack.push([type, arg]);
 		}
+		
+		/** Empties the undo stack */
+		clearUndoStack() {
+			this._undoStack = [];
+		}
 	};
 }));

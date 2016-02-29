@@ -281,25 +281,57 @@ load.provide("mm.structs.ObjectsData", (function() {
 			 * 
 			 * @type integer
 			 */
-			this.version = object.version;
+			this.version = -1;
 			
 			/** An array of nodes in this graph
 			 * 
 			 * @type array<mm.structs.ObjectNode>
 			 */
-			this.nodes = object.nodes.map((x) => new ObjectNode(x, this.types.getNodeType(x.type)));
+			this.nodes = [];
 			/** An array of edges in this graph
 			 * 
 			 * @type array<mm.structs.ObjectEdge>
 			 */
-			this.edges = object.edges.map((x) => new ObjectEdge(x, this.types.getArrowType(x.type)));
+			this.edges = [];
 			/** The canvas information object thing
 			 * 
 			 * @type array<mm.structs.ObjectCanvas>
 			 */
-			this.canvas = new ObjectCanvas(object.canvas, this.translate.bind(this));
+			this.canvas = null;
+			
+			this.reload(object);
 			
 			// Todo: Editor part
+		}
+		
+		/** Reloads all the nodes from a data object from the data file
+		 * 
+		 * @param {object} object The data object.
+		 */
+		reload(object) {
+			this.nodes = [];
+			this.edges = [];
+			
+			this.version = object.version;
+			
+			this.nodes = object.nodes.map((x) => new ObjectNode(x, this.types.getNodeType(x.type)));
+			this.edges = object.edges.map((x) => new ObjectEdge(x, this.types.getArrowType(x.type)));
+			this.canvas = new ObjectCanvas(object.canvas, this.translate.bind(this));
+		}
+		
+		/** Checks if a data file looks valid, and if not outputs a reason
+		 * 
+		 * @param {object} object The object to check.
+		 * @return {string} The empty string if the object is okay, and a reason if it isn't.
+		 */
+		check(object) {
+			if(!object) return "Object is null";
+			if(object.version != 1) return `Wrong version; expecting 1, but got ${object.version}`;
+			if(!Array.isArray(object.nodes)) return `Node array is absent or not an array.`;
+			if(!Array.isArray(object.edges)) return `Edge array is absent or not an array.`;
+			if(!object.canvas) return "Canvas information is absent";
+			
+			return "";
 		}
 		
 		/** Makes a brand new, "empty" node of the default type

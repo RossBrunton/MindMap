@@ -26,6 +26,40 @@ load.provide("mm.interactions.EditSimpleImpExp", (function() {
 				a.click();
 				document.body.removeChild(a);
 			});
+			
+			$(node).find(".mm-import-button").click((e) => {
+				var input = document.createElement("input");
+				input.setAttribute("type", "file");
+				input.style.display = "none";
+				
+				$(input).change((e) => {
+					let fr = new FileReader();
+					
+					fr.onload = (le) => {
+						try {
+							let obj = JSON.parse(fr.result);
+							
+							let err = this._abstractGraph.objects.check(obj);
+							
+							if(err) {
+								alert(`Sorry, could not import the file. The error message given was:\n\n${err}`);
+							}else{
+								this._abstractGraph.objects.reload(obj);
+								this._interactor.rerender();
+								this._editor.clearUndoStack();
+							}
+						} catch(e) {
+							alert("Sorry, that does not look like a valid file.");
+						}
+					}
+					
+					fr.readAsText(input.files[0]);
+				});
+				
+				document.body.appendChild(input);
+				input.click();
+				document.body.removeChild(input);
+			});
 		}
 	};
 }));
