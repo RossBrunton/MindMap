@@ -272,7 +272,13 @@ load.provide("mm.Renderer", (function() {
 			let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 			rect.setAttribute("width", "100%");
 			rect.setAttribute("height", "100%");
-			rect.setAttribute("fill", `url(#${this._id}-gridpatt)`);
+			if(window.navigator.userAgent.includes("MSIE ")) {
+				// IE doesn't support this sort of thing
+				rect.setAttribute("fill", "#ffffff");
+			}else{
+				rect.setAttribute("fill", `url(#${this._id}-gridpatt)`);
+			}
+			
 			rect.setAttribute("class", "mm-background-grid");
 			svg.insertBefore(rect, defs);
 			
