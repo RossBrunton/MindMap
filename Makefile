@@ -1,10 +1,10 @@
 all: compile mkdeps
 
 compile:
-	tools/babel --presets es2015,stage-3 -D -d es5 es6
+	tools/babel --optional spec.protoToAssign --loose es6.classes --presets es2015,stage-3 -D -d es5 es6
 
 compile_watch:
-	tools/babel -w --presets es2015,stage-3 -D -d es5 es6
+	tools/babel -w --optional spec.protoToAssign --loose es6.classes --presets es2015,stage-3 -D -d es5 es6
 
 bigfile: mkdeps
 	tools/catter.py > mm.js
