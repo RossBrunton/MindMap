@@ -123,7 +123,7 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				
 				if("id" in e.attributes.target) {
 					// Check if it's an edge we already know about
-					if(renderer.getEdgeFromJoint(e.id)) return;
+					if(renderer.getEdgeFromJoint(e.id) !== undefined) return;
 					
 					let t = renderer.getNodeFromJoint(e.attributes.target.id);
 					let s = renderer.getNodeFromJoint(e.attributes.source.id);
