@@ -128,6 +128,9 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 					let t = renderer.getNodeFromJoint(e.attributes.target.id);
 					let s = renderer.getNodeFromJoint(e.attributes.source.id);
 					
+					// Stop connecting to self
+					if(s == t) return;
+					
 					let ne = this._abstractGraph.objects.makeNewEdge(s, t);
 					
 					this._interactor.rerender();
