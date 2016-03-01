@@ -3,7 +3,7 @@
 load.provide("mm.structs.NodeTypeField", (function() {
 	return class NodeTypeField {
 		constructor(arr) {
-			if(!arr[0].match(/[a-z]+/)) throw new TypeError(`Node type name ${object.name} is not valid.`);
+			if(!arr[0].match(/^[a-zA-Z\s]+$/)) throw new TypeError(`Node type name ${arr[0]} is not valid.`);
 			
 			[this.name, this.type, this.default, this.arg] = arr;
 		}

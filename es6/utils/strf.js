@@ -21,6 +21,13 @@ load.provide("mm.utils.strf", (function() {
 			let d = new Date(x);
 			if(isNaN(d.getTime())) return "(Invalid date)";
 			return fecha.format(d, arg);
+		},
+		cond: (x, arg, type, node) => {
+			if(x.length > 0) {
+				return arg;
+			}
+			
+			return "";
 		}
 	};
 	
@@ -34,13 +41,16 @@ load.provide("mm.utils.strf", (function() {
 	 */
 	let strf = function(template, node) {
 		return template.replace(/{(.*?)}/g, (t) => {
-			t = t.substring(1, t.length-1).trim();
+			t = t.substring(1, t.length-1);
 			
 			if("{}".includes(t)) return t;
 			
 			if(t.includes(":")) {
-				let [fn, rhs] = t.split(":");
-				let [varname, arg] = rhs.split(",");
+				let fn = t.split(":", 1)[0];
+				let rhs = t.substring(fn.length+1);
+				
+				let varname = rhs.split(",", 1)[0];
+				let arg = rhs.substring(varname.length + 1);
 				
 				let f = node.getFieldType(varname);
 				if(!f) return "(null)";
@@ -48,7 +58,7 @@ load.provide("mm.utils.strf", (function() {
 				
 				if(v === undefined) return "(undefined)";
 				
-				return _fns[fn](v, arg, f.type);
+				return _fns[fn](v, arg, f.type, node);
 			}else{
 				let f = node.getFieldType(t);
 				if(!f) return "(null)";
@@ -56,7 +66,7 @@ load.provide("mm.utils.strf", (function() {
 				
 				switch(f.type) {
 					case "text":
-					case "blocktext":
+					case "blockText":
 					case "url":
 					case "email":
 						return v;

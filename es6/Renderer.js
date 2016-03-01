@@ -27,7 +27,7 @@ load.provide("mm.Renderer", (function() {
 	let _node = joint.shapes.basic.Generic.extend({
 		markup: `<g class="rotatable">
 				
-				<g class="scalable"><rect/></g><text/><g class='outPorts'>
+				<g class="scalable"><rect rx='10' ry='10'/></g><text/><g class='outPorts'>
 					<circle class='mag mag-a' y-alignment='middle' magnet='true' ref='rect'/>
 				</g>
 			</g>

@@ -1,48 +1,286 @@
 {
 	"version": 1,
-	"defaultType":"test2",
-	"defaultArrowType":"default",
+	"defaultType":"article",
+	"defaultArrowType":"parent of",
 	"types": [{
-		"name": "test",
+		"name": "article",
 		"fields": [
-			["testfield", "text"],
-			["name", "text"],
-			["blocktext", "blockText"],
-			["url", "url"],
-			["email", "email"],
-			["date", "date"]
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
 		],
-		"nodeText": "{name}",
-		"nodeAttr": {
-			"rect":{
-				"fill":"#aaffaa",
-				"stroke":"#99bb99",
-				"rx":10,
-				"ry":10
-			}
-		},
-		"viewText": "{name} - {testfield} - {cape:name,5} - {date}",
-		"viewAddText": "HAI"
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#aaffaa","stroke":"#99bb99"}},
+		"viewText": "Journal Article: {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
 	}, {
-		"name": "test2",
+		"name": "book",
 		"fields": [
-			["testfield", "text", "Hello"]
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
 		],
-		"nodeText": "!{testfield}!",
-		"nodeAttr": {
-			"rect":{
-				"fill":"#ffaaaa",
-				"stroke":"#bb9999",
-				"rx":10,
-				"ry":10
-			}
-		},
-		"viewText": "{name} - {testfield}",
-		"viewAddText": "HAI"
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#ffddaa","stroke":"#bb9699"}},
+		"viewText": "Book: {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "book chapter",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#ffeeaa","stroke":"#bbaa99"}},
+		"viewText": "Book Chapter: {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "booklet",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#88dd88","stroke":"#779977"}},
+		"viewText": "Booklet: {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "in collection",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#dd9988","stroke":"#998877"}},
+		"viewText": "In Collection: {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "in proceedings conference",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#aaffff","stroke":"#99bbbb"}},
+		"viewText": "In Proceedings (Conference): {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "in proceedings abstract",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#ffffaa","stroke":"#bbbb99"}},
+		"viewText": "In Proceedings (Abstract): {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "in proceedings workshop",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#ffaaff","stroke":"#bb99bb"}},
+		"viewText": "In Proceedings (Workshop): {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "manual",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#ddddee","stroke":"#aaaabb"}},
+		"viewText": "Manual: {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "masters thesis",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#ffaaee","stroke":"#bb99aa"}},
+		"viewText": "Masters Thesis: {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "miscellaneous",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#ffffff","stroke":"#bbbbbb"}},
+		"viewText": "{title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "phd thesis",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#cc77cc","stroke":"#886688"}},
+		"viewText": "PHD Thesis: {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "proceedings",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#77cccc","stroke":"#668888"}},
+		"viewText": "Proceedings: {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "tech report",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#eedddd","stroke":"#bbaaaa"}},
+		"viewText": "Tech Report: {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
+	}, {
+		"name": "unpublished",
+		"fields": [
+			["title", "text", "Untitled"],
+			["author", "text"],
+			["reference", "blockText"],
+			["keywords", "blockText"],
+			["notes", "blockText"],
+			["bibtex key", "text"],
+			["link", "url"],
+			["doi", "text"],
+			["published", "date"]
+		],
+		"nodeText": "{title}",
+		"nodeAttr": {"rect":{"fill":"#ffffff","stroke":"#bbbbbb"}},
+		"viewText": "Unpublished: {title}<br/>{author}<br/>{reference}{cond:keywords,<br/>Keywords: }{keywords}",
+		"viewAddText": "<br/>{notes}<br/><br/>Published: {published}{cond:link,<br/>Link: }{link:link}"
 	}],
 	
 	"arrows": [{
-		"name": "default",
+		"name": "parent of",
+		"attr": {
+			".connection":{
+				"stroke":"#9999ff",
+				"stroke-width":"4px"
+			},
+			".marker-target":{
+				"stroke":"#9999ff",
+				"fill":"#9999ff"
+			}
+		},
+		"textAttr":{
+			"rect":{
+				"fill":"#ccccff",
+				"stroke":"#9999ff",
+				"rx":10,
+				"ry":10
+			}
+		}
+	}, {
+		"name": "parent of topic change",
 		"attr": {
 			".connection":{
 				"stroke":"#ff9999",
@@ -62,21 +300,21 @@
 			}
 		}
 	}, {
-		"name": "another",
+		"name": "cousin",
 		"attr": {
 			".connection":{
-				"stroke":"#99ff99",
+				"stroke":"#aaaaaa",
 				"stroke-width":"4px"
 			},
 			".marker-target":{
-				"stroke":"#99ff99",
-				"fill":"#99ff99"
+				"stroke":"#aaaaaa",
+				"fill":"#aaaaaa"
 			}
 		},
 		"textAttr":{
 			"rect":{
-				"fill":"#ccffcc",
-				"stroke":"#99ff99",
+				"fill":"#eeeeee",
+				"stroke":"#aaaaaa",
 				"rx":10,
 				"ry":10
 			}
