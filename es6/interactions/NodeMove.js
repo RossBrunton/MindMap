@@ -16,6 +16,8 @@ load.provide("mm.interactions.NodeMove", (function() {
 			let svgNode = renderer.getSvgNode(node.id);
 			
 			if(this._editor) $(svgNode).on("mousedown", (e) => {
+				if(e.target.tagName == "circle") return;
+				
 				this._moves.set(renderer, node);
 			});
 		}
