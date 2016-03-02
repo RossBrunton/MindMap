@@ -12,7 +12,7 @@ load.provide("mm.interactions.Keyboard", (function() {
 			); // I have no idea why this doesn't happen automatically
 			
 			if(this._editor) $(html).on("keydown", (e) => {
-				console.log(e.keyCode);
+				if(e.target.tagName.toUpperCase() == "INPUT") return;
 				
 				let key = e.keyCode;
 				
