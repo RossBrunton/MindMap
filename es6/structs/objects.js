@@ -183,6 +183,15 @@ load.provide("mm.structs.ObjectEdge", (function() {
 			
 			this.type = this.type.getOtherType(newTypeName);
 		}
+		
+		/** Checks if the connections for this node are valid.
+		 * 
+		 * @param {array<int>} nodeIds An array of node ids.
+		 * @return {bool} Whether this node is connected properly.
+		 */
+		isValid(nodeIds) {
+			return nodeIds.includes(this.origin) && nodeIds.includes(this.dest);
+		}
 	};
 }));
 
@@ -316,6 +325,10 @@ load.provide("mm.structs.ObjectsData", (function() {
 			
 			this.nodes = object.nodes.map((x) => new ObjectNode(x, this.types.getNodeType(x.type)));
 			this.edges = object.edges.map((x) => new ObjectEdge(x, this.types.getArrowType(x.type)));
+			
+			let nids = this.nodes.map((n) => n.id);
+			this.edges = this.edges.filter((e) => e.isValid(nids));
+			
 			this.canvas = new ObjectCanvas(object.canvas, this.translate.bind(this));
 		}
 		
