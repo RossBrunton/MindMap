@@ -60,7 +60,7 @@ load.provide("mm.interactions.NodeMove", (function() {
 				let newPos = movedNodeJoint.get("position");
 				let [npx, npy] = [newPos.x, newPos.y];
 				
-				if(movedNode.x != npx && movedNode.y != npy) {
+				if(movedNode.x != npx || movedNode.y != npy) {
 					// Node has been moved
 					if(this._state.inMultiSel(movedNode)) {
 						let multiSel = this._state.getMultiSel();
