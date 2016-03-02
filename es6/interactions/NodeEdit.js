@@ -88,8 +88,9 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				let newNode = this._abstractGraph.objects.makeNewNode(xm, ym);
 				this._interactor.rerender();
 				this._setEditing(newNode);
-				this._interactor.loadDetails(this._nodes.get(newNode.id)[2], renderer, true, true, this._cancel.bind(this, renderer));
+				this._interactor.loadDetails(this._nodes.get(newNode.id)[2], renderer, true, true, true, this._cancel.bind(this, renderer));
 				this._editor.addToUndoStack("node_add", {id:newNode.id, node:newNode.toJson()});
+				$(node).find(".mm-details-panel input").first().focus();
 			});
 			
 			if(this._editor) $(node).find(".mm-create-button").on("click", (e) => {
@@ -139,7 +140,6 @@ load.provide("mm.interactions.NodeEdit", (function() {
 		}
 		
 		_cancel(renderer) {
-			console.log("Cancel called "+this._changingType);
 			if(!this._editingNode) return;
 			if(this._changingType) return;
 			
