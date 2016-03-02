@@ -144,10 +144,10 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 		}
 		
 		_cancel(renderer) {
-			console.log("Edge cancel called "+this._changingType);
 			if(!this._editingEdge) return;
 			if(this._changingType) return;
 			if(this._commit) return;
+			if(!this._edges.get(this._editingEdge.id)) return;
 			
 			if(this._editingBackup.type != this._editingEdge.type.name) {
 				this._editingEdge.update(this._editingBackup);
