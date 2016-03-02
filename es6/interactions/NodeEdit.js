@@ -145,6 +145,10 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			
 			//this._interactor.hideDetailsPanel(renderer, true);
 			
+			// Since the node may have moved, update that
+			this._editingBackup.x = this._editingNode.x;
+			this._editingBackup.y = this._editingNode.y;
+			
 			if(this._editingBackup.type != this._editingNode.type.name) {
 				this._editingNode.update(this._editingBackup);
 				this._interactor.rerender();
