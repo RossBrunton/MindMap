@@ -11,16 +11,22 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			this._vertexRetargetEvent = null;
 			this._vertexRehostEvent = null;
 			this._mouseDown = false;
+			this._validMkpoint = false;
 		}
 		
 		async addEdge(renderer, joint, edge) {
 			Interaction.prototype.addEdge.call(this, renderer, joint, edge);
 			
+			// We want to skip the first "change:vertices" event, since we want to make sure the user actually creates
+			// it by dragging
+			let skipped = false;
+			
 			let svgEdge = renderer.getSvgEdge(edge.id);
-			let mdown = false;
 			
 			$(svgEdge).on("mousedown", (e) => {
 				this._mouseDown = true;
+				this._validMkpoint = edge.points.length > 0;
+				skipped = false;
 				
 				joint.set("connector", {name:"smooth"});
 				
@@ -32,12 +38,19 @@ load.provide("mm.interactions.EdgeChange", (function() {
 				) {
 					e.stopPropagation();
 				}
+				
+				if($(e.target).parents(".labels").length
+					
+				) {
+					e.stopPropagation();
+				}
 			});
 			
 			joint.on("change:vertices", (e, o) => {
 				if(!this._mouseDown) return;
-				this._vertexChangeEvent = [edge, e];
-				
+				this._validMkpoint = this._validMkpoint | skipped;
+				skipped = true;
+				this._vertexChangeEvent = [edge, e, o, joint];
 			});
 			
 			joint.on("change:source", (e, o) => {
@@ -55,14 +68,20 @@ load.provide("mm.interactions.EdgeChange", (function() {
 				this._mouseDown = false;
 				
 				if(this._vertexChangeEvent) {
-					let [edge, e] = this._vertexChangeEvent;
+					let [edge, e, o, joint] = this._vertexChangeEvent;
 					let oldVerts = edge.points;
 					
-					edge.changePoints(e.attributes.vertices.map(x => [x.x / renderer.getScale(), x.y / renderer.getScale()]));
+					if(this._validMkpoint) {
+						edge.changePoints(e.attributes.vertices.map(x => [x.x / renderer.getScale(), x.y / renderer.getScale()]));
 					
-					if(this._editor) this._editor.addToUndoStack("edge_change", {id:edge.id, old:oldVerts, "new":edge.points});
+						if(this._editor) this._editor.addToUndoStack("edge_change", {id:edge.id, old:oldVerts, "new":edge.points});
+						
+						this._interactor.rerender();
+					}else{
+						joint.set("vertices", edge.points.map(x => {return {x:x[0] * renderer.getScale(), x:y[0] * renderer.getScale()}}));
+					}
+					
 					this._vertexChangeEvent = null;
-					this._interactor.rerender();
 				}
 				
 				if(this._vertexRetargetEvent) {

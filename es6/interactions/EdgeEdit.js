@@ -19,14 +19,14 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			
 			let svgNode = renderer.getSvgEdge(edge.id);
 			
-			if(this._editor) $(svgNode).on("click", (e) => {
+			if(this._editor) $(svgNode).on("mouseup", (e) => {
 				if(this._editingEdge) return;
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
 				this._interactor.loadDetails(edge, renderer, true, true, true, this._cancel.bind(this, renderer));
 				this._setEditing(edge);
 				panel.find("input").first().focus();
-				e.preventDefault();
-				e.stopPropagation();
+				//e.preventDefault();
+				//e.stopPropagation();
 			});
 		}
 		
@@ -108,6 +108,9 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				}
 			});
 			
+			// ----
+			// Adding a new edge
+			// ----
 			graph.on("change", (e, i, o, u) => {
 				if(i.updateConnectionOnly) return;
 				if(e.attributes.type != "link") return;
