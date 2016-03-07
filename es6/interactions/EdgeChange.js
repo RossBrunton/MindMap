@@ -78,7 +78,7 @@ load.provide("mm.interactions.EdgeChange", (function() {
 						
 						this._interactor.rerender();
 					}else{
-						joint.set("vertices", edge.points.map(x => {return {x:x[0] * renderer.getScale(), x:y[0] * renderer.getScale()}}));
+						joint.set("vertices", edge.points.map(x => {return {x:x[0] * renderer.getScale(), y:x[1] * renderer.getScale()}}));
 					}
 					
 					this._vertexChangeEvent = null;
