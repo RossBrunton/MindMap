@@ -22,6 +22,8 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			$(svgEdge).on("mousedown", (e) => {
 				this._mouseDown = true;
 				
+				joint.set("connector", {name:"smooth"});
+				
 				if(!$(e.target).hasClass("marker-vertex")
 				&& !$(e.target).hasClass("marker-arrowhead")
 				&& !$(e.target).hasClass("marker-vertex-remove-area")
