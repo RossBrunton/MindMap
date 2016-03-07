@@ -17,25 +17,26 @@ load.provide("mm.interactions.Resize", (function() {
 				left = inner.scrollLeft;
 				
 				// Update locations of blocks
-				if(top == 0) {
+				if(top <= 10) {
 					$(html).find(".mm-resize-top").show();
 				}else{
 					$(html).find(".mm-resize-top").hide();
 				}
 				
-				if(left == 0) {
+				if(left <= 10) {
 					$(html).find(".mm-resize-left").show();
 				}else{
 					$(html).find(".mm-resize-left").hide();
 				}
 				
-				if(top >= svg.height() - html.scrollHeight) {
+				let margin = +svg.css("margin").split("px")[0] * 2;
+				if(top + 10 >= svg.height() - html.scrollHeight + margin) {
 					$(html).find(".mm-resize-bottom").show();
 				}else{
 					$(html).find(".mm-resize-bottom").hide();
 				}
 				
-				if(left >= svg.width() - html.scrollWidth) {
+				if(left + 10 >= svg.width() - html.scrollWidth + margin) {
 					$(html).find(".mm-resize-right").show();
 				}else{
 					$(html).find(".mm-resize-right").hide();
