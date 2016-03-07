@@ -108,14 +108,6 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				}
 			});
 			
-			
-			// ----
-			// Adding new edges
-			// ----
-			/*graph.on("add", (e, i, o, u) => {
-				console.log(e, i, o, u);
-			});*/
-			
 			graph.on("change", (e, i, o, u) => {
 				if(i.updateConnectionOnly) return;
 				if(e.attributes.type != "link") return;

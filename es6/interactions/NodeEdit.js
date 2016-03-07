@@ -112,7 +112,6 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				let editing = $(node).find(".mm-details-panel").attr("data-id");
 				
 				let update = {fields:{}, type:$(node).find(".mm-details-edit-type").val(), width:+$(node).find(".mm-details-edit-width").val()};
-				console.log(update);
 				
 				// Load all the fields
 				for(let entry of $(node).find(".mm-details-edit form").serializeArray()) {

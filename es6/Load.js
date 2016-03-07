@@ -501,8 +501,6 @@ self.load = (function(self) {
 						}
 					}
 					
-					console.log(_names);
-					
 					if("dependencies" in data) {
 						return Promise.all(data.dependencies.map(function(e) {
 							return load.importList(e);

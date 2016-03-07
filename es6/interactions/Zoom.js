@@ -24,8 +24,6 @@ load.provide("mm.interactions.Zoom", (function() {
 				renderer.setScale(scale);
 				this._interactor.rerender();
 				
-				console.log(mx, my);
-				
 				if(mod != 0) {
 					let top = elem.scrollTop;
 					let left = elem.scrollLeft;

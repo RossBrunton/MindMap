@@ -104,8 +104,6 @@ load.provide("mm.Interactor", (function() {
 		 * @param {mm.structs.ObjectNode} node The (mindmap) node that was added.
 		 */
 		async addNode(renderer, object, node) {
-			console.log("Node added: %o for %o", object, node);
-			
 			for(let i of this._interactions) {
 				i.addNode(renderer, object, node);
 			}
@@ -120,8 +118,6 @@ load.provide("mm.Interactor", (function() {
 		 * @param {mm.structs.ObjectArrow} node The (mindmap) edge that was added.
 		 */
 		async addEdge(renderer, object, edge) {
-			console.log(`Edge added: ${edge}`);
-			
 			for(let i of this._interactions) {
 				i.addEdge(renderer, object, edge);
 			}
@@ -136,8 +132,6 @@ load.provide("mm.Interactor", (function() {
 		 * @param {joint.dia.Graph} graph The jointjs graph that was added.
 		 */
 		async addCanvas(renderer, node, graph) {
-			console.log(`Canvas added: ${node}`);
-			
 			// Put the widget thing with the zoom things
 			$(node).prepend(_resViewWidget);
 			
