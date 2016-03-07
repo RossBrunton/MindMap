@@ -6,21 +6,24 @@ load.provide("mm.interactions.Pan", (function() {
 	return class Pan extends Interaction {
 		async addCanvas(renderer, html) {
 			let mouseDown = false;
-			let startX = 0;
-			let startY = 0;
+			let cx = 0;
+			let cy = 0;
 			
 			html.addEventListener("mousedown", function(e) {
 				if(e.button != 0) return;
 				if(!$(e.target).hasClass("mm-background-grid")) return;
 				mouseDown = true;
-				startX = e.clientX;
-				startY = e.clientY;
+				cx = e.clientX;
+				cy = e.clientY;
 			});
 
 			html.addEventListener("mousemove", function(e) {
+				let [deltaX, deltaY] = [e.clientX -cx, e.clientY - cy];
+				[cx, cy] = [e.clientX, e.clientY];
+				
 				if(mouseDown) {
-					$(html).find(".mm-inner")[0].scrollTop -= e.movementY;
-					$(html).find(".mm-inner")[0].scrollLeft -= e.movementX;
+					$(html).find(".mm-inner")[0].scrollTop -= deltaY;
+					$(html).find(".mm-inner")[0].scrollLeft -= deltaX;
 				}
 			});
 

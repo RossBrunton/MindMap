@@ -23,17 +23,26 @@ load.provide("mm.interactions.NodeMove", (function() {
 		}
 		
 		async addCanvas(renderer, html) {
+			let [cx, cy] = [0, 0];
+			
+			if(this._editor) $(html).on("mousedown", (e) => {
+				[cx, cy] = [e.clientX, e.clientY]
+			});
+			
 			if(this._editor) $(html).on("mousemove", (e) => {
 				if(this._moves.has(renderer) && this._moves.get(renderer)) {
 					let multiSel = this._state.getMultiSel();
 					let moving = this._moves.get(renderer);
 					
 					if(this._state.inMultiSel(moving)) {
+						let [deltaX, deltaY] = [e.clientX -cx, e.clientY - cy];
+						[cx, cy] = [e.clientX, e.clientY];
+						
 						for(let n of multiSel) {
 							if(n == moving) continue;
 							
 							let sn = this._nodes.get(n.id)[1];
-							sn.translate(e.originalEvent.movementX, e.originalEvent.movementY);
+							sn.translate(deltaX, deltaY);
 						}
 						
 						let edges = this._abstractGraph.connectedEdges(multiSel);
@@ -41,8 +50,8 @@ load.provide("mm.interactions.NodeMove", (function() {
 							let je = this._edges.get(ed.id)[1];
 							
 							je.set("vertices", je.get("vertices").map(function(o) {return {
-								x:o.x + e.originalEvent.movementX,
-								y:o.y + e.originalEvent.movementY
+								x:o.x + deltaX,
+								y:o.y + deltaY
 							}}.bind(this)));
 						}
 					}
