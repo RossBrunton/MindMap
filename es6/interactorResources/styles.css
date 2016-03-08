@@ -113,6 +113,10 @@
     display:inherit;
 }
 
+.mm-details-panel textarea {
+    font:inherit;
+}
+
 /** Help panel thing */
 .mm-edit-help {
     position:absolute;
