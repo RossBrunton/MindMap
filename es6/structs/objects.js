@@ -467,6 +467,19 @@ load.provide("mm.structs.ObjectsData", (function() {
 			return e;
 		}
 		
+		/** Inserts a new edge into the graph
+		 * 
+		 * Note that a new ID will NOT be generated.
+		 * 
+		 * @param {object|mm.structs.ObjectEdge} edge The edge to add. If it is an object then it will be converted
+		 * to an edge.
+		 */
+		insertEdge(edge) {
+			if(!(edge instanceof ObjectEdge)) edge = new ObjectEdge(edge, this.types.getArrowType(edge.type));
+			
+			this.edges.push(edge);
+		}
+		
 		/** Removes the edge with the given id
 		 * 
 		 * @param {int} id The edge to remove

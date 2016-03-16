@@ -3,6 +3,19 @@
 load.provide("mm.interactions.EdgeEdit", (function() {
 	let Interaction = load.require("mm.interactions.Interaction");
 	let textGen = load.require("mm.textGen");
+	let Editor = load.require("mm.Editor");
+	
+	Editor.registerUndo("edge_edit", function(type, arg, graph) {
+		graph.objects.getEdge(arg.id).update(arg.old);
+	}, function(type, arg, graph) {
+		graph.objects.getEdge(arg.id).update(arg["new"]);
+	});
+	
+	Editor.registerUndo("edge_delete", function(type, arg, graph) {
+		graph.objects.insertEdge(arg.json);
+	}, function(type, arg, graph) {
+		graph.objects.removeEdge(arg["id"]);
+	});
 	
 	return class EdgeEdit extends Interaction {
 		constructor(interactor, abstractGraph, editor, interactorState) {
@@ -36,6 +49,10 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			// ----
 			$(node).find(".mm-details-edit-arrow-save").click((e) => {
 				e.preventDefault();
+				
+				// Node can be moved while editing
+				this._editingBackup.points = this._editingEdge.points;
+				
 				this._editor.addToUndoStack("edge_edit",
 					{id:this._editingEdge.id, old:this._editingBackup, "new":this._editingEdge.toJson()}
 				);
@@ -48,6 +65,9 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			let cancel = () => {
 				if(!this._editingEdge) return;
 				this._interactor.hideDetailsPanel(renderer, true);
+				
+				// Node can be moved while editing
+				this._editingBackup.points = this._editingEdge.points;
 				
 				if(this._editingBackup.type != this._editingEdge.type.name) {
 					this._editingEdge.update(this._editingBackup);
@@ -74,8 +94,11 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				e.preventDefault();
 				let editing = this._editingEdge;
 				
+				// Node can be moved while editing
+				this._editingBackup.points = this._editingEdge.points;
+				
 				this._interactor.hideDetailsPanel(renderer, true);
-				this._editor.addToUndoStack("node_delete", {id:editing.id, json:this._editingBackup});
+				this._editor.addToUndoStack("edge_delete", {id:editing.id, json:this._editingBackup});
 				this._abstractGraph.objects.removeEdge(editing.id);
 				
 				this._interactor.rerender();
@@ -88,6 +111,7 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			// Edge editing
 			// ----
 			if(this._editor) $(node).find(".mm-details-edit-arrow").on("input", (e) => {
+				if(!this._editingEdge) return;
 				let editing = this._editingEdge.id;
 				
 				let update = {
