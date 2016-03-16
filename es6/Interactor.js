@@ -272,6 +272,28 @@ load.provide("mm.Interactor", (function() {
 				}
 			}
 		}
+		
+		/** Undoes an action using the editor
+		 * 
+		 * This also rerenders the graph, so it should be called rather than on editor directly.
+		 * 
+		 * @async
+		 */
+		undo() {
+			this._editor.undo();
+			this.rerender();
+		}
+		
+		/** Redoes an action using the editor
+		 * 
+		 * This also rerenders the graph, so it should be called rather than on editor directly.
+		 * 
+		 * @async
+		 */
+		redo() {
+			this._editor.redo();
+			this.rerender();
+		}
 	};
 	
 	return Interactor;

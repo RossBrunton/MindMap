@@ -6,11 +6,11 @@ load.provide("mm.interactions.EditUndo", (function() {
 	return class EditUndo extends Interaction {
 		async addCanvas(renderer, node) {
 			$(node).find(".mm-undo-button").click((e) => {
-				this._editor.undo();
+				this._interactor.undo();
 			});
 			
 			$(node).find(".mm-redo-button").click((e) => {
-				this._editor.redo();
+				this._interactor.redo();
 			});
 		}
 	};

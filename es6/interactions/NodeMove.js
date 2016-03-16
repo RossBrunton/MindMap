@@ -2,6 +2,13 @@
 
 load.provide("mm.interactions.NodeMove", (function() {
 	let Interaction = load.require("mm.interactions.Interaction");
+	let Editor = load.require("mm.Editor");
+	
+	Editor.registerUndo("node_move", function(type, arg, graph) {
+		graph.objects.getNode(arg.id).update({x: arg.old[0], y: arg.old[1]});
+	}, function(type, arg, graph) {
+		graph.objects.getNode(arg.id).update({x: arg["new"][0], y: arg["old"][1]});
+	});
 	
 	return class NodeMove extends Interaction {
 		constructor(interactor, abstractGraph, editor, state) {

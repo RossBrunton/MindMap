@@ -8,7 +8,7 @@ load.provide("mm.Editor", (function() {
 	 * 
 	 * Keys are the event type and values are [undo, redo] pairs as per `Editor.registerUndo`.
 	 * 
-	 * @type Map<string, array<function(string, object)>>
+	 * @type Map<string, array<function(string, object, mm.structs.abstractGraph)>>
 	 * @private
 	 */
 	let _handlers = new Map();
@@ -20,20 +20,14 @@ load.provide("mm.Editor", (function() {
 	 * @param {abstractGraph} The abstract graph on which this editor edits.
 	 * @param {interactor} The interactor which is using this editor.
 	 */
-	return class Editor {
-		constructor(abstractGraph, interactor) {
+	class Editor {
+		constructor(abstractGraph) {
 			/** The abstract graph on which this editor edits
 			 * 
 			 * @type mm.structs.AbstractGraph
 			 * @private
 			 */
 			this._abstractGraph = abstractGraph;
-			/** The interactor which is using this editor
-			 * 
-			 * @type mm.Interactor
-			 * @private
-			 */
-			this._interactor = interactor;
 			
 			/** The undo stack
 			 * 
@@ -72,27 +66,40 @@ load.provide("mm.Editor", (function() {
 			this._undoStack = [];
 		}
 		
-		/** Performs an undo operation */
+		/** Performs an undo operation
+		 * 
+		 * @async
+		 */
 		async undo() {
 			console.log("Undo");
+			
+			if(this._p == -1) return;
+			let now = this._undoStack[this._p];
+			this._p --;
+			
+			_handlers.get(now[0])[0](now[0], now[1], this._abstractGraph);
+			
+			this.printStack();
 		}
 		
-		/** Performs a redo operation */
+		/** Performs a redo operation
+		 * 
+		 * @async
+		 */
 		async redo() {
 			console.log("Redo");
+			
+			if(this._p == this._undoStack.length - 1) return;
+			this._p ++;
+			let now = this._undoStack[this._p];
+			
+			_handlers.get(now[0])[1](now[0], now[1], this._abstractGraph);
+			
+			this.printStack();
 		}
 		
-		/** Adds a new possible undo and redo event and handlers
-		 * 
-		 * Both handlers will be given the type string and the object added.
-		 * 
-		 * @param {string} type The name of the type.
-		 * @param {async function(string, object)} undo The function to call to undo this event.
-		 * @param {async function(string, object)} redo The funciton to call to redo this event.
-		 */
-		registerUndo(type, undo, redo) {
-			_handlers.set(type, [undo, redo]);
-		}
+		
+		
 		
 		/** Prints the undo stack to the console
 		 * 
@@ -105,4 +112,19 @@ load.provide("mm.Editor", (function() {
 			}
 		}
 	};
+	
+	/** Adds a new possible undo and redo event and handlers
+	 * 
+	 * Both handlers will be given the type string and the object added.
+	 * 
+	 * @param {string} type The name of the type.
+	 * @param {async function(string, objec, mm.structs.abstractGrapht)} undo The function to call to undo this event.
+	 * @param {async function(string, objec, mm.structs.abstractGrapht)} redo The funciton to call to redo this event.
+	 * @static
+	 */
+	Editor.registerUndo = function(type, undo, redo) {
+		_handlers.set(type, [undo, redo]);
+	}
+	
+	return Editor;
 }));

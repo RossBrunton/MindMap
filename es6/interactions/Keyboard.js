@@ -42,13 +42,13 @@ load.provide("mm.interactions.Keyboard", (function() {
 					}
 					
 					if(key == 90) { // CTRL + Z
-						this._editor.undo();
+						this._interactor.undo();
 						
 						e.preventDefault();
 					}
 					
 					if([82, 89].includes(key)) { // CTRL + [R, Y]
-						this._editor.redo();
+						this._interactor.redo();
 						
 						e.preventDefault();
 					}
