@@ -52,6 +52,8 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				
 				// Node can be moved while editing
 				this._editingBackup.points = this._editingEdge.points;
+				this._editingBackup.source = this._editingEdge.source;
+				this._editingBackup.dest = this._editingEdge.dest;
 				
 				this._editor.addToUndoStack("edge_edit",
 					{id:this._editingEdge.id, old:this._editingBackup, "new":this._editingEdge.toJson()}
@@ -68,6 +70,8 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				
 				// Node can be moved while editing
 				this._editingBackup.points = this._editingEdge.points;
+				this._editingBackup.source = this._editingEdge.source;
+				this._editingBackup.dest = this._editingEdge.dest;
 				
 				if(this._editingBackup.type != this._editingEdge.type.name) {
 					this._editingEdge.update(this._editingBackup);
@@ -96,6 +100,8 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				
 				// Node can be moved while editing
 				this._editingBackup.points = this._editingEdge.points;
+				this._editingBackup.source = this._editingEdge.source;
+				this._editingBackup.dest = this._editingEdge.dest;
 				
 				this._interactor.hideDetailsPanel(renderer, true);
 				this._editor.addToUndoStack("edge_delete", {id:editing.id, json:this._editingBackup});
