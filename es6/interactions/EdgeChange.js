@@ -2,6 +2,25 @@
 
 load.provide("mm.interactions.EdgeChange", (function() {
 	let Interaction = load.require("mm.interactions.Interaction");
+	let Editor = load.require("mm.Editor");
+	
+	Editor.registerUndo("edge_change", function(type, arg, graph) {
+		graph.objects.getEdge(arg.id).points = arg.old;
+	}, function(type, arg, graph) {
+		graph.objects.getEdge(arg.id).points = arg["new"];
+	});
+	
+	Editor.registerUndo("edge_retarget", function(type, arg, graph) {
+		graph.objects.getEdge(arg.id).dest = arg.old;
+	}, function(type, arg, graph) {
+		graph.objects.getEdge(arg.id).dest = arg["new"];
+	});
+	
+	Editor.registerUndo("edge_rehost", function(type, arg, graph) {
+		graph.objects.getEdge(arg.id).origin = arg.old;
+	}, function(type, arg, graph) {
+		graph.objects.getEdge(arg.id).origin = arg["new"];
+	});
 	
 	return class EdgeChange extends Interaction {
 		constructor(interactor, abstractGraph, editor) {
