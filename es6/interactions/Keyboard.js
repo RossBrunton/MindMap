@@ -40,6 +40,18 @@ load.provide("mm.interactions.Keyboard", (function() {
 						
 						e.preventDefault();
 					}
+					
+					if(key == 90) { // CTRL + Z
+						this._editor.undo();
+						
+						e.preventDefault();
+					}
+					
+					if([82, 89].includes(key)) { // CTRL + [R, Y]
+						this._editor.redo();
+						
+						e.preventDefault();
+					}
 				}
 			});
 		}
