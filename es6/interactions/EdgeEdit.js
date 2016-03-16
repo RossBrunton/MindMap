@@ -64,26 +64,6 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				this._editingEdge = null;
 			});
 			
-			let cancel = () => {
-				if(!this._editingEdge) return;
-				this._interactor.hideDetailsPanel(renderer, true);
-				
-				// Node can be moved while editing
-				this._editingBackup.points = this._editingEdge.points;
-				this._editingBackup.source = this._editingEdge.source;
-				this._editingBackup.dest = this._editingEdge.dest;
-				
-				if(this._editingBackup.type != this._editingEdge.type.name) {
-					this._editingEdge.update(this._editingBackup);
-					this._interactor.rerender();
-				}else{
-					this._editingEdge.update(this._editingBackup);
-					this._edges.get(this._editingEdge.id)[1].label(0, {position:0.5, attrs:{text:{text:this._editingEdge.text}}});
-				}
-				
-				this._editingEdge = null;
-			};
-			
 			$(node).find(".mm-details-edit-arrow-close").click(
 				(e) => {this._interactor.hideDetailsPanel(renderer, true); e.preventDefault()}
 			);
@@ -173,6 +153,11 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			if(this._changingType) return;
 			if(this._commit) return;
 			if(!this._edges.get(this._editingEdge.id)) return;
+			
+			// Node can be moved while editing
+			this._editingBackup.points = this._editingEdge.points;
+			this._editingBackup.source = this._editingEdge.source;
+			this._editingBackup.dest = this._editingEdge.dest;
 			
 			if(this._editingBackup.type != this._editingEdge.type.name) {
 				this._editingEdge.update(this._editingBackup);
