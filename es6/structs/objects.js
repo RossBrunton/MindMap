@@ -467,6 +467,19 @@ load.provide("mm.structs.ObjectsData", (function() {
 			return e;
 		}
 		
+		/** Inserts a new node into the graph
+		 * 
+		 * Note that a new ID will NOT be generated.
+		 * 
+		 * @param {object|mm.structs.ObjectNode} node The node to add. If it is an object then it will be converted
+		 * to a node.
+		 */
+		insertNode(node) {
+			if(!(node instanceof ObjectNode)) node = new ObjectNode(node, this.types.getNodeType(node.type));
+			
+			this.nodes.push(node);
+		}
+		
 		/** Inserts a new edge into the graph
 		 * 
 		 * Note that a new ID will NOT be generated.

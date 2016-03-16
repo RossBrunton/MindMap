@@ -3,6 +3,25 @@
 load.provide("mm.interactions.NodeEdit", (function() {
 	let Interaction = load.require("mm.interactions.Interaction");
 	let textGen = load.require("mm.textGen");
+	let Editor = load.require("mm.Editor");
+	
+	Editor.registerUndo("node_edit", function(type, arg, graph) {
+		graph.objects.getNode(arg.id).update(arg.old);
+	}, function(type, arg, graph) {
+		graph.objects.getNode(arg.id).update(arg["new"]);
+	});
+	
+	Editor.registerUndo("node_delete", function(type, arg, graph) {
+		graph.cascadingRemoveNodeRecovery(arg["recover"]);
+	}, function(type, arg, graph) {
+		graph.cascadingRemoveNode(arg.id);
+	});
+	
+	Editor.registerUndo("node_add", function(type, arg, graph) {
+		graph.objects.removeNode(arg.id);
+	}, function(type, arg, graph) {
+		graph.objects.insertNode(arg["node"]);
+	});
 	
 	return class NodeEdit extends Interaction {
 		constructor(interactor, abstractGraph, editor, state) {
@@ -70,7 +89,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				e.preventDefault();
 				
 				let rec = this._abstractGraph.cascadingRemoveNode(this._editingNode.id);
-				this._editor.addToUndoStack("node_delete", {recover:rec});
+				this._editor.addToUndoStack("node_delete", {recover:rec, id:this._editingNode.id});
 				this._interactor.hideDetailsPanel(renderer, true);
 				this._interactor.rerender();
 				

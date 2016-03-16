@@ -110,6 +110,20 @@ load.provide("mm.structs.AbstractGraph", (function() {
 			return recovery;
 		}
 		
+		/** Recovers the nodes and edges deleted by cascadingRemoveNode
+		 * 
+		 * @param {object} recover The recovery object.
+		 */
+		cascadingRemoveNodeRecovery(recover) {
+			for(let n of recover.nodes) {
+				this.objects.insertNode(n);
+			}
+			
+			for(let e of recover.edges) {
+				this.objects.insertEdge(e);
+			}
+		}
+		
 		/** Returns an array of links where both ends are connected to a node in the given set.
 		 * 
 		 * @param {array<mm.structs.ObjectNode>} nodes The set of nodes to find edges for.
