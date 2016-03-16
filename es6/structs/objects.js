@@ -415,6 +415,17 @@ load.provide("mm.structs.ObjectsData", (function() {
 			}
 		}
 		
+		/** Returns the edge with the given id
+		 * 
+		 * @param {int} id The edge to look up
+		 * @return {mm.structs.ObjectEdge} The edge.
+		 */
+		getEdge(id) {
+			for(let e of this.edges) {
+				if(e.id == id) {return e;}
+			}
+		}
+		
 		/** Returns an array of the edges that link to or from this node
 		 * 
 		 * @param {int} id The node to get edges for
