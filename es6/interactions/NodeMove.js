@@ -7,7 +7,7 @@ load.provide("mm.interactions.NodeMove", (function() {
 	Editor.registerUndo("node_move", function(type, arg, graph) {
 		graph.objects.getNode(arg.id).update({x: arg.old[0], y: arg.old[1]});
 	}, function(type, arg, graph) {
-		graph.objects.getNode(arg.id).update({x: arg["new"][0], y: arg["old"][1]});
+		graph.objects.getNode(arg.id).update({x: arg["new"][0], y: arg["new"][1]});
 	});
 	
 	return class NodeMove extends Interaction {
