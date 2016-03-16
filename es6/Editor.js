@@ -56,6 +56,10 @@ load.provide("mm.Editor", (function() {
 		 */
 		addToUndoStack(type, arg) {
 			console.log(`Added event of type ${type}, %o`, arg);
+			
+			if(!_handlers.has(type))
+				throw TypeError(`Tried to add an undo event of type ${type}, but no handler exists!`);
+			
 			this._undoStack.splice(this._p+1);
 			this._undoStack.push([type, arg]);
 			this._p ++;
@@ -97,9 +101,6 @@ load.provide("mm.Editor", (function() {
 			
 			this.printStack();
 		}
-		
-		
-		
 		
 		/** Prints the undo stack to the console
 		 * 
