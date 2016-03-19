@@ -224,3 +224,33 @@
 .mm-resize-right-cont {
     right:3px;
 }
+
+/* Coloured Buttons */
+.mm-save {
+    background:#88dd88;
+    border:2px solid #66bb66;
+    border-radius:3px;
+}
+
+.mm-delete {
+    background:#dd8888;
+    border:2px solid #bb6666;
+    border-radius:3px;
+}
+
+.mm-cancel {
+    background:#dddd88;
+    border:2px solid #bbbb66;
+    border-radius:3px;
+}
+
+.mm-button-bar {
+    margin-top:10px;
+    text-align:center;
+}
+
+.mm-button-bar button {
+    width:100px;
+    margin-left:10px;
+    margin-right:10px;
+}
