@@ -9,7 +9,7 @@ load.provide("mm.interactions.Pan", (function() {
 			let cx = 0;
 			let cy = 0;
 			
-			html.addEventListener("mousedown", function(e) {
+			html.addEventListener("mousedown", (e) => {
 				if(e.button != 0) return;
 				if(!$(e.target).hasClass("mm-background-grid") && this._editor) return;
 				mouseDown = true;
@@ -17,7 +17,7 @@ load.provide("mm.interactions.Pan", (function() {
 				cy = e.clientY;
 			});
 
-			html.addEventListener("mousemove", function(e) {
+			html.addEventListener("mousemove", (e) => {
 				let [deltaX, deltaY] = [e.clientX -cx, e.clientY - cy];
 				[cx, cy] = [e.clientX, e.clientY];
 				
