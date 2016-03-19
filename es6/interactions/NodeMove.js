@@ -73,7 +73,7 @@ load.provide("mm.interactions.NodeMove", (function() {
 				}
 			});
 			
-			if(this._editor) $(html).on("mouseup", (e) => {
+			let _stopMove = (e) => {
 				// The changed position seems to be in joint.changed.position. Not sure if I'm supposed to use it, but
 				// it's public.
 				let movedNode = this._moves.get(renderer);
@@ -123,7 +123,10 @@ load.provide("mm.interactions.NodeMove", (function() {
 				}
 				
 				this._moves.set(renderer, null);
-			});
+			};
+			
+			if(this._editor) $(html).on("mouseup", _stopMove);
+			if(this._editor) $(html).mouseleave(_stopMove);
 		}
 	};
 }));

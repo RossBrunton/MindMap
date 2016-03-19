@@ -82,7 +82,7 @@ load.provide("mm.interactions.EdgeChange", (function() {
 		}
 		
 		async addCanvas(renderer, node) {
-			$(node).on("mouseup", (e) => {
+			let _out = (e) => {
 				// This doesn't handle mouse going out of widget
 				this._mouseDown = false;
 				
@@ -132,7 +132,10 @@ load.provide("mm.interactions.EdgeChange", (function() {
 						this._interactor.rerender();
 					}
 				}
-			});
+			};
+			
+			$(node).on("mouseup", _out);
+			$(node).mouseleave(_out);
 		}
 	};
 }));
