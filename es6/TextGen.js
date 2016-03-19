@@ -10,6 +10,15 @@ load.provide("mm.textGen", (function() {
 	
 	let textGen = {};
 	
+	/** Captialises the first character of the given string
+	 * 
+	 * @param {string} str The input string.
+	 * @return string The captialised input string.
+	 */
+	textGen.capitalise = function(str) {
+		return (str.charAt(0).toUpperCase()) + str.slice(1);
+	};
+	
 	/** Generates text for displaying on the actual nodes on the diagram
 	 * 
 	 * Uses the `nodeText` template from the types file.
@@ -57,7 +66,7 @@ load.provide("mm.textGen", (function() {
 		let hold = "";
 		
 		for(let x of types.types) {
-			hold += `<option value='${x.name}' ${x != node.type ? "" : "selected"}>${x.name}</option>`;
+			hold += `<option value='${x.name}' ${x != node.type ? "" : "selected"}>${textGen.capitalise(x.name)}</option>`;
 		}
 		
 		return hold;
@@ -73,7 +82,7 @@ load.provide("mm.textGen", (function() {
 		let hold = "";
 		
 		for(let x of types.arrowTypes) {
-			hold += `<option value='${x.name}' ${x != edge.type ? "" : "selected"}>${x.name}</option>`;
+			hold += `<option value='${x.name}' ${x != edge.type ? "" : "selected"}>${textGen.capitalise(x.name)}</option>`;
 		}
 		
 		return hold;
@@ -88,7 +97,9 @@ load.provide("mm.textGen", (function() {
 		let hold = "";
 		
 		for(let x of node.type.fields) {
-			hold += `${x.name}: `;
+			hold += `<div class='mm-fieldpair'>
+<span class='mm-fieldname'>${textGen.capitalise(x.name)}</span>
+<span class='mm-fieldvar'>`;
 			
 			let v = node.fields[x.name];
 			if(v === undefined) v = "";
@@ -107,7 +118,7 @@ load.provide("mm.textGen", (function() {
 					break;
 				
 				case "blockText":
-					hold += `<br/><textarea name='${x.name}'>${v}</textarea>`;
+					hold += `<textarea name='${x.name}'>${v}</textarea>`;
 					break;
 				
 				case "date":
@@ -115,7 +126,7 @@ load.provide("mm.textGen", (function() {
 					break;
 			}
 			
-			hold += "<br/>";
+			hold += "</span></div>";
 		}
 		
 		return hold;

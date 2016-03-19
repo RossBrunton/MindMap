@@ -3,15 +3,23 @@
     <div class='mm-details-long'></div>
     <div class='mm-details-edit'>
         <form>
-            Type: <select class='mm-details-edit-type'>
-                
-            </select>
+            <div class='mm-fieldpair'>
+                <span class='mm-fieldname'>Type</span>
+                <span class='mm-fieldvar'><select class='mm-details-edit-type'></select></span>
+            </div>
             
-            Width: <select class='mm-details-edit-width' name='width'>
-                <option value='100'>Normal</option>
-                <option value='200'>Wide</option>
-                <option value='300'>Very Wide</option>
-            </select>
+            <div class='mm-fieldpair'>
+                <span class='mm-fieldname'>Width</span>
+                <span class='mm-fieldvar'>
+                    <select class='mm-details-edit-width' name='width'>
+                        <option value='100'>Normal</option>
+                        <option value='200'>Wide</option>
+                        <option value='300'>Very Wide</option>
+                    </select>
+                </span>
+            </div>
+            
+            
             <div class='mm-details-edit-inner'>
                 
             </div>
@@ -25,11 +33,17 @@
     </div>
     <div class='mm-details-edit-arrow'>
         <form>
-            <select class='mm-details-edit-arrow-type'>
-                
-            </select><br/>
+            <div class='mm-fieldpair mm-fieldpair-arrow'>
+                <span class='mm-fieldname mm-fieldname-arrow'>
+                    <select class='mm-details-edit-arrow-type'>
+                        
+                    </select>
+                </span>
             
-            <input class='mm-details-edit-arrow-text' type='text' val='' name='text'/>
+                <span class='mm-fieldval mm-fieldval-arrow'>
+                    <input class='mm-details-edit-arrow-text' type='text' val='' name='text'/>
+                </span>
+            </div>
             
             <div class='mm-button-bar'>
                 <button class='mm-details-edit-arrow-save mm-save'>Save</button>

@@ -254,3 +254,28 @@
     margin-left:10px;
     margin-right:10px;
 }
+
+
+/* New field style */
+.mm-fieldpair {
+    margin-top:7px;
+}
+
+.mm-fieldname {
+    width:150px;
+    display:inline-block;
+    vertical-align:top;
+}
+
+.mm-fieldvar {
+    display:inline-block;
+    vertical-align:top;
+}
+
+.mm-fieldpair input, .mm-fieldpair textarea, .mm-fieldpair select {
+    width:250px;
+}
+
+.mm-fieldpair-arrow select {
+    width:140px;
+}
