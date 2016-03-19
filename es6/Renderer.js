@@ -43,7 +43,7 @@ load.provide("mm.Renderer", (function() {
 				},
 				'.outPorts circle': {
 					r:5,
-					fill:'#ff0000',
+					fill:'#1ABC9C', // Same colour as jointjs
 					ref:'rect',
 					"ref-x":0.999,
 					"ref-y":0.5
