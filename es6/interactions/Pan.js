@@ -27,8 +27,8 @@ load.provide("mm.interactions.Pan", (function() {
 				}
 			});
 
-			$(html).on("mouseup", (e) => mouseDown = false);
-			$(html).mouseleave((e) => mouseDown = false);
+			$(html).on("mouseup", (e) => void (mouseDown = false));
+			$(html).mouseleave((e) => void (mouseDown = false));
 		}
 	};
 }));
