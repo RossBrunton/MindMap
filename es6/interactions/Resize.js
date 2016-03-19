@@ -2,6 +2,20 @@
 
 load.provide("mm.interactions.Resize", (function() {
 	let Interaction = load.require("mm.interactions.Interaction");
+	let Editor = load.require("mm.Editor");
+	
+	let _resizeUndo = (event, call) => {
+		Editor.registerUndo(`resize_${event}`, function(type, arg, graph) {
+			graph.objects.canvas[`add${call}`](-arg.val);
+		}, function(type, arg, graph) {
+			graph.objects.canvas[`add${call}`](arg.val);
+		});
+	};
+	
+	_resizeUndo("top", "Top");
+	_resizeUndo("bottom", "Bottom");
+	_resizeUndo("left", "Left");
+	_resizeUndo("right", "Right");
 	
 	return class Resize extends Interaction {
 		async addCanvas(renderer, html) {
