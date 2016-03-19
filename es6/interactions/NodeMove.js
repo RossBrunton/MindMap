@@ -10,6 +10,14 @@ load.provide("mm.interactions.NodeMove", (function() {
 		graph.objects.getNode(arg.id).update({x: arg["new"][0], y: arg["new"][1]});
 	});
 	
+	Editor.registerUndo("node_multimove", function(type, arg, graph) {
+		for(let n of arg.nodes) graph.objects.getNode(n.id).update({x:n.old[0], y:n.old[1]});
+		for(let e of arg.edges) graph.objects.getEdge(e.id).points = e.old;
+	}, function(type, arg, graph) {
+		for(let n of arg.nodes) graph.objects.getNode(n.id).update({x:n["new"][0], y:n["new"][1]});
+		for(let e of arg.edges) graph.objects.getEdge(e.id).points = e["new"];
+	});
+	
 	return class NodeMove extends Interaction {
 		constructor(interactor, abstractGraph, editor, state) {
 			super(interactor, abstractGraph, editor, state);
@@ -74,30 +82,41 @@ load.provide("mm.interactions.NodeMove", (function() {
 				let movedNodeJoint = this._nodes.get(movedNode.id)[1];
 				
 				let newPos = movedNodeJoint.get("position");
-				let [npx, npy] = [newPos.x, newPos.y];
+				let [npx, npy] = [newPos.x / renderer.getScale(), newPos.y / renderer.getScale()];
 				
 				if(movedNode.x != npx || movedNode.y != npy) {
 					// Node has been moved
 					if(this._state.inMultiSel(movedNode)) {
 						let multiSel = this._state.getMultiSel();
 						
-						let arg = {nodes:[]};
+						let arg = {nodes:[], edges:[]};
 						
 						for(let n of multiSel) {
 							let oldPos = [n.x, n.y];
 							
 							let newPos = this._nodes.get(n.id)[1].get("position");
+							newPos.x /= renderer.getScale();
+							newPos.y /= renderer.getScale();
 							
-							n.changePosition(newPos.x / renderer.getScale(), newPos.y / renderer.getScale());
+							n.changePosition(newPos.x, newPos.y);
 							
 							arg.nodes.push({id:n.id, old:[oldPos[0], oldPos[1]], "new":[newPos.x, newPos.y]});
+						}
+						
+						let edges = this._abstractGraph.connectedEdges(multiSel);
+						for(let ed of edges) {
+							let je = this._edges.get(ed.id)[1];
+							
+							arg.edges.push({id:ed.id, "new":je.get("vertices").map(
+								(o) => [o.x / renderer.getScale(), o.y / renderer.getScale()]
+							), old:ed.points});
 						}
 						
 						this._editor.addToUndoStack("node_multimove", arg);
 					}else{
 						let oldPos = [movedNode.x, movedNode.y];
 					
-						movedNode.changePosition(npx / renderer.getScale(), npy / renderer.getScale());
+						movedNode.changePosition(npx, npy);
 					
 						this._editor.addToUndoStack("node_move", {id:movedNode.id, old:oldPos, "new":[movedNode.x, movedNode.y]});
 					}
