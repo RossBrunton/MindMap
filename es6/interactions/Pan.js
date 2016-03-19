@@ -11,7 +11,7 @@ load.provide("mm.interactions.Pan", (function() {
 			
 			html.addEventListener("mousedown", function(e) {
 				if(e.button != 0) return;
-				if(!$(e.target).hasClass("mm-background-grid")) return;
+				if(!$(e.target).hasClass("mm-background-grid") && this._editor) return;
 				mouseDown = true;
 				cx = e.clientX;
 				cy = e.clientY;
@@ -27,9 +27,8 @@ load.provide("mm.interactions.Pan", (function() {
 				}
 			});
 
-			$(html).on("mouseup mouseout", function(e) {
-				mouseDown = false;
-			});
+			$(html).on("mouseup", (e) => mouseDown = false);
+			$(html).mouseleave((e) => mouseDown = false);
 		}
 	};
 }));
