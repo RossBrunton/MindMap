@@ -10,7 +10,7 @@ load.provide("mm.interactions.MultiSelect", (function() {
 			let svgNode = renderer.getSvgNode(node.id);
 			
 			$(svgNode).on("click", (e) => {
-				if(e.shiftKey) {
+				if(e.shiftKey || e.ctrlKey) {
 					if(this._state.inMultiSel(node)) {
 						this._state.removeFromMultiSel(node);
 					}else{
@@ -98,7 +98,7 @@ load.provide("mm.interactions.MultiSelect", (function() {
 					n.x > x && n.y > y && n.x < x + w && n.y < y + h
 				);
 				
-				if(!e.shiftKey) this._state.clearMultiSel();
+				if(!e.shiftKey && !e.ctrlKey) this._state.clearMultiSel();
 				nodeset.forEach(this._state.addToMultiSel.bind(this._state));
 				this._interactor.updateMultiSel();
 				
