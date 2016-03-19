@@ -218,7 +218,7 @@ load.provide("mm.Renderer", (function() {
 				this._interactor.addEdge(this, link, e);
 				
 				// Text
-				if(e.text || this._editor) {
+				if((e.text || this._editor) && this._scale > 0.7) {
 					link.label(0, {
 						position: 0.5,
 						attrs: e.type.textAttr
