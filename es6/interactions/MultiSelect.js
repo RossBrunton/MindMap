@@ -83,7 +83,8 @@ load.provide("mm.interactions.MultiSelect", (function() {
 				oy = my;
 			});
 			
-			$(node).on("mouseup", (e) => {
+			
+			let _stopSelection = (e) => {
 				if(e.button != 2) return;
 				
 				let [mx, my] = this._interactor.getMousePos(e, renderer);
@@ -103,7 +104,10 @@ load.provide("mm.interactions.MultiSelect", (function() {
 				
 				rmouse = false;
 				rect.setAttribute("width", 0);
-			});
+			}
+			
+			$(node).on("mouseup", _stopSelection);
+			$(node).mouseleave(_stopSelection);
 		}
 	};
 }));
