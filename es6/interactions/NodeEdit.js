@@ -55,6 +55,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				if(node.x != x || node.y != y) return;
 				
 				this._state.clearMultiSel();
+				this._state.addToMultiSel(node);
 				
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
 				this._interactor.loadDetails(node, renderer, true, true, true, this._cancel.bind(this, renderer));
