@@ -46,7 +46,9 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			});
 			
 			if(this._editor) $(svgNode).on("click", (e) => {
-				if(this._editingNode) return;
+				if(this._editingNode) {
+					// Do nothing..?
+				}
 				if(e.shiftKey || e.ctrlKey) return; // Multiselection
 				
 				// Check if the node was dragged
