@@ -170,11 +170,14 @@ load.provide("mm.structs.ObjectEdge", (function() {
 		 * Any fields or values from the object that are absent will be left alone.
 		 * 
 		 * @param {object} obj The object to copy from.
+		 * @param {?array<string>} fields An array of fields (of obj) to copy, any fields not in this list will be
+		 *  ignored. If this arg isn't specified, all fields are copied.
 		 */
-		update(obj) {
-			if("type" in obj) this.changeType(obj.type);
+		update(obj, fields) {
+			if(fields === undefined) fields = ["type", "text", "origin", "dest", "points"];
+			if("type" in obj && fields.includes("type")) this.changeType(obj.type);
 			
-			["text", "origin", "dest", "points"].forEach((x) => {if(x in obj) this[x] = obj[x]});
+			["text", "origin", "dest", "points"].forEach((x) => {if(x in obj && fields.includes(x)) this[x] = obj[x]});
 		}
 		
 		/** Changes the type of this edge to a new type

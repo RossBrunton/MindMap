@@ -6,9 +6,9 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 	let Editor = load.require("mm.Editor");
 	
 	Editor.registerUndo("edge_edit", function(type, arg, graph) {
-		graph.objects.getEdge(arg.id).update(arg.old);
+		graph.objects.getEdge(arg.id).update(arg.old, ["type", "text"]);
 	}, function(type, arg, graph) {
-		graph.objects.getEdge(arg.id).update(arg["new"]);
+		graph.objects.getEdge(arg.id).update(arg["new"], ["type", "text"]);
 	});
 	
 	Editor.registerUndo("edge_delete", function(type, arg, graph) {
@@ -56,11 +56,6 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			$(node).find(".mm-details-edit-arrow-save").click((e) => {
 				e.preventDefault();
 				
-				// Node can be moved while editing
-				this._editingBackup.points = this._editingEdge.points;
-				this._editingBackup.source = this._editingEdge.source;
-				this._editingBackup.dest = this._editingEdge.dest;
-				
 				this._editor.addToUndoStack("edge_edit",
 					{id:this._editingEdge.id, old:this._editingBackup, "new":this._editingEdge.toJson()}
 				);
@@ -84,13 +79,8 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				e.preventDefault();
 				let editing = this._editingEdge;
 				
-				// Node can be moved while editing
-				this._editingBackup.points = this._editingEdge.points;
-				this._editingBackup.source = this._editingEdge.source;
-				this._editingBackup.dest = this._editingEdge.dest;
-				
 				this._interactor.hideDetailsPanel(renderer, true);
-				this._editor.addToUndoStack("edge_delete", {id:editing.id, json:this._editingBackup});
+				this._editor.addToUndoStack("edge_delete", {id:editing.id, json:editing.toJson()});
 				this._abstractGraph.objects.removeEdge(editing.id);
 				
 				this._interactor.rerender();
@@ -162,13 +152,8 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			if(this._commit) return;
 			if(!this._edges.get(this._editingEdge.id)) return;
 			
-			// Node can be moved while editing
-			this._editingBackup.points = this._editingEdge.points;
-			this._editingBackup.source = this._editingEdge.source;
-			this._editingBackup.dest = this._editingEdge.dest;
-			
 			if(this._editingBackup.type != this._editingEdge.type.name) {
-				this._editingEdge.update(this._editingBackup);
+				this._editingEdge.update(this._editingBackup, ["type", "text"]);
 				this._interactor.rerender();
 			}else{
 				this._editingEdge.update(this._editingBackup);
