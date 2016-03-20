@@ -140,12 +140,14 @@
 
 .mm-edit-help-content .left {
     float:left;
-    width:60%
+    width:48%;
+    padding:5px;
 }
 
 .mm-edit-help-content .right {
     float:right;
-    width:40%;
+    width:48%;
+    padding:5px;
 }
 
 .mm-edit-help-content ul {
@@ -155,6 +157,10 @@
 
 .mm-edit-help-content li {
     margin-bottom:10px;
+}
+
+.mm-edit-help-content h2 {
+
 }
 
 /* Hide editor bits */
