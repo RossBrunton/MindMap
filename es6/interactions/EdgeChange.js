@@ -29,7 +29,7 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			this._vertexChangeEvent = null;
 			this._vertexRetargetEvent = null;
 			this._vertexRehostEvent = null;
-			this._mouseDown = false;
+			
 			this._validMkpoint = false;
 		}
 		
@@ -43,7 +43,6 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			let svgEdge = renderer.getSvgEdge(edge.id);
 			
 			$(svgEdge).on("mousedown", (e) => {
-				this._mouseDown = true;
 				this._validMkpoint = edge.points.length > 0;
 				skipped = false;
 				
@@ -66,7 +65,7 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			});
 			
 			joint.on("change:vertices", (e, o) => {
-				if(!this._mouseDown) return;
+				//if(!this._mouseDown) return;
 				this._validMkpoint = this._validMkpoint | skipped;
 				skipped = true;
 				this._vertexChangeEvent = [edge, e, o, joint];
@@ -83,8 +82,6 @@ load.provide("mm.interactions.EdgeChange", (function() {
 		
 		async addCanvas(renderer, node) {
 			let _out = (e) => {
-				// This doesn't handle mouse going out of widget
-				this._mouseDown = false;
 				
 				if(this._vertexChangeEvent) {
 					let [edge, e, o, joint] = this._vertexChangeEvent;
