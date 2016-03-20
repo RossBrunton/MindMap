@@ -31,6 +31,8 @@ load.provide("mm.interactions.HoverView", (function() {
 		async addCanvas(renderer, node) {
 			node.addEventListener("click", (e) => {
 				if(!$(e.target).hasClass("mm-background-grid")) return;
+				if(this._editor) return;
+				
 				this._interactor.hideDetailsPanel(renderer, true);
 			});
 		}
