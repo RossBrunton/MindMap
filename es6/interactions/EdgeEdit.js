@@ -17,6 +17,12 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 		graph.objects.removeEdge(arg["id"]);
 	});
 	
+	Editor.registerUndo("edge_add", function(type, arg, graph) {
+		graph.objects.removeEdge(arg.id);
+	}, function(type, arg, graph) {
+		graph.objects.insertEdge(arg["edge"]);
+	});
+	
 	return class EdgeEdit extends Interaction {
 		constructor(interactor, abstractGraph, editor, interactorState) {
 			super(interactor, abstractGraph, editor, interactorState);
@@ -137,6 +143,8 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 					if(s == t) return;
 					
 					let ne = this._abstractGraph.objects.makeNewEdge(s, t);
+					
+					this._editor.addToUndoStack("edge_add", {edge:ne.toJson(), id:ne.id});
 					
 					this._interactor.rerender();
 				}
