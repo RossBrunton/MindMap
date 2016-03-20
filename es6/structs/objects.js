@@ -72,13 +72,16 @@ load.provide("mm.structs.ObjectNode", (function() {
 		 * Any fields or values from the object that are absent will be left alone.
 		 * 
 		 * @param {object} obj The object to copy from.
+		 * @param {?array<string>} fields An array of fields (of obj) to copy, any fields not in this list will be
+		 *  ignored. If this arg isn't specified, all fields are copied.
 		 */
-		update(obj) {
-			if("type" in obj) this.changeType(obj.type);
+		update(obj, fields) {
+			if(fields === undefined) fields = ["x", "y", "width", "type", "fields"];
+			if("type" in obj && fields.includes("type")) this.changeType(obj.type);
 			
-			["x", "y", "width"].forEach((x) => {if(x in obj) this[x] = obj[x]});
+			["x", "y", "width"].forEach((x) => {if(x in obj && fields.includes(x)) this[x] = obj[x]});
 			
-			if("fields" in obj) for(let x in obj.fields) {
+			if("fields" in obj && fields.includes("fields")) for(let x in obj.fields) {
 				this.fields[x] = obj.fields[x];
 			}
 		}

@@ -6,9 +6,9 @@ load.provide("mm.interactions.NodeEdit", (function() {
 	let Editor = load.require("mm.Editor");
 	
 	Editor.registerUndo("node_edit", function(type, arg, graph) {
-		graph.objects.getNode(arg.id).update(arg.old);
+		graph.objects.getNode(arg.id).update(arg.old, ["width", "type", "fields"]);
 	}, function(type, arg, graph) {
-		graph.objects.getNode(arg.id).update(arg["new"]);
+		graph.objects.getNode(arg.id).update(arg["new"], ["width", "type", "fields"]);
 	});
 	
 	Editor.registerUndo("node_delete", function(type, arg, graph) {
@@ -164,17 +164,11 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			if(!this._editingNode) return;
 			if(this._changingType) return;
 			
-			//this._interactor.hideDetailsPanel(renderer, true);
-			
-			// Since the node may have moved, update that
-			this._editingBackup.x = this._editingNode.x;
-			this._editingBackup.y = this._editingNode.y;
-			
 			if(this._editingBackup.type != this._editingNode.type.name) {
-				this._editingNode.update(this._editingBackup);
+				this._editingNode.update(this._editingBackup, ["width", "type", "fields"]);
 				this._interactor.rerender();
 			}else{
-				this._editingNode.update(this._editingBackup);
+				this._editingNode.update(this._editingBackup, ["width", "type", "fields"]);
 				this._setText(textGen.nodeText(this._editingNode));
 			}
 			
