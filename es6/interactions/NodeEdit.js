@@ -73,11 +73,14 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			});
 			
 			$(node).find(".mm-details-edit-close").click((e) => {
-				this._interactor.hideDetailsPanel(renderer, true, true);
 				this._cancel(renderer);
 				e.preventDefault();
 			});
-			//$(node).on("click", (e) => {if(e.target.classList[0] == "mm-background-grid") cancel(e)});
+			
+			// Save when we click outside
+			$(node).on("click", (e) => {
+				if(e.target.classList[0] == "mm-background-grid") this._interactor.hideDetailsPanel(renderer, true)
+			});
 			
 			
 			// ----
@@ -172,6 +175,8 @@ load.provide("mm.interactions.NodeEdit", (function() {
 		_cancel(renderer) {
 			if(!this._editingNode) return;
 			if(this._changingType) return;
+			
+			this._interactor.hideDetailsPanel(renderer, true, true);
 			
 			if(this._editingBackup.type != this._editingNode.type.name) {
 				this._editingNode.update(this._editingBackup, ["width", "type", "fields", "hidden"]);
