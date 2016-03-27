@@ -38,31 +38,6 @@ load.provide("mm.interactions.EdgeChange", (function() {
 		constructor(interactor, abstractGraph, editor) {
 			super(interactor, abstractGraph, editor);
 			
-			/** The last event for the jointjs "change:vertices" logic
-			 * 
-			 * In the form of [edge, event, change object, jointjs object].
-			 * 
-			 * @type array
-			 * @private
-			 */
-			this._vertexChangeEvent = null;
-			/** The last event for the jointjs "change:target" logic
-			 * 
-			 * In the form of [edge, event, change object, jointjs object].
-			 * 
-			 * @type array
-			 * @private
-			 */
-			this._vertexRetargetEvent = null;
-			/** The last event for the jointjs "change:source" logic
-			 * 
-			 * In the form of [edge, event, change object, jointjs object].
-			 * 
-			 * @type array
-			 * @private
-			 */
-			this._vertexRehostEvent = null;
-			
 			/** We only want the vertices to be change if there is actually a drag. This flag is set when the
 			 *  _vertexChangeEvent should be actually listened to.
 			 * 
@@ -70,6 +45,15 @@ load.provide("mm.interactions.EdgeChange", (function() {
 			 * @private
 			 */
 			this._validMkpoint = false;
+			
+			/** The edge currently being changed, or null if none are
+			 * 
+			 * An [edge, jointJS edge] pair.
+			 * 
+			 * @type array
+			 * @private
+			 */
+			this._editingEdge = null;
 		}
 		
 		async addEdge(renderer, joint, edge) {
@@ -109,9 +93,8 @@ load.provide("mm.interactions.EdgeChange", (function() {
 					return;
 				}
 				
-				// Smooth the edge
-				// TODO: This doesn't take into account that the edge may not need smoothing
-				joint.set("connector", {name:"smooth"});
+				// Remember the edge being edited
+				this._editingEdge = [edge, joint];
 			});
 			
 			joint.on("change:vertices", (e, o) => {
@@ -121,75 +104,76 @@ load.provide("mm.interactions.EdgeChange", (function() {
 				// Okay, now set the "skiped it" to true"
 				skipped = true;
 				
-				// And store the event
-				this._vertexChangeEvent = [edge, e, o, joint];
-			});
-			
-			joint.on("change:source", (e, o) => {
-				this._vertexRehostEvent = [edge, e, o, joint];
-			});
-			
-			joint.on("change:target", (e, o) => {
-				this._vertexRetargetEvent = [edge, e, o, joint];
+				// Smooth the edge
+				joint.set("connector", {name:"smooth"});
 			});
 		}
 		
 		async addCanvas(renderer, node) {
 			// Function called when the dragging stops
 			let _out = (e) => {
-				if(this._vertexChangeEvent) {
-					// Adding or changing the curve point
-					let [edge, e, o, joint] = this._vertexChangeEvent;
-					let oldVerts = edge.points;
-					
+				if(!this._editingEdge) return;
+				
+				let scale = renderer.getScale()
+				let [edge, joint] = this._editingEdge;
+				
+				
+				// This whole section checks if the points have changed!
+				// Get the points
+				let points = joint.get("vertices").map(x => [x.x / scale, x.y / scale]);
+				let oldPoints = edge.points;
+				
+				// Now check whether there is any change in the points
+				let pointsChange = false;
+				if(points.length != oldPoints.length) pointsChange = true;
+				if(!pointsChange) {
+					pointsChange = false;
+					for(let i = 0; i < points.length; i ++) {
+						if(points[i][0] != oldPoints[i][0] || points[i][1] != oldPoints[i][1]) pointsChange = true;
+					}
+				}
+				
+				// Now update the event if the points have changed
+				if(pointsChange) {
 					if(this._validMkpoint) {
-						edge.changePoints(e.attributes.vertices.map(x => [x.x / renderer.getScale(), x.y / renderer.getScale()]));
+						// We are allowed to create a point
+						edge.changePoints(points);
 					
-						if(this._editor) this._editor.addToUndoStack("edge_change", {id:edge.id, old:oldVerts, "new":edge.points});
+						if(this._editor) this._editor.addToUndoStack("edge_change", {id:edge.id, old:oldPoints, "new":edge.points});
 						
 						this._interactor.rerender();
 					}else{
+						// If we are not allowed to create a point, remove it by setting the vertices
 						joint.set("vertices", edge.points.map(x => {return {x:x[0] * renderer.getScale(), y:x[1] * renderer.getScale()}}));
+						joint.set("connector", {name:"normal"});
 					}
-					
-					this._vertexChangeEvent = null;
 				}
 				
-				if(this._vertexRetargetEvent) {
-					// Changing the place the arrow is pointing to
-					let [edge, e, o, joint] = this._vertexRetargetEvent;
-					this._vertexRetargetEvent = null;
-					
-					// If we didn't connect to anything, don't bother
-					if(!("id" in o)) return;
-					
+				//Check for a new target
+				if("id" in joint.get("target")) {
 					// And get the new target
-					let newTarget = renderer.getNodeFromJoint(o.id);
+					let newTarget = renderer.getNodeFromJoint(joint.get("target").id);
 					
-					if(edge.dest != newTarget) {
+					if(edge.dest != newTarget && newTarget !== undefined) {
 						this._editor.addToUndoStack("edge_retarget", {id:edge.id, old:edge.dest, "new":newTarget});
 						edge.dest = newTarget;
 						this._interactor.rerender();
 					}
 				}
 				
-				if(this._vertexRehostEvent) {
-					// Changing the place the arrow is coming from
-					let [edge, e, o, joint] = this._vertexRehostEvent;
-					this._vertexRehostEvent = null;
+				// Check for a new origin
+				if("id" in joint.get("source")) {
+					// Get the new origin
+					let newHost = renderer.getNodeFromJoint(joint.get("source").id);
 					
-					// If we didn't connect to anything, don't bother
-					if(!("id" in o)) return;
-					
-					// And get the new source
-					let newHost = renderer.getNodeFromJoint(o.id);
-					
-					if(edge.origin != newHost) {
+					if(edge.origin != newHost && newHost !== undefined) {
 						this._editor.addToUndoStack("edge_rehost", {id:edge.id, old:edge.origin, "new":newHost});
 						edge.origin = newHost;
 						this._interactor.rerender();
 					}
 				}
+				
+				this._editingEdge = null;
 			};
 			
 			$(node).on("mouseup", _out);
