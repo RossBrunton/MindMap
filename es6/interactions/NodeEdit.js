@@ -6,9 +6,9 @@ load.provide("mm.interactions.NodeEdit", (function() {
 	let Editor = load.require("mm.Editor");
 	
 	Editor.registerUndo("node_edit", function(type, arg, graph) {
-		graph.objects.getNode(arg.id).update(arg.old, ["width", "type", "fields"]);
+		graph.objects.getNode(arg.id).update(arg.old, ["width", "type", "fields", "hidden"]);
 	}, function(type, arg, graph) {
-		graph.objects.getNode(arg.id).update(arg["new"], ["width", "type", "fields"]);
+		graph.objects.getNode(arg.id).update(arg["new"], ["width", "type", "fields", "hidden"]);
 	});
 	
 	Editor.registerUndo("node_delete", function(type, arg, graph) {
@@ -128,12 +128,17 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			// ----
 			// Node editing
 			// ----
-			if(this._editor) $(node).find(".mm-details-edit").on("input", (e) => {
+			let handler = (e) => {
 				if($(node).find(".mm-details-panel").hasClass("edge")) return;
 				
 				let editing = $(node).find(".mm-details-panel").attr("data-id");
 				
-				let update = {fields:{}, type:$(node).find(".mm-details-edit-type").val(), width:+$(node).find(".mm-details-edit-width").val()};
+				let update = {
+					fields:{},
+					type:$(node).find(".mm-details-edit-type").val(),
+					width:+$(node).find(".mm-details-edit-width").val(),
+					hidden:$(node).find(".mm-details-edit-hidden")[0].checked
+				};
 				
 				// Load all the fields
 				for(let entry of $(node).find(".mm-details-edit form").serializeArray()) {
@@ -152,7 +157,12 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				}else{
 					this._setText(textGen.nodeText(this._nodes.get(+editing)[2]));
 				}
-			});
+				
+				this._interactor.updateHidden(this._editingNode);
+			};
+			
+			if(this._editor) $(node).find(".mm-details-edit").on("input", handler);
+			if(this._editor) $(node).find(".mm-details-edit-hidden").on("click", handler);
 		}
 		
 		_setEditing(node) {
@@ -165,10 +175,10 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			if(this._changingType) return;
 			
 			if(this._editingBackup.type != this._editingNode.type.name) {
-				this._editingNode.update(this._editingBackup, ["width", "type", "fields"]);
+				this._editingNode.update(this._editingBackup, ["width", "type", "fields", "hidden"]);
 				this._interactor.rerender();
 			}else{
-				this._editingNode.update(this._editingBackup, ["width", "type", "fields"]);
+				this._editingNode.update(this._editingBackup, ["width", "type", "fields", "hidden"]);
 				this._setText(textGen.nodeText(this._editingNode));
 			}
 			

@@ -211,6 +211,7 @@ load.provide("mm.Interactor", (function() {
 				}else{
 					panel.find(".mm-details-edit-type").html(textGen.editSelect(object, this._abstractGraph.types));
 					panel.find(".mm-details-edit-width").val(object.width);
+					panel.find(".mm-details-edit-hidden")[0].checked = object.hidden;
 					panel.find(".mm-details-edit-inner").html(textGen.editForm(object));
 				}
 			}else{
@@ -271,6 +272,10 @@ load.provide("mm.Interactor", (function() {
 					}
 				}
 			}
+		}
+		
+		updateHidden(node) {
+			this._renderers.forEach((r) => r.updateHidden(this._abstractGraph.objects, node));
 		}
 		
 		/** Undoes an action using the editor

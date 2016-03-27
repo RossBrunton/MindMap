@@ -380,5 +380,17 @@ load.provide("mm.Renderer", (function() {
 		getScale() {
 			return this._scale;
 		}
+		
+		updateHidden(objects, node) {
+			let edges = objects.getEdgesConnectedToNode(node.id);
+			
+			if(node.hidden) {
+				$(this.getSvgNode(node.id)).addClass("hidden-node");
+				edges.forEach((e) => $(this.getSvgEdge(e.id)).addClass("hidden-edge"));
+			}else{
+				$(this.getSvgNode(node.id)).removeClass("hidden-node");
+				edges.forEach((e) => {if(!objects.isHidden(e)) $(this.getSvgEdge(e.id)).removeClass("hidden-edge")});
+			}
+		}
 	};
 }));
