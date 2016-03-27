@@ -75,8 +75,6 @@ load.provide("mm.Editor", (function() {
 		 * @async
 		 */
 		async undo() {
-			console.log("Undo");
-			
 			if(this._p == -1) return;
 			let now = this._undoStack[this._p];
 			this._p --;
@@ -91,8 +89,6 @@ load.provide("mm.Editor", (function() {
 		 * @async
 		 */
 		async redo() {
-			console.log("Redo");
-			
 			if(this._p == this._undoStack.length - 1) return;
 			this._p ++;
 			let now = this._undoStack[this._p];
