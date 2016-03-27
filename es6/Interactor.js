@@ -289,6 +289,7 @@ load.provide("mm.Interactor", (function() {
 		 */
 		undo() {
 			this._editor.undo();
+			this._renderers.forEach((r) => this.hideDetailsPanel(r, true));
 			this.rerender();
 		}
 		
@@ -300,6 +301,7 @@ load.provide("mm.Interactor", (function() {
 		 */
 		redo() {
 			this._editor.redo();
+			this._renderers.forEach((r) => this.hideDetailsPanel(r, true));
 			this.rerender();
 		}
 	};
