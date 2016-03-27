@@ -17,7 +17,7 @@ load.provide("mm.structs.ObjectNode", (function() {
 			 */
 			this.type = type;
 			
-			for(let x of ["id", "x", "y", "fields", "width"]) this[x] = object[x];
+			for(let x of ["id", "x", "y", "fields", "width", "hidden"]) this[x] = object[x];
 		}
 		
 		/** Gets the field type of the specified field
@@ -63,7 +63,8 @@ load.provide("mm.structs.ObjectNode", (function() {
 				y:this.y,
 				id:this.id,
 				fields:fields,
-				width:this.width
+				width:this.width,
+				hidden:this.hidden
 			}
 		}
 		
@@ -76,10 +77,10 @@ load.provide("mm.structs.ObjectNode", (function() {
 		 *  ignored. If this arg isn't specified, all fields are copied.
 		 */
 		update(obj, fields) {
-			if(fields === undefined) fields = ["x", "y", "width", "type", "fields"];
+			if(fields === undefined) fields = ["x", "y", "width", "type", "fields", "hidden"];
 			if("type" in obj && fields.includes("type")) this.changeType(obj.type);
 			
-			["x", "y", "width"].forEach((x) => {if(x in obj && fields.includes(x)) this[x] = obj[x]});
+			["x", "y", "width", "hidden"].forEach((x) => {if(x in obj && fields.includes(x)) this[x] = obj[x]});
 			
 			if("fields" in obj && fields.includes("fields")) for(let x in obj.fields) {
 				this.fields[x] = obj.fields[x];
@@ -534,6 +535,22 @@ load.provide("mm.structs.ObjectsData", (function() {
 				nodes:this.nodes.map((x) => x.toJson()),
 				edges:this.edges.map((x) => x.toJson()),
 				canvas:this.canvas.toJson()
+			}
+		}
+		
+		/** Returns true if the object should be hidden
+		 * 
+		 * For nodes, this is it's "hidden" field.
+		 * For edges, this is true if it is connected to a hidden node.
+		 * 
+		 * @param {mm.structs.ObjectNode|mm.structs.ObjectEdge} obj The object to check.
+		 * @return {boolean} Whether the object is hidden or not.
+		 */
+		isHidden(obj) {
+			if(obj instanceof ObjectNode) return obj.hidden;
+			
+			if(obj instanceof ObjectEdge) {
+				return this.isHidden(this.getNode(obj.origin)) || this.isHidden(this.getNode(obj.dest));
 			}
 		}
 	};

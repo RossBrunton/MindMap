@@ -180,6 +180,8 @@ load.provide("mm.Renderer", (function() {
 			this._edgeIds = new Map();
 			
 			for(let n of objects.nodes) {
+				if(objects.isHidden(n) && !this._editor) continue;
+				
 				let tts = textGen.wrapText(textGen.nodeText(n), n.width);
 				
 				let rect = new _node({
@@ -198,6 +200,8 @@ load.provide("mm.Renderer", (function() {
 			
 			// Edges
 			for(let e of objects.edges) {
+				if(objects.isHidden(e) && !this._editor) continue;
+				
 				let link = new joint.dia.Link({
 					source: {id:this._nodeIds.get(e.origin).id},
 					target: {id:this._nodeIds.get(e.dest).id},
