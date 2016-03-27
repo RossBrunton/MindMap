@@ -54,9 +54,6 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				// Check if the node was dragged
 				if(node.x != x || node.y != y) return;
 				
-				this._state.clearMultiSel();
-				this._state.addToMultiSel(node);
-				
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
 				this._interactor.loadDetails(node, renderer, true, true, true, this._save.bind(this, renderer));
 				this._setEditing(node);
@@ -165,6 +162,9 @@ load.provide("mm.interactions.NodeEdit", (function() {
 		}
 		
 		_setEditing(node) {
+			this._state.clearMultiSel();
+			this._state.addToMultiSel(node);
+			
 			this._editingNode = node;
 			this._editingBackup = node.toJson();
 		}
