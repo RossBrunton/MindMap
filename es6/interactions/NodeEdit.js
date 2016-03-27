@@ -182,6 +182,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				this._setText(textGen.nodeText(this._editingNode));
 			}
 			
+			this._interactor.updateHidden(this._editingNode);
 			this._editingNode = null;
 		}
 		
