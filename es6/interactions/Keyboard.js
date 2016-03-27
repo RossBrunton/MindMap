@@ -10,20 +10,25 @@ load.provide("mm.interactions.Keyboard", (function() {
 		graph.cascadingRemoveNode(arg.ids);
 	});
 	
+	/** Handles all the keyboard shortcuts
+	 * 
+	 * @extends mm.Interaciton
+	 */
 	return class Keyboard extends Interaction {
 		async addCanvas(renderer, html) {
 			$(html).attr("tabindex", 0);
 			
 			$(html).on("mousedown", (x) => {
 				if(!$.contains(html, document.activeElement)) $(html).focus()}
-			); // I have no idea why this doesn't happen automatically
+			); // If clicking on anything in the html node, focus on it
+			
 			
 			if(this._editor) $(html).on("keydown", (e) => {
 				if(e.target.tagName.toUpperCase() == "INPUT") return;
 				
 				let key = e.keyCode;
 				
-				if(key == 46) { // Delete
+				if(key == 46) { // Multidelete
 					if(this._state.countMultiSel()) {
 						let multisel = this._state.getMultiSel().map(x => x.id);
 						let rec = this._abstractGraph.cascadingRemoveNode(multisel);
@@ -33,7 +38,7 @@ load.provide("mm.interactions.Keyboard", (function() {
 					}
 				}
 				
-				if(key == 27) { // Escape
+				if(key == 27) { // Escape, hide details panel
 					$(html).focus();
 					if(this._interactor.hideDetailsPanel(renderer, true)) return;
 					this._state.clearMultiSel();
@@ -41,7 +46,7 @@ load.provide("mm.interactions.Keyboard", (function() {
 				}
 				
 				if(e.ctrlKey) {
-					if(key == 65) { // CTRL + A
+					if(key == 65) { // CTRL + A, select all
 						for(let n of this.myNodes(renderer)) {
 							this._state.addToMultiSel(n[2]);
 						}
@@ -49,13 +54,13 @@ load.provide("mm.interactions.Keyboard", (function() {
 						e.preventDefault();
 					}
 					
-					if(key == 90) { // CTRL + Z
+					if(key == 90) { // CTRL + Z, undo
 						this._interactor.undo();
 						
 						e.preventDefault();
 					}
 					
-					if([82, 89].includes(key)) { // CTRL + [R, Y]
+					if([82, 89].includes(key)) { // CTRL + [R, Y], redo
 						this._interactor.redo();
 						
 						e.preventDefault();
