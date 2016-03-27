@@ -39,9 +39,9 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			let svgNode = renderer.getSvgEdge(edge.id);
 			
 			if(this._editor) $(svgNode).on("mouseup", (e) => {
-				if(this._editingEdge) return;
+				//if(this._editingEdge) return;
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
-				this._interactor.loadDetails(edge, renderer, true, true, true, this._cancel.bind(this, renderer));
+				this._interactor.loadDetails(edge, renderer, true, true, true, this._save.bind(this, renderer));
 				this._setEditing(edge);
 				panel.find("input").first().focus();
 				//e.preventDefault();
@@ -55,19 +55,14 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			// ----
 			$(node).find(".mm-details-edit-arrow-save").click((e) => {
 				e.preventDefault();
-				
-				this._editor.addToUndoStack("edge_edit",
-					{id:this._editingEdge.id, old:this._editingBackup, "new":this._editingEdge.toJson()}
-				);
-				this._commit = true;
 				this._interactor.hideDetailsPanel(renderer, true);
-				this._commit = false;
-				this._editingEdge = null;
 			});
 			
-			$(node).find(".mm-details-edit-arrow-close").click(
-				(e) => {this._interactor.hideDetailsPanel(renderer, true); e.preventDefault()}
-			);
+			$(node).find(".mm-details-edit-arrow-close").click((e) => {
+				this._interactor.hideDetailsPanel(renderer, true, true);
+				this._cancel(renderer);
+				e.preventDefault();
+			});
 			
 			//$(node).on("click", (e) => {if(e.target.classList[0] == "mm-background-grid") cancel(e)});
 			
@@ -79,7 +74,8 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				e.preventDefault();
 				let editing = this._editingEdge;
 				
-				this._interactor.hideDetailsPanel(renderer, true);
+				this._interactor.hideDetailsPanel(renderer, true, true);
+				this._cancel(renderer);
 				this._editor.addToUndoStack("edge_delete", {id:editing.id, json:editing.toJson()});
 				this._abstractGraph.objects.removeEdge(editing.id);
 				
@@ -105,10 +101,8 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 				let oldTypeName = this._editingEdge.type.name;
 				this._editingEdge.update(update);
 				if(this._editingEdge.type.name != oldTypeName) {
-					this._changingType = true;
 					this._interactor.rerender();
-					this._interactor.loadDetails(this._editingEdge, renderer, true, true, true, this._cancel.bind(this, renderer));
-					this._changingType = false;
+					this._interactor.loadDetails(this._editingEdge, renderer, true, true, true, this._save.bind(this, renderer), true);
 				}else{
 					this._edges.get(+editing)[1].label(0, {position:0.5, attrs:{text:{text:this._editingEdge.text}}});
 				}
@@ -148,7 +142,6 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 		
 		_cancel(renderer) {
 			if(!this._editingEdge) return;
-			if(this._changingType) return;
 			if(this._commit) return;
 			if(!this._edges.get(this._editingEdge.id)) return;
 			
@@ -162,5 +155,12 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			
 			this._editingEdge = null;
 		};
+		
+		_save(renderer) {
+			this._editor.addToUndoStack("edge_edit",
+				{id:this._editingEdge.id, old:this._editingBackup, "new":this._editingEdge.toJson()}
+			);
+			this._editingEdge = null;
+		}
 	};
 }));
