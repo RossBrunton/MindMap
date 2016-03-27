@@ -155,8 +155,10 @@ load.provide("mm.interactions.EdgeChange", (function() {
 					let newTarget = renderer.getNodeFromJoint(joint.get("target").id);
 					
 					if(edge.dest != newTarget && newTarget !== undefined) {
-						this._editor.addToUndoStack("edge_retarget", {id:edge.id, old:edge.dest, "new":newTarget});
-						edge.dest = newTarget;
+						if(newTarget != edge.origin) {
+							this._editor.addToUndoStack("edge_retarget", {id:edge.id, old:edge.dest, "new":newTarget});
+							edge.dest = newTarget;
+						}
 						this._interactor.rerender();
 					}
 				}
@@ -167,8 +169,10 @@ load.provide("mm.interactions.EdgeChange", (function() {
 					let newHost = renderer.getNodeFromJoint(joint.get("source").id);
 					
 					if(edge.origin != newHost && newHost !== undefined) {
-						this._editor.addToUndoStack("edge_rehost", {id:edge.id, old:edge.origin, "new":newHost});
-						edge.origin = newHost;
+						if(newHost != edge.dest) {
+							this._editor.addToUndoStack("edge_rehost", {id:edge.id, old:edge.origin, "new":newHost});
+							edge.origin = newHost;
+						}
 						this._interactor.rerender();
 					}
 				}
