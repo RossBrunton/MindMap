@@ -157,7 +157,13 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 		};
 		
 		_save(renderer) {
-			this._editor.addToUndoStack("edge_edit",
+			// See if it has been updated at all
+			let change = false;
+			if(this._editingBackup.text != this._editingEdge.text) change = true;
+			if(this._editingBackup.type != this._editingEdge.type.name) change = true;
+			
+			
+			if(change) this._editor.addToUndoStack("edge_edit",
 				{id:this._editingEdge.id, old:this._editingBackup, "new":this._editingEdge.toJson()}
 			);
 			this._editingEdge = null;
