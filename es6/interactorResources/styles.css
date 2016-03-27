@@ -231,6 +231,11 @@
     right:3px;
 }
 
+/* Hidden nodes */
+.hidden-node, .hidden-edge {
+    opacity:0.5;
+}
+
 /* Coloured Buttons */
 .mm-save {
     background:#88dd88;

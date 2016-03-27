@@ -196,6 +196,10 @@ load.provide("mm.Renderer", (function() {
 				this._graph.addCell(rect);
 				this._nodeIds.set(n.id, rect);
 				this._interactor.addNode(this, rect, n);
+				
+				if(objects.isHidden(n)) {
+					$(this.getSvgNode(n.id)).addClass("hidden-node");
+				}
 			}
 			
 			// Edges
@@ -229,6 +233,10 @@ load.provide("mm.Renderer", (function() {
 					});
 					
 					link.label(0, {position:0.5, attrs:{rect:{style:"scale:1.3"}, text:{text:e.text}}});
+				}
+				
+				if(objects.isHidden(e)) {
+					$(this.getSvgEdge(e.id)).addClass("hidden-edge");
 				}
 			}
 			
