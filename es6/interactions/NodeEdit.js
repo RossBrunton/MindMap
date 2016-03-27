@@ -58,7 +58,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				this._state.addToMultiSel(node);
 				
 				let panel = $(svgNode).parents(".mm-root").find(".mm-details-panel");
-				this._interactor.loadDetails(node, renderer, true, true, true, this._cancel.bind(this, renderer));
+				this._interactor.loadDetails(node, renderer, true, true, true, this._save.bind(this, renderer));
 				this._setEditing(node);
 				panel.find("input").first().focus();
 				e.preventDefault();
@@ -72,14 +72,14 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			// ----
 			$(node).find(".mm-details-edit-save").click((e) => {
 				e.preventDefault();
-				this._editor.addToUndoStack("node_edit",
-					{id:this._editingNode.id, old:this._editingBackup, "new":this._editingNode.toJson()}
-				);
-				this._editingNode = null;
 				this._interactor.hideDetailsPanel(renderer, true);
 			});
 			
-			$(node).find(".mm-details-edit-close").click((e) => {this._interactor.hideDetailsPanel(renderer, true); e.preventDefault()});
+			$(node).find(".mm-details-edit-close").click((e) => {
+				this._interactor.hideDetailsPanel(renderer, true, true);
+				this._cancel(renderer);
+				e.preventDefault();
+			});
 			//$(node).on("click", (e) => {if(e.target.classList[0] == "mm-background-grid") cancel(e)});
 			
 			
@@ -93,7 +93,8 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				
 				let rec = this._abstractGraph.cascadingRemoveNode(this._editingNode.id);
 				this._editor.addToUndoStack("node_delete", {recover:rec, id:this._editingNode.id});
-				this._interactor.hideDetailsPanel(renderer, true);
+				this._interactor.hideDetailsPanel(renderer, true, true);
+				this._cancel(renderer);
 				this._interactor.rerender();
 				
 				this._editingNode = null;
@@ -109,8 +110,8 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				let [xm, ym] = this._interactor.getMousePos(e, renderer);
 				let newNode = this._abstractGraph.objects.makeNewNode(xm, ym);
 				this._interactor.rerender();
+				this._interactor.loadDetails(this._nodes.get(newNode.id)[2], renderer, true, true, true, this._save.bind(this, renderer));
 				this._setEditing(newNode);
-				this._interactor.loadDetails(this._nodes.get(newNode.id)[2], renderer, true, true, true, this._cancel.bind(this, renderer));
 				this._editor.addToUndoStack("node_add", {id:newNode.id, node:newNode.toJson()});
 				$(node).find(".mm-details-panel input").first().focus();
 			});
@@ -120,7 +121,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				let newNode = this._abstractGraph.objects.makeNewNode(xm - 100, ym + 50);
 				this._interactor.rerender();
 				this._setEditing(newNode);
-				this._interactor.loadDetails(this._nodes.get(newNode.id)[2], renderer, true, true, this._cancel.bind(this, renderer));
+				this._interactor.loadDetails(this._nodes.get(newNode.id)[2], renderer, true, true, this._save.bind(this, renderer));
 				this._editor.addToUndoStack("node_add", {id:newNode.id, node:newNode.toJson()});
 			});
 			
@@ -149,11 +150,9 @@ load.provide("mm.interactions.NodeEdit", (function() {
 				let oldTypeName = this._editingNode.type.name;
 				this._editingNode.update(update);
 				if(this._editingNode.type.name != oldTypeName) {
-					this._changingType = true;
 					this._interactor.rerender();
 					this._interactor.loadDetails
-						(this._editingNode, renderer, true, true, true, this._cancel.bind(this, renderer));
-					this._changingType = false;
+						(this._editingNode, renderer, true, true, true, this._save.bind(this, renderer), true);
 				}else{
 					this._setText(textGen.nodeText(this._nodes.get(+editing)[2]));
 				}
@@ -183,6 +182,23 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			}
 			
 			this._interactor.updateHidden(this._editingNode);
+			this._editingNode = null;
+		}
+		
+		_save(renderer) {
+			// First of all, check if there are any changes to save (otherwise don't bother creating an undo event)
+			let change = false;
+			for(let v of ["width", "hidden"]) {
+				if(this._editingBackup[v] != this._editingNode[v]) change = true;
+			}
+			if(this._editingBackup.type != this._editingNode.type.name) change = true;
+			for(let f in this._editingNode.fields) {
+				if(this._editingBackup.fields[f] != this._editingNode.fields[f]) change = true;
+			}
+			
+			if(change) this._editor.addToUndoStack("node_edit",
+				{id:this._editingNode.id, old:this._editingBackup, "new":this._editingNode.toJson()}
+			);
 			this._editingNode = null;
 		}
 		

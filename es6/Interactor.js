@@ -196,9 +196,11 @@ load.provide("mm.Interactor", (function() {
 		 * @param {boolean=false} expand To expard the panel and show more information (for nodes).
 		 * @param {boolean=false} force If the panel is already loaded and is expanded, default is to not change it.
 		 *  This forces the change.
+		 * @param {boolean=false} ignoreHandler Ignore the event handler. Be really sure that the handler is for your
+		 *  code though.
 		 * @param {?function()} handler Function to call when the panel is closed or changes to something else.
 		 */
-		loadDetails(object, renderer, show, expand, force, handler) {
+		loadDetails(object, renderer, show, expand, force, handler, ignoreHandler) {
 			let panel = $(renderer.getRoot()).find(".mm-details-panel");
 			if(panel.hasClass("long") && !force) return;
 			
@@ -235,7 +237,7 @@ load.provide("mm.Interactor", (function() {
 				panel.addClass("long");
 			}
 			
-			if(this._detailsSwitch) this._detailsSwitch();
+			if(this._detailsSwitch && !ignoreHandler) this._detailsSwitch();
 			this._detailsSwitch = handler;
 			
 			panel.attr("data-id", object.id);
@@ -246,9 +248,10 @@ load.provide("mm.Interactor", (function() {
 		 * @param {mm.Renderer} renderer The renderer on which to hide the panel.
 		 * @param {boolean=false} evenIfLong By default the panel isn't closed if it is expanded. This forces it to be
 		 *  closed even then.
+		 * @param {boolean=false} ignoreHandler Ignore the handler.
 		 * @return {boolean} True if the panel was closed, false if it isn't or it isn't open.
 		 */
-		hideDetailsPanel(renderer, evenIfLong) {
+		hideDetailsPanel(renderer, evenIfLong, ignoreHandler) {
 			let panel = $(renderer.getRoot()).find(".mm-details-panel");
 			
 			if(panel.hasClass("long") && !evenIfLong) return false;
@@ -257,7 +260,7 @@ load.provide("mm.Interactor", (function() {
 			panel.addClass("hidden");
 			panel.removeClass("long");
 			
-			if(this._detailsSwitch) this._detailsSwitch();
+			if(this._detailsSwitch && !ignoreHandler) this._detailsSwitch();
 			this._detailsSwitch = null;
 			return true;
 		}
