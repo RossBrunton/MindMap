@@ -98,6 +98,22 @@ load.provide("mm.Editor", (function() {
 			this.printStack();
 		}
 		
+		/** Checks whether an undo is possible
+		 * 
+		 * @return {boolean} Whether there is something that can be undone.
+		 */
+		canUndo() {
+			return this._p >= 0;
+		}
+		
+		/** Checks whether a redo is possible
+		 * 
+		 * @return {boolean} Whether there is something that can be redone.
+		 */
+		canRedo() {
+			return this._p < this._undoStack.length-1;
+		}
+		
 		/** Prints the undo stack to the console
 		 * 
 		 * For debuggery.
