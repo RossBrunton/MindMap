@@ -63,6 +63,8 @@ self.load = (function(self) {
 	var TYPE_PACK = 0;
 	var TYPE_RES = 1;
 	
+	var USE_THREADING = false;
+	
 	/** The functions that will be called when the given namespace is imported.
 	 * @type array
 	 * @private
@@ -158,38 +160,40 @@ self.load = (function(self) {
 		var _workPromises = new Map();
 		
 		// Create workers
-		var threads = Math.max(navigator.hardwareConcurrency/2, 1);
-		for(var i = threads; i > 0; i--) {
-			var w = new Worker(document.currentScript.src);
-			_workers.push(w);
-			_workerStates.set(w, false);
-			
-			w.onmessage = function(e) {
-				_workerStates.set(e.target, false);
+		if(USE_THREADING) {
+			var threads = Math.max(navigator.hardwareConcurrency/2, 1);
+			for(var i = threads; i > 0; i--) {
+				var w = new Worker(document.currentScript.src);
+				_workers.push(w);
+				_workerStates.set(w, false);
 				
-				var f = _workPromises.get(e.data[0]);
-				_workPromises.delete(e.data[0]);
-				f(e.data[1]);
-			}
-		}
-		
-		// Check for work
-		setInterval(function() {
-			if(_workOrders.length) {
-				for(var worker of _workerStates.entries()) {
-					if(worker[1]) {
-						continue;
-					}
+				w.onmessage = function(e) {
+					_workerStates.set(e.target, false);
 					
-					var task = _workOrders.splice(0, 1)[0];
-					
-					worker[0].postMessage(task.slice(0, 3), task[3]);
-					_workerStates.set(worker[0], true);
-					
-					if(!_workOrders.length) return;
+					var f = _workPromises.get(e.data[0]);
+					_workPromises.delete(e.data[0]);
+					f(e.data[1]);
 				}
 			}
-		}, 10);
+			
+			// Check for work
+			setInterval(function() {
+				if(_workOrders.length) {
+					for(var worker of _workerStates.entries()) {
+						if(worker[1]) {
+							continue;
+						}
+						
+						var task = _workOrders.splice(0, 1)[0];
+						
+						worker[0].postMessage(task.slice(0, 3), task[3]);
+						_workerStates.set(worker[0], true);
+						
+						if(!_workOrders.length) return;
+					}
+				}
+			}, 10);
+		}
 	}
 	
 	/** Marks that the namespace `name` has been provided, and associates a given object with it.
