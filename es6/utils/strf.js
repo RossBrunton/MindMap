@@ -1,7 +1,7 @@
 "use strict";
 
 load.provide("mm.utils.strf", (function() {
-	load.require("@libs/fecha.min.js");
+	load.requireExternal("libs/fecha.min.js");
 	
 	/** An object containing all the functions used when formatting strings
 	 * 

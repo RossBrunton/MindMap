@@ -1,48 +1,59 @@
 #!/usr/bin/python
-from __future__ import print_function
 
-from load import *
-from sys import stdout
+from load import LoadState, LoadHandler
+from sys import argv, stdout
 from base64 import b64encode
 
-# I'm lazy, so rather than doing this properly I just do it now
-stdout.write('"use strict";\n');
+def arr_join(arr):
+    return ", ".join(map(lambda x: "\"{}\"".format(x), arr))
 
-stdout.write('/* Library: fecha.min.js */ \n');
-with open("libs/fecha.min.js") as f:
-    for l in f.readlines():
-        stdout.write(l)
-
-
-stdout.write('/* Library: polyfill.min.js */ \n');
-with open("libs/polyfill.min.js") as f:
-    for l in f.readlines():
-        stdout.write(l)
-
-
-class Catter(LoadState):
-    def onProvide(self, pname, type):
-        pass
-        # print("Provided: "+pname)
-    
-    def onFileProvide(self, fname, remote, type, rname):
-        stdout.write("/* Including file: {} */\n".format(fname))
-        if type == TYPE_PACK and not remote:
-            with open(fname) as f:
+class Handler(LoadHandler):
+    """ Override this class to change how the LoadState works """
+    def load_file(self, state, file, packs, type):
+        super(Handler, self).load_file(state, file, packs, type)
+        
+        stdout.write("/* Including packs: {} */\n".format(", ".join(packs)))
+        if type == LoadState.TYPE_PACK:
+            deps = state.getDependencies(packs[0])
+            
+            if "load" not in packs:
+                # function(file, provided, required, size, type)
+                stdout.write('load.addDependency("about:blank", [{}], [{}], 0, {});\n\n'.format(
+                    arr_join(packs), arr_join(deps), LoadState.TYPE_PACK
+                ))
+            
+            with open(file) as f:
                 for l in f.readlines():
                     stdout.write(l)
-                    
+            
             stdout.write("\n")
-        elif type == TYPE_RES and not remote:
-            with open(fname) as f:
+        
+        
+        if type == LoadState.TYPE_RES:
+            with open(file) as f:
                 buff = f.read()
             
-            stdout.write("/* Resource: {} */\n".format(fname))
-            stdout.write('load.provideResource("{}", atob("{}"));\n\n'.format(rname, b64encode(buff)))
+            stdout.write('load.provideResource("{}", atob("{}"));\n\n'.format(packs[0], b64encode(buff)))
+        
+        
+        if type == LoadState.TYPE_EXT:
+            for p in packs:
+                deps = state.getDependencies(p)
+                
+                # function(file, provided, required, size, type)
+                stdout.write('load.addDependency("{}", [\"{}\"], [{}], 0, {});\n\n'.format(
+                    file, p, arr_join(deps), LoadState.TYPE_EXT
+                ))
+            
+    
+    """ Evaluate a single package """
+    def evaluate(self, state, pack, type):
+        super(Handler, self).evaluate(state, pack, type)
 
-importList("es5/deps.json")
+ls = LoadState(handler=Handler())
 
-c = Catter()
-c.importPackage("load")
-c.importPackage("mm.main")
-c.importPackage("mm.mainwrap")
+ls.loadDeps(argv[1])
+
+ls.importAndEvaluate("load")
+ls.importAndEvaluate(argv[2])
+stdout.write("load.importAndEvaluate(\"{}\");\n".format(argv[2]))

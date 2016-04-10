@@ -7,309 +7,264 @@ module provides many methods of that package in Python with the same names and s
 """
 
 import os
+from os import path
 import re
 import json
+from six import string_types
 
-TYPE_PACK = 0;
-TYPE_RES = 1;
+class LoadHandler(object):
+    """ Override this class to change how the LoadState works """
+    def load_file(self, state, file, packs, type):
+        state.printMsg("Loading file "+file)
+        
+        for p in packs:
+            state.provide(p, type)
+    
+    """ Evaluate a single package """
+    def evaluate(self, state, pack, type):
+        state.printMsg("Evaluating "+pack)
+        
+        for p in state.getDependencies(pack):
+            state.require(p)
+        
+        state.printMsg("Done evaluating "+pack)
 
-STATE_NONE = 0;
-STATE_RAN = 2;
 
-NFILENAME = 0;
-NSTATE = 1;
-NDEPS = 2;
-NSIZE = 3;
-NOBJ = 4;
-NTYPE = 5;
 
-class LoadState():
-    """ Represents a "state" of packages being imported.
+class LoadState(object):
+    STATE_NONE = 0
+    STATE_SEEN = 1
+    STATE_IMPORTING = 2
+    STATE_IMPORTED = 3
+    STATE_RUNNING = 4
+    STATE_RAN = 5
     
-    LoadStates can have packages imported, when those packages are imported, all future importing will not import it
-    again.
+    TYPE_PACK = 0
+    TYPE_RES = 1
+    TYPE_EXT = 2
     
-    Functions can be registered when a package is provided or a file is loaded. These will only be fired once
-    for each package/file. Unless it has been cleared. These are called when Load.js would provide or append a file to
-    head. But you have to provide your own functions. Of course.
-    """
-    
-    _importSet = [];
-    """ The set of all package names that need to be imported. """
-    _batchSet = [];
-    """ The set of package names that are in the current "import batch" and will be loaded soon. """
-    _states = {};
-    """ Key is package name, value is 0 for not imported, and 1 for imported. """
-    _readies = {};
-    """ Key is package name, value is an array of functions that will be called when the package is imported. """
-    _provideCount = 0;
-    """ How many packages still need imported. """
-    _batching = False;
-    """ Whether we are currently importing packages. """
-    
-    onProvide = None
-    """ Function to call when a package is provided.
-    
-    Given two arguments, first is the name of the package, second is whether it is a package or resource.
-    """
-    onFileProvide = None
-    """ Function to call when a file containing a package is to be loaded.
-    
-    It is given three arguments, first is the path, second is a boolean indicating whether the path is a file path or else
-    a URL, third is whether it is a package or resource
-    """
-    skipLoad = False
-    """ If true then the package "load" will never be imported, and silently ignored. """
-    skipUnknown = False
-    """ If true then any package which is not found will be silently ignored, rather than causing an error. """
-    
-    def _provide(self, name):
-        """ Provides a package.
-        
-        Called when the file is "added", since no JS code actually runs.
-        """
-        self._states[name] = 2;
-        
-        if name in self._readies:
-            for r in self._readies[name]:
-                r(name);
-        
-        self._provideCount -= 1;
-        #if not self._provideCount and self._batching:
-        #    self._doBatchSet();
-        
-        if self.onProvide and (name != "load" or not self.skipLoad):
-            self.onProvide(name, _names[name][NTYPE])
-    
-    def importPackage(self, name, onReady=None):
-        """ Imports a package, calling the onProvide and onFileProvide functions as appropriate.
-        
-        If onReady is provided, it will be called with the package name when it is finally imported.
-        """
-        if not self.isImported(name):
-            self._addToImportSet(name);
-            
-            if not self._batching:
-                self._batching = True;
-                self._doBatchSet();
-            
-            if name[0] == ">":
-                name = name[1:];
-            
-            if onReady:
-                if name not in self._readies:
-                    self._readies[name] = [];
-                self._readies[name].append(onReady);
-            
-            return None;
+    def __init__(self, handler=None, noisy=False):
+        self._packs = {}
+        self._files = {}
+        self._importSet = set()
+        self._depFiles = {}
+        self._currentEval = None
+        self._noisy = noisy
+        if handler:
+            self._handler = handler
         else:
-            if name[0] == ">":
-                name = name[1:];
-            
-            if onReady:
-                onReady(name);
-            
-            return name;
+            self._handler = LoadHandler()
     
-    def importAll(self):
-        """ Imports all known packages. """
-        for p in _names.keys():
-            self.importPackage(p)
     
-    def importMatch(self, regex):
-        """ Imports all packages that match a given regex. """
-        for p in _names.keys():
-            if regex.match(p):
-                self.importPackage(p)
+    def printMsg(self, msg):
+        if self._noisy:
+            print(msg);
     
-    def isImported(self, name):
-        """ Returns whether a given package is imported. """
-        if name in self._states and self._states[name] == 2:
-            return True;
+    
+    def provide(self, name, type):
+        self.printMsg("Provided "+name)
         
-        return False;
+        if name in self._packs:
+            if self._packs[name]["state"] == LoadState.STATE_IMPORTING:
+                self._packs[name]["state"] = LoadState.STATE_IMPORTED
+            else:
+                self._packs[name]["state"] = LoadState.STATE_SEEN
+        else:
+            self._packs[name] = {
+                "file":"about:blank",
+                "state":LoadState.STATE_SEEN,
+                "deps":[],
+                "size":0,
+                "type":type,
+                "evalOnImport":False
+            }
+        
+        if self._packs[name]["state"] == LoadState.STATE_SEEN:
+            return
+        
+        if self._packs[name]["evalOnImport"]:
+            self.evaluate(name)
+        
+        self._tryImport()
+    
+    
+    def require(self, name):
+        defer = name.startswith(">")
+        if defer:
+            name = name[1:]
+        
+        if name in self._packs:
+            if not defer:
+                self.evaluate(name)
+            else:
+                self._packs[name]["evalOnImport"] = True
+    
+    
+    def evaluate(self, name):
+        if self._packs[name]["state"] == LoadState.STATE_RUNNING:
+            return
+        
+        if self._packs[name]["state"] == LoadState.STATE_IMPORTED:
+            oldCur = self._currentEval
+            self._currentEval = name
+            self._packs[name]["state"] = LoadState.STATE_RUNNING
+            
+            self._handler.evaluate(self, name, self._packs[name]["type"])
+            
+            self._packs[name]["state"] = LoadState.STATE_RAN
+            self._currentEval = oldCur
+    
+    
+    def importPack(self, name):
+        if not self.isImported(name):
+            oldName = name
+            if name.startswith(">"):
+                name = name[1:]
+            
+            self._addToImportSet(oldName)
+            self._tryImport()
+    
     
     def _addToImportSet(self, pack):
-        """ Adds a given package to the import set. """
         if pack in self._importSet:
             return
         
-        if pack not in _names:
-            print pack + " required but not found."
+        if self._packs[pack]["state"] >= LoadState.STATE_IMPORTING:
             return
         
-        if pack in self._states and self._states[pack] != 0:
-            return
+        self._importSet.add(pack)
         
-        self._importSet.append(pack);
-        p = _names[pack];
+        p = self._packs[pack]
         
-        for d in p[2]:
-            if d[0] == ">":
+        for d in p["deps"]:
+            if d.startswith(">"):
                 self._addToImportSet(d[1:])
-            elif d[0] == "@":
-                self._importSet.append(d)
             else:
                 self._addToImportSet(d)
     
     
-    def _doBatchSet(self, trace=False):
-        """ Performs the batching stage; calculating all the packages that can currently be imported without additional
-        dependancies. """
-        if not len(self._importSet):
-            return;
+    def _tryImport(self, trace=False):
+        if not self._importSet:
+            return
         
-        _packagesToImport = [];
+        toImport = set()
         
-        #Generate the batch set
-        i = 0
-        while i < len(self._importSet):
-            if self._importSet[i].startswith("@"):
-                _packagesToImport.append(self._importSet[i]);
-                self._importSet.remove(self._importSet[i]);
-                continue;
+        for p in self._importSet:
+            now = self._packs[p]
             
-            now = _names[self._importSet[i]];
+            okay = True
             
-            okay = True;
-            for d in now[NDEPS]:
-                if d.startswith(">"): 
-                    #Okay
+            for d in now["deps"]:
+                if d.startswith(">"):
+                    # okay
                     pass
-                elif d.startswith("@"): 
-                    #Also Okay
+                elif d not in self._packs:
+                    # TODO: WARNING
                     pass
-                elif d not in _names:
-                    print(now[NFILENAME] + " depends on "+ d +", which is not available.");
-                    okay = False;
-                    break;
-                elif d not in self._states or self._states[d] < STATE_RAN:
-                    # Check if they are from the same file
-                    if _names[d][NFILENAME] != now[NFILENAME]:
-                        okay = False;
-                        if trace: print(now[NFILENAME] +" blocked by "+_names[d][NFILENAME]);
-                        break;
-            
+                elif self._packs[d]["state"] < LoadState.STATE_IMPORTED:
+                    # Check if from same file
+                    if self._packs[d]["file"] != now["file"]:
+                        okay = False
+                        if trace:
+                            # TODO: Trace
+                            pass
+                        break
             
             if okay:
-                if self._importSet[i] not in self._states or self._states[self._importSet[i]] == STATE_NONE:
-                    _packagesToImport.append(self._importSet[i]);
-                self._importSet.remove(self._importSet[i]);
-                continue
+                if now["state"] <= LoadState.STATE_SEEN:
+                    toImport.add(p)
+                
+        
+        self._importSet = self._importSet ^ toImport
+        
+        # Now import them all
+        self.printMsg("Importing "+", ".join(toImport))
+        
+        for p in toImport:
+            self._doImportFile(self._packs[p]["file"], self._packs[p]["type"], p)
+    
+    
+    def _doImportFile(self, file, type, pack):
+        f = self._files[file]
+        
+        if self._packs[pack]["state"] == LoadState.STATE_SEEN:
+            self._packs[pack]["state"] = LoadState.STATE_IMPORTING
             
-            i += 1;
-        
-        # And then import them all
-        # if len(_packagesToImport): print("Importing: "+(", ".join(_packagesToImport)));
-        
-        for p in _packagesToImport:
-            if p.startswith("@"):
-                self._doImportFile(p, TYPE_PACK)
-            else:
-                self._doImportFile(_names[p][NFILENAME], _names[p][NTYPE])
-        
-        # NOW DO IT ALL AGAIN
-        if len(self._importSet):
-            self._doBatchSet()
+            self.provide(pack, type)
         else:
-            self._batching = False
+            if file not in self._files:
+                self._files[file] = [[], [], false]
+            
+            if f[2]:
+                return
+            f[2] = True
+            
+            for p in f[0]:
+                self._packs[p]["state"] = LoadState.STATE_IMPORTING
+            
+            self._handler.load_file(self, file, f[0], type)
     
-    
-    def _doImportFile(self, file, type):
-        """ Simulates appending a file to the head tag and provides packages. """
-        remote = False
-        if file[0] == "@":
-            file = file[1:]
-            remote = True
-        
-        if file not in _files:
-            _files[file] = [[], [], False];
-        
-        f = _files[file];
-        
-        self._provideCount += len(f[0]);
-        
-        type = TYPE_PACK
-        pname = ""
-        for i in f[0]:
-            type = _names[i][NTYPE]
-            self._states[i] = STATE_RAN;
-            self._provide(i)
-            pname = i
-        
-        if self.onFileProvide and (not self.skipLoad or "load" not in f[0]):
-            self.onFileProvide(file, remote, type, pname)
     
     def abort(self):
-        """ Stops any currently running import. """
-        self._batching = False;
-        self._importSet = [];
-        self._batchSet = [];
+        self._importSet = []
     
-    def clear(self):
-        """ Resets all the packages, as if none had been imported at all. """
-        self.abort()
-        self._states = []
-
-
-_names = {};
-""" Package information as per _names in Load.js. """
-_files = {};
-""" File information as per _files in Load.js. """
-
-def addDependency(file, provided, required, size, type):
-    """ Adds a new dependancy.
     
-    Will be visible immediately to all LoadStates. """
-    if not size:
-        size = 0;
+    def isImported(self, name):
+        return name in self._packs and self._packs[name]["state"] >= LoadState.STATE_IMPORTED
     
-    _files[file] = [provided, required, False];
     
-    for p in provided:
-        # We only want to add it if either it doesn't exist, the given file has more packages or the given file is smaller
+    def addDependency(self, file, provided, required, size, type):
+        for p in provided:
+            if (p not in self._packs)\
+            or (self._packs[p]["state"] <= LoadState.STATE_NONE and\
+              (self._packs[p]["file"] not in self._files or len(provided)>len(self._files[self._packs[p]["file"]][0]))\
+            ):
+                self._packs[p] = {
+                    "file":file,
+                    "state":LoadState.STATE_NONE,
+                    "deps":required,
+                    "size":size,
+                    "type":type,
+                    "evalOnImport":False
+                }
         
-        if p not in _names\
-        or (len(provided) > len(_files[_names[p][NFILENAME]][0])):
-            _names[p] = [file, 0, required, size, None, type];
-
-def importList(path, callback=None, errorCallback=None):
-    """ Given a path to a dependancy file, loads the dependancies of that file. """
-    #try:
-    relativePath = os.path.split(path)[0]
+        self._files[file] = [provided, required, False]
     
-    data = json.load(file(path))
     
-    try:
-        data["version"]
-    except TypeError:
-        #Convert into new format
-        data = {"version":0, "packages":data}
-    
-    for p in data["packages"]:
-        if "://" not in p[0] and not os.path.isabs(p[0]):
-            p[0] = os.path.join(relativePath, p[0]);
+    def loadDepsObject(self, data, absolutePath):
+        if isinstance(data, string_types):
+            data = json.loads(data)
         
-        dlist = p[2];
-        if len(p) > 4: dlist += p[4]
-        addDependency(p[0], p[1], dlist, p[3], TYPE_PACK)
+        deps = data["packages"]
         
-        if len(p) > 4:
-            # Handle resources needed
-            for j in p[4]:
-                # Convert to absolute paths
-                fpath = j
-                
-                if not ":" in fpath and not fpath.startswith("/"):
-                    fpath = os.path.join(relativePath, fpath);
-                
-                addDependency(fpath, [j], [], 0, TYPE_RES);
+        for d in deps:
+            if ":" not in d[0] and not d[0].startswith("/"):
+                d[0] = path.join(absolutePath, d[0])
+            
+            self.addDependency(d[0], d[1], d[2], d[3], d[4])
+        
+        # Logic for external deps
     
-    if callback:
-        callback(data)
+    
+    def loadDeps(self, file):
+        self.printMsg("Reading dependancy file "+file)
         
-    #except Exception as e:
-    #    if errorCallback:
-    #        errorCallback(e)
-    #    else:
-    #        raise e
+        absolutePath = path.dirname(path.abspath(file))
+        
+        with open(file, "r") as f:
+            data = f.read()
+            self.loadDepsObject(data, absolutePath)
+    
+    
+    def importAndEvaluate(self, pack):
+        self.importPack(pack)
+        self.evaluate(pack)
+    
+    
+    def lie(self, list, pack):
+        self.loadDeps(list)
+        self.importAndEvaluate(pack)
+    
+    
+    def getDependencies(self, pack):
+        return self._packs[pack]["deps"]
