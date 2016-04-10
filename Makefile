@@ -7,7 +7,7 @@ compile_watch:
 	tools/babel -w -D -d es5 es6
 
 bigfile: mkdeps
-	tools/catter.py > mm.js
+	tools/catter.py es5/deps.json mm.main | cat libs/polyfill.min.js - > mm.js
 
 mkdeps:
 	tools/generateDeps.py es5 > es5/deps.json
