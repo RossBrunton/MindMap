@@ -37,6 +37,10 @@ if len(sys.argv) >= 3:
 	rel = sys.argv[2]
 
 def handlePath(f):
+	# Check if URL
+	if f.startswith("//") or f.startswith("http://") or f.startswith("https://"):
+		return f
+	
 	return posixpath.relpath(f, rel)
 
 def addPack(path, size, type):
