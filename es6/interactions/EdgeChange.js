@@ -32,7 +32,7 @@ load.provide("mm.interactions.EdgeChange", (function() {
 	 *  a lot. The big issue is that there is no event fired when the action actually ends. How I hack my way around
 	 *  this is by storing the last event, and then when the mouse is released, handling all the stored events.
 	 * 
-	 * @extends mm.Interaciton
+	 * @extends mm.Interaction
 	 */
 	return class EdgeChange extends Interaction {
 		constructor(interactor, abstractGraph, editor) {
