@@ -1,0 +1,14 @@
+*.pyc
+*.pyo
+
+*~
+
+**node_modules**
+*.es5.js
+*.map
+
+es5/*
+libs/polyfill.min.js
+
+tools/babel
+**deps.json
