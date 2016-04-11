@@ -41,6 +41,8 @@ load.provide("mm.interactions.NodeMove", (function() {
 		async addNode(renderer, joint, node) {
 			Interaction.prototype.addNode.call(this, renderer, joint, node);
 			
+			let svgNode = renderer.getSvgNode(node.id);
+			
 			if(this._editor) $(svgNode).on("mousedown", (e) => {
 				// Don't move a node if we click on the circle
 				if(e.target.tagName == "circle") return;
