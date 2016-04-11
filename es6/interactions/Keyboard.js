@@ -12,10 +12,11 @@ load.provide("mm.interactions.Keyboard", (function() {
 	
 	/** Handles all the keyboard shortcuts
 	 * 
-	 * @extends mm.Interaciton
+	 * @extends mm.Interaction
 	 */
 	return class Keyboard extends Interaction {
 		async addCanvas(renderer, html) {
+			// Elements need a tabindex to be keyboardable
 			$(html).attr("tabindex", 0);
 			
 			$(html).on("mousedown", (x) => {
@@ -24,6 +25,7 @@ load.provide("mm.interactions.Keyboard", (function() {
 			
 			
 			if(this._editor) $(html).on("keydown", (e) => {
+				// Don't handle key events if the user is typing
 				if(e.target.tagName.toUpperCase() == "INPUT") return;
 				
 				let key = e.keyCode;
@@ -40,6 +42,8 @@ load.provide("mm.interactions.Keyboard", (function() {
 				
 				if(key == 27) { // Escape, hide details panel
 					$(html).focus();
+					
+					// This function returns true iff the panel was open
 					if(this._interactor.hideDetailsPanel(renderer, true)) return;
 					this._state.clearMultiSel();
 					

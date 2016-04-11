@@ -7,7 +7,7 @@ load.provide("mm.interactions.EditUndo", (function() {
 	 * 
 	 * It's just basically a bridge to the functions in this._interactor, nothing much.
 	 * 
-	 * @extends mm.Interaciton
+	 * @extends mm.Interaction
 	 */
 	return class EditUndo extends Interaction {
 		async addCanvas(renderer, node) {

@@ -5,7 +5,7 @@ load.provide("mm.interactions.EditHelp", (function() {
 	
 	/** Interactor for showing and hiding the help screen
 	 * 
-	 * @extends mm.Interaciton
+	 * @extends mm.Interaction
 	 */
 	return class EditHelp extends Interaction {
 		async addCanvas(renderer, node) {
