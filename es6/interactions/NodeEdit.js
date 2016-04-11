@@ -29,7 +29,6 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			
 			this._editingNode = null;
 			this._editingBackup = null;
-			this._changingType = false;
 		}
 		
 		async addNode(renderer, joint, node) {
@@ -174,7 +173,6 @@ load.provide("mm.interactions.NodeEdit", (function() {
 		
 		_cancel(renderer) {
 			if(!this._editingNode) return;
-			if(this._changingType) return;
 			
 			this._interactor.hideDetailsPanel(renderer, true, true);
 			

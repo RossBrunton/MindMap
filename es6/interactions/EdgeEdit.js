@@ -29,7 +29,7 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			
 			this._editingEdge = null;
 			this._editingBackup = null;
-			this._changingType = false;
+			
 			this._commit = false;
 		}
 		
