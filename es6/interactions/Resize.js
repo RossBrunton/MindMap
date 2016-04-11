@@ -4,6 +4,13 @@ load.provide("mm.interactions.Resize", (function() {
 	let Interaction = load.require("mm.interactions.Interaction");
 	let Editor = load.require("mm.Editor");
 	
+	/** Register an undo event for the specific side
+	 * 
+	 * @param {string} event The event name to call it.
+	 * @param {string} call The function to call on the canvas, starting with "add". For example, specifying "Right"
+	 *  will call `addRight`.
+	 * @private
+	 */
 	let _resizeUndo = (event, call) => {
 		Editor.registerUndo(`resize_${event}`, function(type, arg, graph) {
 			graph.objects.canvas[`add${call}`](-arg.val);
@@ -17,14 +24,22 @@ load.provide("mm.interactions.Resize", (function() {
 	_resizeUndo("left", "Left");
 	_resizeUndo("right", "Right");
 	
+	/** Interactor for resizing the editing canvas thing
+	 * 
+	 * @extends mm.Interaciton
+	 */
 	return class Resize extends Interaction {
 		async addCanvas(renderer, html) {
+			// Current location of scroll
 			let top = -1;
 			let left = -1;
+			
+			// And shortcuts for various elements
 			let inner = $(html).find(".mm-inner")[0];
 			let svg = $(html).find("svg");
 			
 			if(this._editor) html.addEventListener("mousemove", function(e) {
+				// If we have not moved, don't do anything
 				if(top == inner.scrollTop && left == inner.scrollLeft) return;
 				
 				top = inner.scrollTop;
