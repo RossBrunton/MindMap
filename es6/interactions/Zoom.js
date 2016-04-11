@@ -3,6 +3,22 @@
 load.provide("mm.interactions.Zoom", (function() {
 	let Interaction = load.require("mm.interactions.Interaction");
 	
+	/** Scroll change for scrollwheel
+	 * 
+	 * @type integer
+	 * @private
+	 * @const
+	 */
+	const _WHEEL_ZOOM = 0.1;
+	
+	/** Scroll change for buttons
+	 * 
+	 * @type integer
+	 * @private
+	 * @const
+	 */
+	const _BUTTON_ZOOM = 0.3;
+	
 	/** Interactor for changing the zoom level
 	 * 
 	 * @extends mm.Interaciton
@@ -63,23 +79,23 @@ load.provide("mm.interactions.Zoom", (function() {
 			}
 			
 			// Widget zoom buttons
-			$(html).find(".mm-zoom-in").click((e) => _updateZoom(0.3));
-			$(html).find(".mm-zoom-out").click((e) => _updateZoom(-0.3));
+			$(html).find(".mm-zoom-in").click((e) => _updateZoom(_BUTTON_ZOOM));
+			$(html).find(".mm-zoom-out").click((e) => _updateZoom(-_BUTTON_ZOOM));
 			
 			// Scroll zoom
 			$(html).on('mousewheel DOMMouseScroll', function(e){
 				// Browser compatability! :D
 				if("detail" in e.originalEvent && e.originalEvent.detail) {
 					if(e.originalEvent.detail > 0) {
-						_updateZoom(-0.2, e);
+						_updateZoom(-_WHEEL_ZOOM, e);
 					}else{
-						_updateZoom(0.2, e);
+						_updateZoom(_WHEEL_ZOOM, e);
 					}
 				}else{
 					if(e.originalEvent.deltaY > 0) {
-						_updateZoom(-0.2, e);
+						_updateZoom(-_WHEEL_ZOOM, e);
 					}else{
-						_updateZoom(0.2, e);
+						_updateZoom(_WHEEL_ZOOM, e);
 					}
 				}
 				

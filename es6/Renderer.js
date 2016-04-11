@@ -5,6 +5,22 @@ load.provide("mm.Renderer", (function() {
 	let TypesFile = load.require("mm.structs.TypesFile");
 	let textGen = load.require("mm.textGen");
 	
+	/** Text size
+	 * 
+	 * @type integer
+	 * @private
+	 * @const
+	 */
+	const _TEXT_SIZE = 14;
+	
+	/** Rectangle height
+	 * 
+	 * @type integer
+	 * @const
+	 * @private
+	 */
+	const _NODE_HEIGHT = 30;
+	
 	/** The basic template to be inserted into the node when it is set up.
 	 * 
 	 * @const
@@ -36,9 +52,9 @@ load.provide("mm.Renderer", (function() {
 		defaults: joint.util.deepSupplement({
 			type:'basic.Rect',
 			attrs: {
-				'rect': {'follow-scale':true, width:100, height:30},
+				'rect': {'follow-scale':true, width:100, height:_NODE_HEIGHT},
 				'text': {
-					'font-size':14,'ref-x':0.5,'ref-y':0.5, ref:'rect', 'y-alignment':'middle', 'x-alignment':'middle',
+					'font-size':_TEXT_SIZE,'ref-x':0.5,'ref-y':0.5, ref:'rect', 'y-alignment':'middle', 'x-alignment':'middle',
 					fill:"black"
 				},
 				'.outPorts circle': {
@@ -179,6 +195,8 @@ load.provide("mm.Renderer", (function() {
 			this._nodeIds = new Map();
 			this._edgeIds = new Map();
 			
+			let rootScale = Math.sqrt(this._scale);
+			
 			for(let n of objects.nodes) {
 				if(objects.isHidden(n) && !this._editor) continue;
 				
@@ -188,9 +206,10 @@ load.provide("mm.Renderer", (function() {
 					position:{x:n.x * this._scale, y:n.y * this._scale},
 					attrs:n.type.nodeAttr,
 					outPorts: ["mag-a"],
-					size:{width:n.width, height:30},
+					size:{width:n.width*rootScale, height:_NODE_HEIGHT*rootScale},
 				});
 				
+				rect.attr("text/font-size", _TEXT_SIZE * rootScale);
 				rect.attr("text/text", tts);
 				
 				this._graph.addCell(rect);
