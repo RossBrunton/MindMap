@@ -29,8 +29,6 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			
 			this._editingEdge = null;
 			this._editingBackup = null;
-			
-			this._commit = false;
 		}
 		
 		async addEdge(renderer, joint, edge) {
@@ -144,7 +142,6 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 		
 		_cancel(renderer) {
 			if(!this._editingEdge) return;
-			if(this._commit) return;
 			if(!this._edges.get(this._editingEdge.id)) return;
 			
 			this._interactor.hideDetailsPanel(renderer, true, true);
