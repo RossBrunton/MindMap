@@ -39,7 +39,7 @@ load.provide("mm.interactions.EdgeEdit", (function() {
 			 * @type ?mm.structs.ObjectEdge
 			 */
 			this._editingEdge = null;
-			/** The properties of the editing node from when it started editing
+			/** The properties of the editing edge from when it started editing
 			 * 
 			 * So we can revert to this if there is a cancel.
 			 * 
