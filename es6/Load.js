@@ -127,6 +127,13 @@ self.load = (function(self) {
 	 */
 	var _uncaughtErrors = [];
 	
+	/** If true, all messages will be supressed
+	 * @type boolean
+	 * @private
+	 * @default false
+	 */
+	var _noisy = false;
+	
 	/** Helper function for network requests
 	 * 
 	 * @param {string} url The url to get
@@ -169,6 +176,14 @@ self.load = (function(self) {
 			listener[name] = [];
 		}
 	};
+	
+	/** Prints the message to console.log in gray
+	 * 
+	 * @param {string} message The message to log
+	 */
+	var _log = function(message) {
+		if(!_noisy) console.log("%c"+message, "color:#999999");
+	}
 	
 	
 	
@@ -319,7 +334,7 @@ self.load = (function(self) {
 	 * @since 0.0.12-alpha
 	 */
 	load.provide = function(name, pack, options) {
-		console.log("Provided "+name);
+		_log("Provided: "+name);
 		
 		if(!options) options = {};
 		
@@ -350,7 +365,7 @@ self.load = (function(self) {
 	};
 	
 	load.provideResource = function(name, data) {
-		console.log("Provided resource "+name);
+		_log("Provided resource: "+name);
 		
 		//Set object and imported
 		if(name in _packs) {
@@ -370,7 +385,7 @@ self.load = (function(self) {
 	};
 	
 	load.provideExternal = function(name, script) {
-		console.log("Provided external library "+name);
+		_log("Provided external library: "+name);
 		
 		//Set object and imported
 		if(name in _packs) {
@@ -605,7 +620,7 @@ self.load = (function(self) {
 					if(_packs[now.deps[d]].file != now.file) {
 						okay = false;
 						if(trace)
-							console.log(
+							_log(
 								nowName + " ("+now.file+")"
 								+" depends on "
 								+now.deps[d] + " ("+_packs[now.deps[d]].file+")"
@@ -623,7 +638,7 @@ self.load = (function(self) {
 		}
 		
 		//And then import them all
-		if(_packagesToImport.length) console.log("%cImporting: "+_packagesToImport.join(", "), "color:#999999");
+		if(_packagesToImport.length) _log("Importing: "+_packagesToImport.join(", "));
 		
 		for(var i = _packagesToImport.length-1; i >= 0; i --) {
 			_doImportFile(_packs[_packagesToImport[i]].file, _packs[_packagesToImport[i]].type, _packagesToImport[i]);
@@ -845,7 +860,7 @@ self.load = (function(self) {
 	load.loadDeps = function(path, callback, errorCallback) {
 		if(path in _depFiles) return Promise.resolve(_depFiles[path]);
 		
-		console.log("%cDownloading dependancy file "+path, "color:#999999");
+		_log("Downloading dependency file: "+path);
 		
 		// Get paths
 		var relativePath = "./";
