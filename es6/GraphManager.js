@@ -3,11 +3,22 @@
 load.provide("mm.HTMLGraphFinder", (function() {
 	let Renderer = load.require("mm.Renderer");
 	
+	/** This is a simple generator that creates and yields ``graph areas"
+	 * 
+	 * It yields a number of objects by searching the document for graph-display elements. Each object has the following
+	 *  properties:
+	 * - renderer: A renderer controlling this area.
+	 * - objectsUrl: The url of the objects file, or undefined if it is unspecified.
+	 * - typesUrl: The url of the types file.
+	 * - editor: A boolean, whether the editor is enabled or not.
+	 */
 	return function*() {
 		for(let n of Array.from(document.querySelectorAll("graph-display"))) {
-			let editor = n.getAttribute("editor") ?
-				["true", "1", "editor"].includes(n.getAttribute("editor").toLowerCase())
-				: false;
+			let editor = false;
+			if(n.getAttribute("editor") && ["true", "1", "editor"].includes(n.getAttribute("editor").toLowerCase())) {
+				editor = true;
+			}
+			
 			yield {
 				renderer: new Renderer(n, editor),
 				objectsUrl: n.getAttribute("src"),

@@ -46,6 +46,7 @@ load.provide("mm.utils.strf", (function() {
 			if("{}".includes(t)) return t;
 			
 			if(t.includes(":")) {
+				// {var:fun} or {var:fun,arg}
 				let fn = t.split(":", 1)[0];
 				let rhs = t.substring(fn.length+1);
 				
@@ -60,6 +61,7 @@ load.provide("mm.utils.strf", (function() {
 				
 				return _fns[fn](v, arg, f.type, node);
 			}else{
+				// {var}
 				let f = node.getFieldType(t);
 				if(!f) return "(null)";
 				let v = node.fields[t];
