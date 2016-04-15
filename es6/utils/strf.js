@@ -83,7 +83,5 @@ load.provide("mm.utils.strf", (function() {
 		});
 	};
 	
-	// Testing. TODO: Remove this
-	window.strf = strf;
 	return strf;
 }));
