@@ -38,7 +38,7 @@ load.provide("mm.structs.ObjectNode", (function() {
 			this.y += y;
 		}
 		
-		/** Updates the x and y locations of this node.
+		/** Updates the x and y locations of this node
 		 * @param {int} x The x coordinate.
 		 * @param {int} y The y coordinate.
 		 */

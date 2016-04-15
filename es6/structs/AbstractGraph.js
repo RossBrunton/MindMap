@@ -69,6 +69,7 @@ load.provide("mm.structs.AbstractGraph", (function() {
 			}
 			
 			if(this._objectsUrl) {
+				// We have an objects file to download
 				return Promise.all([
 					getfile(this._typesUrl),
 					getfile(this._objectsUrl)
@@ -80,6 +81,7 @@ load.provide("mm.structs.AbstractGraph", (function() {
 					this.ready = true;
 				});
 			}else{
+				// We only have a types file
 				let typesf = await getfile(this._typesUrl);
 				
 				this.types = new TypesFile(jsonMaybe(typesf));
@@ -98,12 +100,16 @@ load.provide("mm.structs.AbstractGraph", (function() {
 		 * @return {object} A recovery object
 		 */
 		cascadingRemoveNode(nodes) {
+			// Object used to recover
 			let recovery = {edges:[], nodes:[]};
 			
+			// Make sure the input is an array of node ids, rather than anything else
 			if(!Array.isArray(nodes)) nodes = [nodes];
 			nodes = nodes.map((x) => typeof(x) == "number" ? x : x.id);
 			
+			// And loop through them
 			for(let n of nodes) {
+				// Make sure to delete and collect the edges as well
 				let edges = this.objects.getEdgesConnectedToNode(n);
 				recovery.edges = recovery.edges.concat(edges.map((e) => e.toJson()));
 				edges.forEach((e) => this.objects.removeEdge(e.id));
