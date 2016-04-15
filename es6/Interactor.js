@@ -171,7 +171,8 @@ load.provide("mm.Interactor", (function() {
 		
 		/** Returns an [x, y] pair indicating where the mouse is on the given canvas
 		 * 
-		 * This takes into account scaling.
+		 * This takes into account scaling, that is, it will be the location if the graph was scaled to 100%, even if
+		 *  it currently isn't.
 		 * @param {object} e A jquery mouse event.
 		 * @param {mm.Renderer} renderer The renderer for that element.
 		 * @return {array<float>} The [x, y] location of the mouse.
@@ -249,7 +250,7 @@ load.provide("mm.Interactor", (function() {
 		 * @param {boolean=false} evenIfLong By default the panel isn't closed if it is expanded. This forces it to be
 		 *  closed even then.
 		 * @param {boolean=false} ignoreHandler Ignore the handler.
-		 * @return {boolean} True if the panel was closed, false if it isn't or it isn't open.
+		 * @return {boolean} True if the panel was closed, false if it wasn't or it wasn't open in the first place.
 		 */
 		hideDetailsPanel(renderer, evenIfLong, ignoreHandler) {
 			let panel = $(renderer.getRoot()).find(".mm-details-panel");
@@ -265,6 +266,10 @@ load.provide("mm.Interactor", (function() {
 			return true;
 		}
 		
+		/** Updates the multiple selection
+		 * 
+		 * This highligts nodes that are multiple selected, and removes the highlight of those that are not.
+		 */
 		updateMultiSel() {
 			for(let r of this._renderers) {
 				$(r.getRoot()).find(".mm-selected").each((i, n) => $(n).removeClass("mm-selected"));
@@ -277,6 +282,10 @@ load.provide("mm.Interactor", (function() {
 			}
 		}
 		
+		/** Updates the hidden state of a given node
+		 * 
+		 * It is hidden or visible based on whether it should be.
+		 */
 		updateHidden(node) {
 			this._renderers.forEach((r) => r.updateHidden(this._abstractGraph.objects, node));
 		}

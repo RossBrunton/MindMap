@@ -400,13 +400,22 @@ load.provide("mm.Renderer", (function() {
 			return this._scale;
 		}
 		
+		/** Updates the hidden state of a node and it's connected edges
+		 * 
+		 * Things that are supposed to be hidden are hidden, things that aren't are shown
+		 * 
+		 * @param {mm.structs.ObjectsData} objects The objects data for the diagram
+		 * @param {mm.structs.ObjectNode} node The node to check
+		 */
 		updateHidden(objects, node) {
 			let edges = objects.getEdgesConnectedToNode(node.id);
 			
 			if(node.hidden) {
+				// Supposed to be hidden
 				$(this.getSvgNode(node.id)).addClass("hidden-node");
 				edges.forEach((e) => $(this.getSvgEdge(e.id)).addClass("hidden-edge"));
 			}else{
+				// Supposed to be visible
 				$(this.getSvgNode(node.id)).removeClass("hidden-node");
 				edges.forEach((e) => {if(!objects.isHidden(e)) $(this.getSvgEdge(e.id)).removeClass("hidden-edge")});
 			}

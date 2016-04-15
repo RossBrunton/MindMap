@@ -8,12 +8,12 @@ load.provide("mm.main", (function() {
 	load.requireExternal("backbone", "//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js", ["lodash"]);
 	load.requireExternal("joint", "//cdnjs.cloudflare.com/ajax/libs/jointjs/0.9.7/joint.min.js", ["backbone"]);
 	
-	
+	// Makes a CSS node and adds it to the document
 	let _mkCss = function(url) {
-        let link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = url;
-        document.head.appendChild(link);
+		let link = document.createElement("link");
+		link.rel = "stylesheet";
+		link.href = url;
+		document.head.appendChild(link);
     };
     
     _mkCss("//cdnjs.cloudflare.com/ajax/libs/jointjs/0.9.7/joint.min.css");
