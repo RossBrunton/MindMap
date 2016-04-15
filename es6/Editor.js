@@ -55,7 +55,7 @@ load.provide("mm.Editor", (function() {
 		 * @param {object} arg The argument to this event, will be used when undoing and redoing.
 		 */
 		addToUndoStack(type, arg) {
-			console.log(`Added event of type ${type}, %o`, arg);
+			//console.log(`Added event of type ${type}, %o`, arg);
 			
 			if(!_handlers.has(type))
 				throw TypeError(`Tried to add an undo event of type ${type}, but no handler exists!`);
@@ -81,7 +81,7 @@ load.provide("mm.Editor", (function() {
 			
 			_handlers.get(now[0])[0](now[0], now[1], this._abstractGraph);
 			
-			this.printStack();
+			//this.printStack();
 		}
 		
 		/** Performs a redo operation
@@ -95,7 +95,7 @@ load.provide("mm.Editor", (function() {
 			
 			_handlers.get(now[0])[1](now[0], now[1], this._abstractGraph);
 			
-			this.printStack();
+			//this.printStack();
 		}
 		
 		/** Checks whether an undo is possible
