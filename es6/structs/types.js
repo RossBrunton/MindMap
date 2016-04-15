@@ -31,8 +31,9 @@ load.provide("mm.structs.NodeType", (function() {
 			/** The types file of this object
 			 * 
 			 * @type mm.structs.TypesFile
+			 * @private
 			 */
-			this.file = file;
+			this._file = file;
 			
 			/** The fields of this type
 			 * 
@@ -64,7 +65,7 @@ load.provide("mm.structs.NodeType", (function() {
 		 * @return {?mm.structs.NodeType} The other type, or null if it doesn't exist.
 		 */
 		getOtherType(name) {
-			return this.file.getNodeType(name);
+			return this._file.getNodeType(name);
 		}
 	};
 }));
@@ -80,8 +81,14 @@ load.provide("mm.structs.ArrowType", (function() {
 		constructor(object, file) {
 			if(!object.name.match(/[a-z]+/)) throw new TypeError(`Arrow type name ${this.name} is not valid.`);
 			
-			this.file = file;
 			for(let x of ["name", "attr", "textAttr"]) this[x] = object[x];
+			
+			/** The types file of this object
+			 * 
+			 * @type mm.structs.TypesFile
+			 * @private
+			 */
+			this._file = file;
 		}
 		
 		/** Returns an arrow type (not a field) from this types file
@@ -92,7 +99,7 @@ load.provide("mm.structs.ArrowType", (function() {
 		 * @return {?mm.structs.ArrowType} The other type, or null if it doesn't exist.
 		 */
 		getOtherType(name) {
-			return this.file.getArrowType(name);
+			return this._file.getArrowType(name);
 		}
 	};
 }));
