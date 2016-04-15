@@ -62,21 +62,27 @@ load.provide("mm.structs.AbstractGraph", (function() {
 		 * @async
 		 */
 		async load() {
+			// If it is an object, return it. If it is a string, JSON.parse it.
+			let jsonMaybe = function(o) {
+				if(typeof o === "string") return JSON.parse(o);
+				return o;
+			}
+			
 			if(this._objectsUrl) {
 				return Promise.all([
 					getfile(this._typesUrl),
 					getfile(this._objectsUrl)
 				]).then((contents) => {
-					this.types = new TypesFile(typeof contents[0] === "string"?JSON.parse(contents[0]):contents[0]);
+					this.types = new TypesFile(jsonMaybe(contents[0]));
 					this.objects =
-						new ObjectsData(typeof contents[1] === "string"?JSON.parse(contents[1]):contents[1], this.types);
+						new ObjectsData(jsonMaybe(contents[1]), this.types);
 					
 					this.ready = true;
 				});
 			}else{
 				let typesf = await getfile(this._typesUrl);
 				
-				this.types = new TypesFile(typeof typesf === "string" ? JSON.parse(typesf) : typesf);
+				this.types = new TypesFile(jsonMaybe(typesf));
 				this.objects = new ObjectsData(emptyGraph, this.types);
 				this.ready = true;
 			}
