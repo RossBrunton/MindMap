@@ -25,13 +25,13 @@ load.provide("mm.interactions.Zoom", (function() {
 	 */
 	return class Zoom extends Interaction {
 		async addCanvas(renderer, html) {
-			// This is the current zoom scale
-			let scale = 1.0;
-			
 			// This is the function to be called and actually changes the zoom
 			// e is the mouse event, which is used to make the location look like its zooming on the mouse when using
 			//  the scroll wheel
 			let _updateZoom = (mod, e) => {
+				// This is the current zoom scale
+				let scale = renderer.getScale();
+				
 				// Get the actual element to be scaled
 				let elem = $(html).find(".mm-inner")[0];
 				

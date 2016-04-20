@@ -22,5 +22,8 @@ canvas(obj): An object describing the raw values of the area on which the nodes 
 	{
 	width(int): The width of the canvas.
 	height(int): The height of the canvas.
+	initialZoom(float): The initial zoom of the diagram.
+	initialX(int): The initial x scroll location of the diagram (not scaled by initialZoom).
+	initialY(int): The initial y scroll location of the diagram (not scaled by initialZoom).
 	}
 editor(obj?): An optional object describing various editor parameters. To be decided on a later date.

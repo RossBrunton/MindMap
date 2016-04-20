@@ -1123,7 +1123,7 @@ load.provide("mm.structs.ObjectNode", function () {
 			this.y += y;
 		};
 
-		/** Updates the x and y locations of this node.
+		/** Updates the x and y locations of this node
    * @param {int} x The x coordinate.
    * @param {int} y The y coordinate.
    */
@@ -1357,7 +1357,7 @@ load.provide("mm.structs.ObjectCanvas", function () {
 		function ObjectCanvas(object, translateFn) {
 			_classCallCheck(this, ObjectCanvas);
 
-			var _arr3 = ["width", "height"];
+			var _arr3 = ["width", "height", "initialZoom", "initialX", "initialY"];
 
 			for (var _i3 = 0; _i3 < _arr3.length; _i3++) {
 				var x = _arr3[_i3];this[x] = object[x];
@@ -1420,7 +1420,10 @@ load.provide("mm.structs.ObjectCanvas", function () {
 		ObjectCanvas.prototype.toJson = function toJson() {
 			return {
 				width: this.width,
-				height: this.height
+				height: this.height,
+				initialZoom: this.initialZoom,
+				initialX: this.initialX,
+				initialY: this.initialY
 			};
 		};
 
@@ -1929,6 +1932,14 @@ load.addDependency("about:blank", ["mm.InteractorState"], [], 0, 0);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 load.provide("mm.InteractorState", function () {
+	/** This manages the `state` of all the interactions that should be shared between all interactions
+  * 
+  * At the moment, this is the multiset (of selected nodes) and whether the diagram is rerendering or not.
+  * 
+  * @param {mm.structs.AbstractGraph} The abstract graph for this state.
+  * @param {mm.Interactor} The interactor for this state.
+  * @param {mm.editor} The editor for this state's interactor.
+  */
 	return function () {
 		function InteractorState(interactor, abstractGraph, editor) {
 			_classCallCheck(this, InteractorState);
@@ -1949,10 +1960,27 @@ load.provide("mm.InteractorState", function () {
     */
 			this._editor = editor;
 
+			/** True iff the diagram is currently being redrawn (from `Interactor.rerender`)
+    * 
+    * @type boolean
+    */
 			this.rerendering = false;
 
+			/** The set of all selected nodes
+    * 
+    * @type array<mm.structs.ObjectNode>
+    * @private
+    */
 			this._multiSel = [];
 		}
+
+		/** Adds a new node to the multiset
+   * 
+   * This will update the interactor, making it set the border on all the selected nodes.
+   * 
+   * @param {mm.structs.ObjectNode} node The node to add.
+   */
+
 
 		InteractorState.prototype.addToMultiSel = function addToMultiSel(node) {
 			if (this._multiSel.includes(node)) return;
@@ -1960,11 +1988,26 @@ load.provide("mm.InteractorState", function () {
 			this._interactor.updateMultiSel();
 		};
 
+		/** Returns whether the given node is in the multiset
+   * 
+   * @param {mm.structs.ObjectNode} node The node to check.
+   * @return {boolean} Whether the node is in the diagram.
+   */
+
+
 		InteractorState.prototype.inMultiSel = function inMultiSel(node) {
 			return this._multiSel.some(function (x) {
 				return x == node;
 			});
 		};
+
+		/** Removes the given node from the multiset
+   * 
+   * Updates the interactor as well, removing the node's highlight
+   * 
+   * @param {mm.structs.ObjectNode} node The node to remove
+   */
+
 
 		InteractorState.prototype.removeFromMultiSel = function removeFromMultiSel(node) {
 			this._multiSel = this._multiSel.filter(function (x) {
@@ -1973,14 +2016,32 @@ load.provide("mm.InteractorState", function () {
 			this._interactor.updateMultiSel();
 		};
 
+		/** Empties all nodes in the multiset
+   * 
+   * Updates the interactor.
+   */
+
+
 		InteractorState.prototype.clearMultiSel = function clearMultiSel() {
 			this._multiSel = [];
 			this._interactor.updateMultiSel();
 		};
 
+		/** Return how many nodes are selected
+   * 
+   * @return {int} The size of the multisel
+   */
+
+
 		InteractorState.prototype.countMultiSel = function countMultiSel() {
 			return this._multiSel.length;
 		};
+
+		/** Returns the multiset
+   * 
+   * @return {array<mm.structs.ObjectNode>} An array of all the nodes in the multiset.
+   */
+
 
 		InteractorState.prototype.getMultiSel = function getMultiSel() {
 			return this._multiSel;
@@ -2005,6 +2066,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 load.provide("mm.structs.NodeTypeField", function () {
+	/** Represents a singe type of field
+  * 
+  * @param {array<*>} arr The array from the types file for this field.
+  */
 	return function NodeTypeField(arr) {
 		_classCallCheck(this, NodeTypeField);
 
@@ -2022,6 +2087,11 @@ load.provide("mm.structs.NodeTypeField", function () {
 load.provide("mm.structs.NodeType", function () {
 	var NodeTypeField = load.require("mm.structs.NodeTypeField");
 
+	/** Represents a singe type of node
+  * 
+  * @param {object} object The type object as defined in the types file.
+  * @param {mm.structs.TypesFile} file The types file this node type is from.
+  */
 	return function () {
 		function NodeType(object, file) {
 			_classCallCheck(this, NodeType);
@@ -2031,11 +2101,28 @@ load.provide("mm.structs.NodeType", function () {
 			var _arr2 = ["name", "nodeText", "nodeAttr", "viewText", "viewAddText"];
 			for (var _i = 0; _i < _arr2.length; _i++) {
 				var x = _arr2[_i];this[x] = object[x];
-			}this.file = file;
+			} /** The types file of this object
+      * 
+      * @type mm.structs.TypesFile
+      * @private
+      */
+			this._file = file;
+
+			/** The fields of this type
+    * 
+    * @type array<mm.structs.NodeTypeField>
+    */
 			this.fields = object.fields.map(function (x) {
 				return new NodeTypeField(x);
 			});
 		}
+
+		/** Returns the field type with the given name, or null if it doesn't exist.
+   * 
+   * @param {string} field The name of the field to look up.
+   * @return {?mm.structs.NodeTypeField} The field object.
+   */
+
 
 		NodeType.prototype.getFieldType = function getFieldType(field) {
 			var _iteratorNormalCompletion = true;
@@ -2068,8 +2155,17 @@ load.provide("mm.structs.NodeType", function () {
 			return null;
 		};
 
+		/** Returns a node type (not a field) from this types file
+   * 
+   * This could be thought of as a ``sibling" type, I guess.
+   * 
+   * @param {string} name The name of the other type to get.
+   * @return {?mm.structs.NodeType} The other type, or null if it doesn't exist.
+   */
+
+
 		NodeType.prototype.getOtherType = function getOtherType(name) {
-			return this.file.getNodeType(name);
+			return this._file.getNodeType(name);
 		};
 
 		return NodeType;
@@ -2077,21 +2173,39 @@ load.provide("mm.structs.NodeType", function () {
 });
 
 load.provide("mm.structs.ArrowType", function () {
+	/** Represents a singe type of node
+  * 
+  * @param {object} object The type object as defined in the types file.
+  * @param {mm.structs.TypesFile} file The types file this arrow type is from.
+  */
 	return function () {
 		function ArrowType(object, file) {
 			_classCallCheck(this, ArrowType);
 
 			if (!object.name.match(/[a-z]+/)) throw new TypeError("Arrow type name " + this.name + " is not valid.");
 
-			this.file = file;
 			var _arr3 = ["name", "attr", "textAttr"];
 			for (var _i2 = 0; _i2 < _arr3.length; _i2++) {
 				var x = _arr3[_i2];this[x] = object[x];
-			}
+			} /** The types file of this object
+      * 
+      * @type mm.structs.TypesFile
+      * @private
+      */
+			this._file = file;
 		}
 
+		/** Returns an arrow type (not a field) from this types file
+   * 
+   * This could be thought of as a ``sibling" type, I guess.
+   * 
+   * @param {string} name The name of the other type to get.
+   * @return {?mm.structs.ArrowType} The other type, or null if it doesn't exist.
+   */
+
+
 		ArrowType.prototype.getOtherType = function getOtherType(name) {
-			return this.file.getArrowType(name);
+			return this._file.getArrowType(name);
 		};
 
 		return ArrowType;
@@ -2102,20 +2216,44 @@ load.provide("mm.structs.TypesFile", function () {
 	var ArrowType = load.require("mm.structs.ArrowType");
 	var NodeType = load.require("mm.structs.NodeType");
 
+	/** Represents the types file
+  * 
+  * @param {object} object The data from the types file.
+  */
 	return function () {
 		function TypesFile(object) {
 			var _this = this;
 
 			_classCallCheck(this, TypesFile);
 
+			/** The version of the types file in use
+    * 
+    * @type integer
+    */
 			this.version = object.version;
 
+			/** The default type name for newly created nodes
+    * 
+    * @type string
+    */
 			this.defaultType = object.defaultType;
+			/** The default type name for newly created arrows
+    * 
+    * @type string
+    */
 			this.defaultArrowType = object.defaultArrowType;
 
+			/** All the node types in this file
+    * 
+    * @type array<mm.structs.NodeType>
+    */
 			this.types = object.types.map(function (x) {
 				return new NodeType(x, _this);
 			});
+			/** All the arrow types in this file
+    * 
+    * @type array<mm.structs.ArrowType>
+    */
 			this.arrowTypes = object.arrows.map(function (x) {
 				return new ArrowType(x, _this);
 			});
@@ -2303,36 +2441,43 @@ load.provide("mm.structs.AbstractGraph", function () {
 			var ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
 				var _this = this;
 
-				var typesf;
+				var jsonMaybe, typesf;
 				return regeneratorRuntime.wrap(function _callee$(_context) {
 					while (1) {
 						switch (_context.prev = _context.next) {
 							case 0:
+								// If it is an object, return it. If it is a string, JSON.parse it.
+
+								jsonMaybe = function jsonMaybe(o) {
+									if (typeof o === "string") return JSON.parse(o);
+									return o;
+								};
+
 								if (!this._objectsUrl) {
-									_context.next = 4;
+									_context.next = 5;
 									break;
 								}
 
 								return _context.abrupt("return", Promise.all([getfile(this._typesUrl), getfile(this._objectsUrl)]).then(function (contents) {
-									_this.types = new TypesFile(typeof contents[0] === "string" ? JSON.parse(contents[0]) : contents[0]);
-									_this.objects = new ObjectsData(typeof contents[1] === "string" ? JSON.parse(contents[1]) : contents[1], _this.types);
+									_this.types = new TypesFile(jsonMaybe(contents[0]));
+									_this.objects = new ObjectsData(jsonMaybe(contents[1]), _this.types);
 
 									_this.ready = true;
 								}));
 
-							case 4:
-								_context.next = 6;
+							case 5:
+								_context.next = 7;
 								return getfile(this._typesUrl);
 
-							case 6:
+							case 7:
 								typesf = _context.sent;
 
 
-								this.types = new TypesFile(typeof typesf === "string" ? JSON.parse(typesf) : typesf);
+								this.types = new TypesFile(jsonMaybe(typesf));
 								this.objects = new ObjectsData(emptyGraph, this.types);
 								this.ready = true;
 
-							case 10:
+							case 11:
 							case "end":
 								return _context.stop();
 						}
@@ -2361,13 +2506,16 @@ load.provide("mm.structs.AbstractGraph", function () {
 		AbstractGraph.prototype.cascadingRemoveNode = function cascadingRemoveNode(nodes) {
 			var _this2 = this;
 
+			// Object used to recover
 			var recovery = { edges: [], nodes: [] };
 
+			// Make sure the input is an array of node ids, rather than anything else
 			if (!Array.isArray(nodes)) nodes = [nodes];
 			nodes = nodes.map(function (x) {
 				return typeof x == "number" ? x : x.id;
 			});
 
+			// And loop through them
 			var _iteratorNormalCompletion = true;
 			var _didIteratorError = false;
 			var _iteratorError = undefined;
@@ -2376,6 +2524,7 @@ load.provide("mm.structs.AbstractGraph", function () {
 				for (var _iterator = nodes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 					var n = _step.value;
 
+					// Make sure to delete and collect the edges as well
 					var edges = this.objects.getEdgesConnectedToNode(n);
 					recovery.edges = recovery.edges.concat(edges.map(function (e) {
 						return e.toJson();
@@ -2584,7 +2733,7 @@ load.provide("mm.Editor", function () {
 
 
 		Editor.prototype.addToUndoStack = function addToUndoStack(type, arg) {
-			console.log("Added event of type " + type + ", %o", arg);
+			//console.log(`Added event of type ${type}, %o`, arg);
 
 			if (!_handlers.has(type)) throw TypeError("Tried to add an undo event of type " + type + ", but no handler exists!");
 
@@ -2627,9 +2776,9 @@ load.provide("mm.Editor", function () {
 
 								_handlers.get(now[0])[0](now[0], now[1], this._abstractGraph);
 
-								this.printStack();
+								//this.printStack();
 
-							case 6:
+							case 5:
 							case "end":
 								return _context.stop();
 						}
@@ -2671,9 +2820,9 @@ load.provide("mm.Editor", function () {
 
 								_handlers.get(now[0])[1](now[0], now[1], this._abstractGraph);
 
-								this.printStack();
+								//this.printStack();
 
-							case 6:
+							case 5:
 							case "end":
 								return _context2.stop();
 						}
@@ -2920,13 +3069,19 @@ load.provide("mm.Renderer", function () {
 		/** Given some objects, renders them from scratch.
    * 
    * @param {mm.structs.ObjectsData} objects The objects to render with this.
+   * @param {boolean=false} reset Set the initial zoom and scroll from the object's canvas.
    */
 
 
-		Renderer.prototype.rerender = function rerender(objects) {
+		Renderer.prototype.rerender = function rerender(objects, reset) {
 			var _this = this;
 
 			if (!this.inited) this.init();
+
+			// Maybe load initial scale
+			if (reset) {
+				this._scale = objects.canvas.initialZoom;
+			}
 
 			// Set dimensions
 			this._width = objects.canvas.width;
@@ -3056,6 +3211,12 @@ load.provide("mm.Renderer", function () {
 			$("#" + this._id + "-gridpatt").attr("width", 16 * this._scale);
 			$("#" + this._id + "-gridpatt").attr("height", 16 * this._scale);
 			$("#" + this._id + "-gridpatt path").attr("d", "M %i 0 L 0 0 0 %i".replace(/\%i/g, 16 * this._scale));
+
+			// Initial scroll position
+			if (reset) {
+				$("#" + this._id + " .mm-inner")[0].scrollLeft = objects.canvas.initialX * this._scale;
+				$("#" + this._id + " .mm-inner")[0].scrollTop = objects.canvas.initialY * this._scale;
+			}
 		};
 
 		/** Inits the element, by creating the needed elements inside it */
@@ -3258,17 +3419,28 @@ load.provide("mm.Renderer", function () {
 			return this._scale;
 		};
 
+		/** Updates the hidden state of a node and it's connected edges
+   * 
+   * Things that are supposed to be hidden are hidden, things that aren't are shown
+   * 
+   * @param {mm.structs.ObjectsData} objects The objects data for the diagram
+   * @param {mm.structs.ObjectNode} node The node to check
+   */
+
+
 		Renderer.prototype.updateHidden = function updateHidden(objects, node) {
 			var _this2 = this;
 
 			var edges = objects.getEdgesConnectedToNode(node.id);
 
 			if (node.hidden) {
+				// Supposed to be hidden
 				$(this.getSvgNode(node.id)).addClass("hidden-node");
 				edges.forEach(function (e) {
 					return $(_this2.getSvgEdge(e.id)).addClass("hidden-edge");
 				});
 			} else {
+				// Supposed to be visible
 				$(this.getSvgNode(node.id)).removeClass("hidden-node");
 				edges.forEach(function (e) {
 					if (!objects.isHidden(e)) $(_this2.getSvgEdge(e.id)).removeClass("hidden-edge");
@@ -3552,6 +3724,7 @@ load.provide("mm.utils.strf", function () {
 			if ("{}".includes(t)) return t;
 
 			if (t.includes(":")) {
+				// {var:fun} or {var:fun,arg}
 				var fn = t.split(":", 1)[0];
 				var rhs = t.substring(fn.length + 1);
 
@@ -3566,6 +3739,7 @@ load.provide("mm.utils.strf", function () {
 
 				return _fns[fn](v, arg, f.type, node);
 			} else {
+				// {var}
 				var _f = node.getFieldType(t);
 				if (!_f) return "(null)";
 				var _v = node.fields[t];
@@ -3589,8 +3763,6 @@ load.provide("mm.utils.strf", function () {
 		});
 	};
 
-	// Testing. TODO: Remove this
-	window.strf = strf;
 	return strf;
 });
 /* Including packs: mm.interactions.EditHelp */
@@ -4222,11 +4394,15 @@ load.provide("mm.interactions.NodeMove", function () {
 			var ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(renderer, joint, node) {
 				var _this2 = this;
 
+				var svgNode;
 				return regeneratorRuntime.wrap(function _callee$(_context) {
 					while (1) {
 						switch (_context.prev = _context.next) {
 							case 0:
 								Interaction.prototype.addNode.call(this, renderer, joint, node);
+
+								svgNode = renderer.getSvgNode(node.id);
+
 
 								if (this._editor) $(svgNode).on("mousedown", function (e) {
 									// Don't move a node if we click on the circle
@@ -4236,7 +4412,7 @@ load.provide("mm.interactions.NodeMove", function () {
 									_this2._moves.set(renderer, node);
 								});
 
-							case 2:
+							case 3:
 							case "end":
 								return _context.stop();
 						}
@@ -4887,6 +5063,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 load.provide("mm.interactions.Pan", function () {
 	var Interaction = load.require("mm.interactions.Interaction");
 
+	/** Handles click draging around the diagram
+  * 
+  * Basically, listens for mouse movements and updates the scroll location of the diagram.
+  * 
+  * @extends mm.Interaction
+  */
 	return function (_Interaction) {
 		_inherits(Pan, _Interaction);
 
@@ -4906,13 +5088,20 @@ load.provide("mm.interactions.Pan", function () {
 						switch (_context.prev = _context.next) {
 							case 0:
 								mouseDown = false;
+
+								// Current mouse location, used to check how much the mouse has moved since the last mousemove event
+
 								cx = 0;
 								cy = 0;
 
 
 								html.addEventListener("mousedown", function (e) {
+									// Don't bother dragging if we aren't using the left click
 									if (e.button != 0) return;
+
+									// ... Or if we have clicked something else and aren't in the editor
 									if (!$(e.target).hasClass("mm-background-grid") && _this2._editor) return;
+
 									mouseDown = true;
 									cx = e.clientX;
 									cy = e.clientY;
@@ -5915,20 +6104,20 @@ load.provide("mm.interactions.Zoom", function () {
 			var ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(renderer, html) {
 				var _this2 = this;
 
-				var scale, _updateZoom;
+				var _updateZoom;
 
 				return regeneratorRuntime.wrap(function _callee$(_context) {
 					while (1) {
 						switch (_context.prev = _context.next) {
 							case 0:
-								// This is the current zoom scale
-								scale = 1.0;
-
 								// This is the function to be called and actually changes the zoom
 								// e is the mouse event, which is used to make the location look like its zooming on the mouse when using
 								//  the scroll wheel
 
 								_updateZoom = function _updateZoom(mod, e) {
+									// This is the current zoom scale
+									var scale = renderer.getScale();
+
 									// Get the actual element to be scaled
 									var elem = $(html).find(".mm-inner")[0];
 
@@ -6017,7 +6206,7 @@ load.provide("mm.interactions.Zoom", function () {
 									e.preventDefault();
 								});
 
-							case 5:
+							case 4:
 							case "end":
 								return _context.stop();
 						}
@@ -6048,6 +6237,7 @@ load.provide("mm.main", function () {
 	load.requireExternal("backbone", "//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js", ["lodash"]);
 	load.requireExternal("joint", "//cdnjs.cloudflare.com/ajax/libs/jointjs/0.9.7/joint.min.js", ["backbone"]);
 
+	// Makes a CSS node and adds it to the document
 	var _mkCss = function _mkCss(url) {
 		var link = document.createElement("link");
 		link.rel = "stylesheet";
@@ -6080,6 +6270,15 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 load.provide("mm.HTMLGraphFinder", function () {
 	var Renderer = load.require("mm.Renderer");
 
+	/** This is a simple generator that creates and yields ``graph areas"
+  * 
+  * It yields a number of objects by searching the document for graph-display elements. Each object has the following
+  *  properties:
+  * - renderer: A renderer controlling this area.
+  * - objectsUrl: The url of the objects file, or undefined if it is unspecified.
+  * - typesUrl: The url of the types file.
+  * - editor: A boolean, whether the editor is enabled or not.
+  */
 	return regeneratorRuntime.mark(function _callee() {
 		var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, n, editor;
 
@@ -6095,13 +6294,18 @@ load.provide("mm.HTMLGraphFinder", function () {
 
 					case 5:
 						if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-							_context.next = 13;
+							_context.next = 14;
 							break;
 						}
 
 						n = _step.value;
-						editor = n.getAttribute("editor") ? ["true", "1", "editor"].includes(n.getAttribute("editor").toLowerCase()) : false;
-						_context.next = 10;
+						editor = false;
+
+						if (n.getAttribute("editor") && ["true", "1", "editor"].includes(n.getAttribute("editor").toLowerCase())) {
+							editor = true;
+						}
+
+						_context.next = 11;
 						return {
 							renderer: new Renderer(n, editor),
 							objectsUrl: n.getAttribute("src"),
@@ -6109,51 +6313,51 @@ load.provide("mm.HTMLGraphFinder", function () {
 							editor: editor
 						};
 
-					case 10:
+					case 11:
 						_iteratorNormalCompletion = true;
 						_context.next = 5;
 						break;
 
-					case 13:
-						_context.next = 19;
+					case 14:
+						_context.next = 20;
 						break;
 
-					case 15:
-						_context.prev = 15;
+					case 16:
+						_context.prev = 16;
 						_context.t0 = _context["catch"](3);
 						_didIteratorError = true;
 						_iteratorError = _context.t0;
 
-					case 19:
-						_context.prev = 19;
+					case 20:
 						_context.prev = 20;
+						_context.prev = 21;
 
 						if (!_iteratorNormalCompletion && _iterator.return) {
 							_iterator.return();
 						}
 
-					case 22:
-						_context.prev = 22;
+					case 23:
+						_context.prev = 23;
 
 						if (!_didIteratorError) {
-							_context.next = 25;
+							_context.next = 26;
 							break;
 						}
 
 						throw _iteratorError;
 
-					case 25:
-						return _context.finish(22);
-
 					case 26:
-						return _context.finish(19);
+						return _context.finish(23);
 
 					case 27:
+						return _context.finish(20);
+
+					case 28:
 					case "end":
 						return _context.stop();
 				}
 			}
-		}, _callee, this, [[3, 15, 19, 27], [20,, 22, 26]]);
+		}, _callee, this, [[3, 16, 20, 28], [21,, 23, 27]]);
 	});
 });
 
@@ -6253,7 +6457,7 @@ load.provide("mm.graphManager", function () {
 						return _ag.load();
 
 					case 30:
-						i.rerender();
+						i.rerender(true);
 
 					case 31:
 						_iteratorNormalCompletion3 = true;
@@ -6644,10 +6848,14 @@ load.provide("mm.Interactor", function () {
 			return addCanvas;
 		}();
 
-		/** Causes all the renderers to redraw the graph, in case things have changed */
+		/** Causes all the renderers to redraw the graph, in case things have changed
+   * 
+   * @param {boolean=false} reset If true, then the zoom and scroll location will be set to the one in the
+   *  diagram's data.
+   */
 
 
-		Interactor.prototype.rerender = function rerender() {
+		Interactor.prototype.rerender = function rerender(reset) {
 			var _this2 = this;
 
 			this._interactorState.rerendering = true;
@@ -6655,7 +6863,7 @@ load.provide("mm.Interactor", function () {
 				return i.clean();
 			});
 			this._renderers.forEach(function (r) {
-				return r.rerender(_this2._abstractGraph.objects);
+				return r.rerender(_this2._abstractGraph.objects, reset);
 			});
 			this._interactorState.rerendering = false;
 			this.updateMultiSel();
@@ -6671,7 +6879,8 @@ load.provide("mm.Interactor", function () {
 
 		/** Returns an [x, y] pair indicating where the mouse is on the given canvas
    * 
-   * This takes into account scaling.
+   * This takes into account scaling, that is, it will be the location if the graph was scaled to 100%, even if
+   *  it currently isn't.
    * @param {object} e A jquery mouse event.
    * @param {mm.Renderer} renderer The renderer for that element.
    * @return {array<float>} The [x, y] location of the mouse.
@@ -6754,7 +6963,7 @@ load.provide("mm.Interactor", function () {
    * @param {boolean=false} evenIfLong By default the panel isn't closed if it is expanded. This forces it to be
    *  closed even then.
    * @param {boolean=false} ignoreHandler Ignore the handler.
-   * @return {boolean} True if the panel was closed, false if it isn't or it isn't open.
+   * @return {boolean} True if the panel was closed, false if it wasn't or it wasn't open in the first place.
    */
 
 
@@ -6771,6 +6980,12 @@ load.provide("mm.Interactor", function () {
 			this._detailsSwitch = null;
 			return true;
 		};
+
+		/** Updates the multiple selection
+   * 
+   * This highligts nodes that are multiple selected, and removes the highlight of those that are not.
+   */
+
 
 		Interactor.prototype.updateMultiSel = function updateMultiSel() {
 			var _iteratorNormalCompletion4 = true;
@@ -6828,6 +7043,12 @@ load.provide("mm.Interactor", function () {
 			}
 		};
 
+		/** Updates the hidden state of a given node
+   * 
+   * It is hidden or visible based on whether it should be.
+   */
+
+
 		Interactor.prototype.updateHidden = function updateHidden(node) {
 			var _this3 = this;
 
@@ -6870,6 +7091,25 @@ load.provide("mm.Interactor", function () {
 				return _this5.hideDetailsPanel(r, true);
 			});
 			this.rerender();
+		};
+
+		/** Exports the diagram as a JSON object
+   * 
+   * First it updates the initial zoom and location in the object's canvas, then it calls toJson and returns that.
+   * 
+   * @param {mm.Renderer} The renderer doing the saving, for reading the zoom and location.
+   * @return {object} The graph object.
+   */
+
+
+		Interactor.prototype.export = function _export(renderer) {
+			var scale = renderer.getScale();
+
+			this._abstractGraph.objects.canvas.initialZoom = scale;
+			this._abstractGraph.objects.canvas.initialX = $(renderer.getRoot()).find(".mm-inner")[0].scrollLeft / scale;
+			this._abstractGraph.objects.canvas.initialY = $(renderer.getRoot()).find(".mm-inner")[0].scrollTop / scale;
+
+			return this._abstractGraph.objects.toJson();
 		};
 
 		return Interactor;
@@ -6921,7 +7161,7 @@ load.provide("mm.interactions.EditSimpleImpExp", function () {
 									// Export
 
 									// First of all, get the diagram as a JSON string
-									var txt = JSON.stringify(_this2._abstractGraph.objects.toJson());
+									var txt = JSON.stringify(_this2._interactor.export(renderer));
 
 									// Now generate a data url for it
 									var url = "";
@@ -6970,7 +7210,7 @@ load.provide("mm.interactions.EditSimpleImpExp", function () {
 												} else {
 													// Everything is OK, lets load it
 													_this2._abstractGraph.objects.reload(obj);
-													_this2._interactor.rerender();
+													_this2._interactor.rerender(true);
 													_this2._editor.clearUndoStack();
 												}
 											} catch (e) {

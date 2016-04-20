@@ -154,11 +154,15 @@ load.provide("mm.Interactor", (function() {
 			}
 		}
 		
-		/** Causes all the renderers to redraw the graph, in case things have changed */
-		rerender() {
+		/** Causes all the renderers to redraw the graph, in case things have changed
+		 * 
+		 * @param {boolean=false} reset If true, then the zoom and scroll location will be set to the one in the
+		 *  diagram's data.
+		 */
+		rerender(reset) {
 			this._interactorState.rerendering = true;
 			this._interactions.forEach((i) => i.clean());
-			this._renderers.forEach((r) => r.rerender(this._abstractGraph.objects));
+			this._renderers.forEach((r) => r.rerender(this._abstractGraph.objects, reset));
 			this._interactorState.rerendering = false;
 			this.updateMultiSel();
 		}
@@ -312,6 +316,23 @@ load.provide("mm.Interactor", (function() {
 			this._editor.redo();
 			this._renderers.forEach((r) => this.hideDetailsPanel(r, true));
 			this.rerender();
+		}
+		
+		/** Exports the diagram as a JSON object
+		 * 
+		 * First it updates the initial zoom and location in the object's canvas, then it calls toJson and returns that.
+		 * 
+		 * @param {mm.Renderer} The renderer doing the saving, for reading the zoom and location.
+		 * @return {object} The graph object.
+		 */
+		export(renderer) {
+			var scale = renderer.getScale();
+			
+			this._abstractGraph.objects.canvas.initialZoom = scale;
+			this._abstractGraph.objects.canvas.initialX = $(renderer.getRoot()).find(".mm-inner")[0].scrollLeft/scale;
+			this._abstractGraph.objects.canvas.initialY = $(renderer.getRoot()).find(".mm-inner")[0].scrollTop/scale;
+			
+			return this._abstractGraph.objects.toJson();
 		}
 	};
 	

@@ -62,7 +62,7 @@ load.provide("mm.graphManager", (function() {
 		
 		for(let [i, ag] of _graphs) {
 			await ag.load();
-			i.rerender();
+			i.rerender(true);
 		}
 	}
 	

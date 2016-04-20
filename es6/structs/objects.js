@@ -214,7 +214,7 @@ load.provide("mm.structs.ObjectCanvas", (function() {
 	 */
 	return class ObjectCanvas {
 		constructor(object, translateFn) {
-			for(let x of ["width", "height"]) this[x] = object[x];
+			for(let x of ["width", "height", "initialZoom", "initialX", "initialY"]) this[x] = object[x];
 			
 			this._translateFn = translateFn;
 		}
@@ -265,7 +265,10 @@ load.provide("mm.structs.ObjectCanvas", (function() {
 		toJson() {
 			return {
 				width:this.width,
-				height:this.height
+				height:this.height,
+				initialZoom:this.initialZoom,
+				initialX:this.initialX,
+				initialY:this.initialY
 			}
 		}
 	};

@@ -16,7 +16,7 @@ load.provide("mm.interactions.EditSimpleImpExp", (function() {
 				// Export
 				
 				// First of all, get the diagram as a JSON string
-				let txt = JSON.stringify(this._abstractGraph.objects.toJson());
+				let txt = JSON.stringify(this._interactor.export(renderer));
 				
 				// Now generate a data url for it
 				let url = "";
@@ -65,7 +65,7 @@ load.provide("mm.interactions.EditSimpleImpExp", (function() {
 							}else{
 								// Everything is OK, lets load it
 								this._abstractGraph.objects.reload(obj);
-								this._interactor.rerender();
+								this._interactor.rerender(true);
 								this._editor.clearUndoStack();
 							}
 						} catch(e) {

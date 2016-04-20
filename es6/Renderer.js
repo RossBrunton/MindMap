@@ -179,9 +179,15 @@ load.provide("mm.Renderer", (function() {
 		/** Given some objects, renders them from scratch.
 		 * 
 		 * @param {mm.structs.ObjectsData} objects The objects to render with this.
+		 * @param {boolean=false} reset Set the initial zoom and scroll from the object's canvas.
 		 */
-		rerender(objects) {
+		rerender(objects, reset) {
 			if(!this.inited) this.init();
+			
+			// Maybe load initial scale
+			if(reset) {
+				this._scale = objects.canvas.initialZoom;
+			}
 			
 			// Set dimensions
 			this._width = objects.canvas.width;
@@ -263,6 +269,12 @@ load.provide("mm.Renderer", (function() {
 			$(`#${this._id}-gridpatt`).attr("width", 16 * this._scale);
 			$(`#${this._id}-gridpatt`).attr("height", 16 * this._scale);
 			$(`#${this._id}-gridpatt path`).attr("d", "M %i 0 L 0 0 0 %i".replace(/\%i/g, 16 * this._scale));
+			
+			// Initial scroll position
+			if(reset) {
+				$(`#${this._id} .mm-inner`)[0].scrollLeft = objects.canvas.initialX * this._scale;
+				$(`#${this._id} .mm-inner`)[0].scrollTop = objects.canvas.initialY * this._scale;
+			}
 		}
 		
 		/** Inits the element, by creating the needed elements inside it */
