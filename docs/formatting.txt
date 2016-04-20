@@ -1,0 +1,17 @@
+The content of text nodes (either HTML or graphs) depends on the type of the object being displayed. A format string
+will be used to describe this format. The format string is a "normal" string, with data inserted at points specified
+using curly brackets ({}) in one of the following formats:
+
+{{}: Print a literal "{"
+{}}: Print a literal "}"
+{varname}: Display the variable name literally (based on its type).
+{fun:varname}: Call a function (listed below) on the varname, and include its return value.
+{fun:varname,arg}: As above, but supply the argument to the function as well (if needed).
+
+The accepted functions are as follows:
+link: Creates a HTML hyperlink for the variable. Email addresses will use a "mailto:" link.
+singleline: Trims all but the first line from a multiline text field.
+cap: Removes all characters after the position specified by the argument, should the string be longer than that.
+cape: As cap, but if the string is longer, the last three characters are replaced with "." (elipses).
+dformat: Formats the provided date given the argument. The argument is a format string described at 
+https://github.com/taylorhakes/fecha#formatting-tokens

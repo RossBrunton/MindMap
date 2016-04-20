@@ -1,0 +1,24 @@
+version(int): Version of the types format, should be 1.
+types(arr): An array of objects, each describing one type and in the following form:
+	{
+	name(str): The name of this type. Must match /[a-zA-Z]+/
+	fields(arr): An array of ararys, each describing one field as follows:
+		[
+		fname(str): The name of the field. Field names must match /[a-zA-Z]+/
+		ftype(str): The type of the field (see fieldtypes.txt).
+		def(*): The default value of the node.
+		fargs(*): Optional argument based on the field type.
+		]
+	nodeText(str): A format string (see formatting.txt) describing the text to appear on the node, does not accept HTML.
+	nodeAttr(object): Object for jointJS's attr function to style the node on the graph.
+	viewText(str): A format string for the information panel that shows up hovering over a node.
+	viewAddText(str): A format string for the block underneath the information panel that shows up on clicking a node.
+	}
+arrows(arr): An array of objects, each describing an arrow type:
+	{
+	name(str): The name of this arrow type.
+	attr(object): Argument to the jointJS attr function for styling this arrow.
+	textAttr(object): Argument to the jointJS attr function for styling the text on this arrow.
+	}
+defaultType(str): The name of the node type for newly created nodes
+defaultEdge(str): The name of the edge type for newly created edges

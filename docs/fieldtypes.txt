@@ -1,0 +1,15 @@
+Each field for an object type has a type, as follows:
+
+text: A single line of text.
+
+blockText: Multiple lines of text. This will use a multiline text box rather than a single line one in the editor.
+
+url: A URL, the editor will validate this.
+
+email: An email address, the editor will also validate this.
+
+date: A full datetime. When written to the JSON objects file, this will be in Date.toJSON() format (ISO 8601). For ease
+of use, internally these will be stored as strings rather than JS Date objects. The argument to this type (that is, the
+third entry in it's list) is one of the following: "year", "month", "day", "minute" describing how granular the editor 
+will treat it (anything more specific than the argument will be absent from the editing of this field).
+

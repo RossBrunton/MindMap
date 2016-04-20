@@ -1,0 +1,26 @@
+version(int): Version of the objects format, should be 1.
+nodes(arr): Array of nodes of the graph, each is an object with the following properties:
+	{
+	type(str): The type of the object (as described in the types file).
+	id(int): A unique identifier for this node.
+	x(int): The x coordinate of the node on the diagram.
+	y(int): The y coordinate of the node on the diagram.
+	fields(obj): An object describing all the fields of the node. Keys are field names and values are field values.
+	width(int): The width of the node.
+	hidden(boolean): True if the node is to be hidden.
+	}
+edges(arr): Array of objects describing edges between nodes.
+	{
+	type(str): The type of the edge (as described in the types file).
+	id(int): A unique identifier for this edge. Note that a node and an edge may share the same id.
+	origin(int): The id of the node for the origin of this arrow.
+	dest(int): The id of the node for the destination of this arrow.
+	text(str): Text to display on this edge.
+	points(arr): An array of (x, y) pairs, each of which is a point which this edge curves around.
+	}
+canvas(obj): An object describing the raw values of the area on which the nodes are drawn. Has the following properties:
+	{
+	width(int): The width of the canvas.
+	height(int): The height of the canvas.
+	}
+editor(obj?): An optional object describing various editor parameters. To be decided on a later date.
