@@ -210,7 +210,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 						(this._editingNode, renderer, true, true, true, this._save.bind(this, renderer), true);
 				}else{
 					// It hasn't, so just update the text
-					this._setText(textGen.nodeText(this._nodes.get(+editing)[2]));
+					this._setText(textGen.nodeText(this._nodes.get(+editing)[2]), renderer);
 				}
 				
 				// And update the visibility thing, so that invisible nodes turn invisible
@@ -258,7 +258,7 @@ load.provide("mm.interactions.NodeEdit", (function() {
 			}else{
 				// Nope, so just update the text
 				this._editingNode.update(this._editingBackup, ["width", "type", "fields", "hidden"]);
-				this._setText(textGen.nodeText(this._editingNode));
+				this._setText(textGen.nodeText(this._editingNode), renderer);
 			}
 			
 			this._interactor.updateHidden(this._editingNode);
@@ -297,11 +297,13 @@ load.provide("mm.interactions.NodeEdit", (function() {
 		 *  of the node will be set too.
 		 * 
 		 * @param {string} text The text to set.
+		 * @param {mm.Renderer} renderer The renderer to use for reading scale.
 		 * @private
 		 */
-		_setText(text) {
+		_setText(text, renderer) {
+			let scale = Math.sqrt(renderer.getScale());
 			this._nodes.get(+this._editingNode.id)[1].attr("text/text", textGen.wrapText(text, this._editingNode.width));
-			this._nodes.get(+this._editingNode.id)[1].resize(this._editingNode.width, 30);
+			this._nodes.get(+this._editingNode.id)[1].resize(this._editingNode.width  * scale, 30 * scale);
 		}
 	};
 }));
